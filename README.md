@@ -1,0 +1,1 @@
+This project maintains an OWL ontology file conversion for the Langual.org XML thesaurus Food Source facet data.  Plan is to enable Langual's thesaurus file to be updated over time, and the owl file to be updated as needed.
