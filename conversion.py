@@ -2,17 +2,36 @@
 # -*- coding: utf-8 -*-
 # Author: Damion Dooley
 # 
+# conversion.py
+""" 
+Reads Langual.org thesaurus XML file and parses items, extracting: 
 
+	- Items having taxonomic scientific names.  These are all in the Food Source facet.  A lookup of eol.org taxonomic database reference to NCBI taxonomy name is performed (alternatly make entries to cover ITIS items?)  Result is an NCBI taxon tree as well as a tree of food source items. 
+	- Items in preservation facet.
+	- ?
+
+End product will be OWL ontology file include that contains all the necessary attributes for inclusion into FOODON.
+
+"""
 import json
 from pprint import pprint
 import optparse
 import sys
 import xml.etree.ElementTree as ET
 
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
+try: #Python 2.7
+	from collections import OrderedDict
+except ImportError: # Python 2.6
+	from ordereddict import OrderedDict
+
+
+#FOR LOADING JSON AND PRESERVING ORDERED DICT SORTING. 
+try:	
+	import simplejson as json
+except ImportError: # Python 2.6
+    import json
+
+#... rulefileobj =  json.load(rules_handle, object_pairs_hook=OrderedDict)
 
 
 CODE_VERSION = '0.0.1'
@@ -36,6 +55,7 @@ class Langual(object):
 
 	def __main__(self, file):
 		"""
+		Example record
 		<FTC>B1249</FTC>
 		<TERM lang="en UK">PAPAYA</TERM>
 		<BT>B1024</BT>
@@ -114,7 +134,7 @@ class Langual(object):
 						has_taxonomy += 1
 						if 'ITIS' in taxObj: 
 							has_ITIS += 1 #print "TAXONOMY ITIS: ", taxObj['ITIS']
-							eol.org/pages/328663
+							#eol.org/pages/328663
 							continue
 				else:
 					no_taxonomy += 1
@@ -189,7 +209,7 @@ class Langual(object):
 						nameptr = name.find(prefix)
 						if nameptr > -1 and db not in taxObj:
 							nameptrend = name.find(']',nameptr + len(prefix) )
-							taxObj[db] = int(name[nameptr + len(prefix) : nameptrend])
+							taxObj[db] = name[nameptr + len(prefix) : nameptrend] #Note: some dbs have space delimited codes
 						
 			# If no codes, e.g. for "broiler chicken", <AI> will contain only text definition rather than <DICTION>
 
