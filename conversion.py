@@ -113,15 +113,15 @@ class Langual(object):
 
 		print
 		print "LANGUAL IMPORT of [" + file + ']'
-		print "Facet item counts:"
+		print "Facet item counts"
 		print counts				
 		print
-		print "Food source (facet B) stats:"
+		print "Food source (facet B) stats"
 		print "	Food additive items: ", food_additive
 		print "	Items with taxonomy: ", has_taxonomy
 		print "	  Items having ITIS: ", has_ITIS
 		print "	Items without taxon: ", no_taxonomy
-		print "	Details (parent_id-child_id : name : synonyms):"	
+		print "		parent_id-child_id : name : synonyms"	
 		print output
 
 
