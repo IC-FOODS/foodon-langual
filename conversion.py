@@ -24,15 +24,11 @@ try: #Python 2.7
 except ImportError: # Python 2.6
 	from ordereddict import OrderedDict
 
-
 #FOR LOADING JSON AND PRESERVING ORDERED DICT SORTING. 
 try:	
 	import simplejson as json
 except ImportError: # Python 2.6
     import json
-
-#... rulefileobj =  json.load(rules_handle, object_pairs_hook=OrderedDict)
-
 
 CODE_VERSION = '0.0.1'
 
@@ -55,33 +51,8 @@ class Langual(object):
 
 	def __main__(self, file):
 		"""
-		Example record
-		<FTC>B1249</FTC>
-		<TERM lang="en UK">PAPAYA</TERM>
-		<BT>B1024</BT>
-		<SN></SN>
-		<AI>&#60;SCIFAM&#62;Caricaceae [ITIS 22322]
-		&#60;SCINAM&#62;Carica papaya L. [ITIS 22324]
-		&#60;SCINAM&#62;Carica papaya L. [GRIN 9147]
-		&#60;SCINAM&#62;Carica papaya L. [PLANTS CAPA23]
-		&#60;SCINAM&#62;Carica papaya L. [EuroFIR-NETTOX 2007 73]
-		&#60;SCINAM&#62;Carica papaya L. [DPNL 2003 8382]
-		&#60;MANSFELD&#62;23437</AI>
-		<SYNONYMS>
-		<SYNONYM>carica papaya</SYNONYM>
-		<SYNONYM>hawaiian papaya</SYNONYM>
-		<SYNONYM>lechoza</SYNONYM>
-		<SYNONYM>melon tree</SYNONYM>
-		<SYNONYM>pawpaw</SYNONYM>
-		</SYNONYMS>
-		<RELATEDTERMS>
-		</RELATEDTERMS>
-		<CLASSIFICATION>False</CLASSIFICATION>
-		<ACTIVE>True</ACTIVE>
-		<DATEUPDATED>2011-10-07</DATEUPDATED>
-		<DATECREATED>2000-01-01</DATECREATED>
-		<UPDATECOMMENT></UPDATECOMMENT>
-		<SINGLE>False</SINGLE>
+			Create memory-resident data structure of captured Langual items.  Includes:
+				- ALL FOOD SOURCE ITEMS, which have taxonomy.
 		"""
 
 		langual = {}
@@ -93,6 +64,8 @@ class Langual(object):
 		has_ITIS = 0
 		no_taxonomy = 0
 		food_additive = 0
+		output = ''
+
 		for child in root.iter('DESCRIPTOR'):
 			active = child.find('ACTIVE').text
 
@@ -106,12 +79,9 @@ class Langual(object):
 
 			code = child.find('FTC')
 
-			# ALL FOOD SOURCE ITEMS, which have taxonomy.
-
 			category = code.text[0]
+
 			# Stats on count of members of each facet
-
-
 			if category in counts: counts[category] += 1
 			else: counts[category] = 1;	
 
@@ -139,62 +109,86 @@ class Langual(object):
 				else:
 					no_taxonomy += 1
 
-					print parent.text,'-',code.text, term.text, '|'.join(synonyms)
+					output += '		'+ parent.text + '-' + code.text + ':' + term.text + ':' + '|'.join(synonyms) + '\n'
 
-					
+		print
+		print "LANGUAL IMPORT of [" + file + ']'
+		print "Facet item counts:"
+		print counts				
+		print
+		print "Food source (facet B) stats:"
+		print "	Food additive items: ", food_additive
+		print "	Items with taxonomy: ", has_taxonomy
+		print "	  Items having ITIS: ", has_ITIS
+		print "	Items without taxon: ", no_taxonomy
+		print "	Details (parent_id-child_id : name : synonyms):"	
+		print output
 
-		print "Has taxonomy: ", has_taxonomy, "Has ITIS: ", has_ITIS, "No taxonomy: ", no_taxonomy, "Food additive: ", food_additive
-		print counts
-
-		"""
-		#with open(file) as data_file:    
- 		#	self.struct = json.load(data_file)
-		#pass
-		# http://www.itis.gov/web_service.html
-		# http://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=500059
-		# http://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=202384&jsonp=itis_data
-		# http://www.itis.gov/ITISWebService/jsonservice/getHierarchyUpFromTSN?tsn=1378
-
-		# ITIS (903) SEARCH TO EOL ID/Batch of IDs:
-		# http://eol.org/api/search_by_provider/1.0.json?batch=true&id=180722%2C160783&hierarchy_id=903
-		# Returns:
-		# [{"180722":[
-			{"eol_page_id":328663},
-			{"eol_page_link":"eol.org/pages/328663"}
-		]},
-		{"160783":[
-			{"eol_page_id":8897},
-			{"eol_page_link":"eol.org/pages/8897"}]
-		}]
-
-		#http://eol.org/api/docs/provider_hierarchies
-		596 : "Index Fungorum"
-		903 : "ITIS" SEARCH TO EOL ID/Batch of IDs:
-		1172 : "NCBI Taxonomy"
-
-		http://eol.org/api/pages/1.0.json?batch=true&id=328663&subjects=overview&common_names=true&synonyms=true&taxonomy=true&cache_ttl=&language=en
-
-		# ISSUE: Some "lines" in lines_of_text might not be separated by a carriage return. <SCINAM>Hapalochlaena maculosa (Hoyle, 1883) [ITIS 556175]<.... > 
 
 		
-		PROBLEM CASE:
-		TAXONOMY:  <SCIFAM>Apiaceae
-		<SCINAM>Apium graveolens var. rapaceum (Miller) Gaudin
-		<ITIS>530941
-		<GRIN>3704
-		<MANSFELD>1236
-		B1057 - B1736 SESBANIA agati grandiflora|sesbania grandiflora
-
-
-
-		SPICE OR FLAVOR-PRODUCING PLANT [B1179]
-
-
-		MUSTARD AND CRESS [B4301]
-		"""
 	def getTaxonomy(self, lines_of_text):
-		""" Objective is to find first instance of ITIS code - the most detailed one
-		# Kingdom / Subkingdom / Infrakingdom / Superdivision / Division / Subdivision [Phylum / Subphylum] / Class / Superorder / Order / Family / Genus / Species
+		""" 
+		Objective is to find first instance of ITIS code - the most detailed one.
+		Taxonomy roles in Langual:
+			Kingdom / Subkingdom / Infrakingdom / Superdivision / Division / Subdivision [Phylum / Subphylum] / Class / Superorder / Order / Family / Genus / Species
+
+		Example Langual record
+		<DESCRIPTOR>
+			<FTC>B1249</FTC>
+			<TERM lang="en UK">PAPAYA</TERM>
+			<BT>B1024</BT>
+			<SN></SN>
+			<AI>&#60;SCIFAM&#62;Caricaceae [ITIS 22322]
+			&#60;SCINAM&#62;Carica papaya L. [ITIS 22324]
+			&#60;SCINAM&#62;Carica papaya L. [GRIN 9147]
+			&#60;SCINAM&#62;Carica papaya L. [PLANTS CAPA23]
+			&#60;SCINAM&#62;Carica papaya L. [EuroFIR-NETTOX 2007 73]
+			&#60;SCINAM&#62;Carica papaya L. [DPNL 2003 8382]
+			&#60;MANSFELD&#62;23437</AI>
+			<SYNONYMS>
+				<SYNONYM>carica papaya</SYNONYM>
+				<SYNONYM>hawaiian papaya</SYNONYM>
+				<SYNONYM>lechoza</SYNONYM>
+				<SYNONYM>melon tree</SYNONYM>
+				<SYNONYM>pawpaw</SYNONYM>
+			</SYNONYMS>
+			<RELATEDTERMS>
+			</RELATEDTERMS>
+			<CLASSIFICATION>False</CLASSIFICATION>
+			<ACTIVE>True</ACTIVE>
+			<DATEUPDATED>2011-10-07</DATEUPDATED>
+			<DATECREATED>2000-01-01</DATECREATED>
+			<UPDATECOMMENT></UPDATECOMMENT>
+			<SINGLE>False</SINGLE>
+
+
+		# ISSUE: Some "lines" in lines_of_text might not be separated by a carriage return, e.g.
+			
+			<SCINAM>Hapalochlaena maculosa (Hoyle, 1883) [ITIS 556175]<.... > 
+
+		
+		PROBLEM CASE - ITIS code is NOT following SCINAME in brackets:
+			<SCIFAM>Apiaceae
+			<SCINAM>Apium graveolens var. rapaceum (Miller) Gaudin
+			<ITIS>530941
+			<GRIN>3704
+			<MANSFELD>1236
+
+			<DESCRIPTOR>
+				<FTC>B1729</FTC>
+				<TERM lang="en UK">CELERIAC</TERM>
+				<BT>B1018</BT>
+				<SN></SN>
+				<AI>&#60;SCIFAM&#62;Apiaceae
+				&#60;SCINAM&#62;Apium graveolens var. rapaceum (Miller) Gaudin
+				&#60;ITIS&#62;530941
+				&#60;GRIN&#62;3704
+				&#60;MANSFELD&#62;1236</AI>
+				<SYNONYMS>
+					<SYNONYM>apium graveolens rapaceum</SYNONYM>
+					<SYNONYM>celery root</SYNONYM>
+				</SYNONYMS>
+
 		"""
 		taxObj = {}
 		for line in lines_of_text.split('\n'):
@@ -217,9 +211,55 @@ class Langual(object):
 		return taxObj
 
 
+	def getEOLData(self):
+		"""
+		Perform Lookup of NCBI_Taxon data directly from EOL.org via API and ITIS code.
+
+		ITIS (903) SEARCH TO EOL ID/Batch of IDs:
+
+			http://eol.org/api/search_by_provider/1.0.json?batch=true&id=180722%2C160783&hierarchy_id=903
+
+		Returns:
+			[{"180722":[
+				{"eol_page_id":328663},
+				{"eol_page_link":"eol.org/pages/328663"}
+			]},
+			{"160783":[
+				{"eol_page_id":8897},
+				{"eol_page_link":"eol.org/pages/8897"}]
+			}]
+
+		http://eol.org/api/docs/provider_hierarchies
+
+			596 : "Index Fungorum"
+			903 : "ITIS" SEARCH TO EOL ID/Batch of IDs:
+			1172 : "NCBI Taxonomy"
+
+		http://eol.org/api/pages/1.0.json?batch=true&id=328663&subjects=overview&common_names=true&synonyms=true&taxonomy=true&cache_ttl=&language=en
+
+		NOTE ALSO
+
+			http://www.itis.gov/web_service.html
+			http://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=500059
+			http://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=202384&jsonp=itis_data
+			http://www.itis.gov/ITISWebService/jsonservice/getHierarchyUpFromTSN?tsn=1378
+
+		"""
+		pass
+
+
+	def getCurrentOntology(self, file):
+		"""
+		Load existing JSON representation of OWL ontology (created last time OWL ontology was saved)
+		Will be updated if LANGUAL database has changed.
+		"""
+		with open(file) as data_file:    
+ 			self.struct = json.load(data_file, object_pairs_hook=OrderedDict)
+
+
 if __name__ == '__main__':
 
-	genepio = Langual()
-	genepio.__main__('langual2014.xml')
+	foodstruct = Langual()
+	foodstruct.__main__('langual2014.xml')
 
 
