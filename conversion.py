@@ -1,20 +1,36 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Author: Damion Dooley
-# 
-# conversion.py
+
 """ 
-Reads Langual.org thesaurus XML file and parses items, extracting: 
+**************************************************
+conversion.py
+Author: Damion Dooley
 
-	- Items having taxonomic scientific names.  These are all in the Food Source facet.  A lookup of eol.org taxonomic database reference to NCBI taxonomy name is performed (alternatly make entries to cover ITIS items?)  Result is an NCBI taxon tree as well as a tree of food source items. 
-	- Items in preservation facet.
-	- ?
+This script uses the Langual.org food description thesaurus (published yearly in XML) 
+to provide a differential update of a langual.JSON data file.  From this the langual.OWL file
+is regenerated, and can then be imported into FOODON food ontology.  
+It provides many of the facets - food source, cooking method, preservation method, etc. 
 
-End product will be OWL ontology file include that contains all the necessary attributes for inclusion into FOODON.
+Key to the management of the langual.json file and subsequent OWL file is that one can 
+manually add elements to it which are not overwritten by subsequent langual XML file imports.
+Every Langual item maps over to any existing FOODON item by way of a hasDbXref: Langual [id]" entry.
+The langual.json file has entities organized (the key) by langual_id, but entity itself includes the assigned FOODON id so that when it comes time to adjust an existing langual.OWL file, entries are located/written out by FOODON ID.  
 
+This script assigns FOODON ids in range of 3400000 - 3499999 for any new langual terms that script
+allows to be imported into langual.json
+
+Food Source facet import notes:
+
+	- Includes raw animal, plant, bacteria and fungi ingredients.
+	- Most items having taxonomic scientific names.  A lookup of eol.org 
+		taxonomic database reference to NCBI taxonomy name is performed 
+		(alternatly make entries to cover ITIS items?)  
+	- Result is an NCBI taxon tree as well as a tree of food source items. 
+
+**************************************************
 """
 import json
-from pprint import pprint
+#from pprint import pprint
 import optparse
 import sys
 import xml.etree.ElementTree as ET
@@ -30,7 +46,7 @@ try:
 except ImportError: # Python 2.6
     import json
 
-CODE_VERSION = '0.0.1'
+CODE_VERSION = '0.0.2'
 
 def stop_err( msg, exit_code=1 ):
 	sys.stderr.write("%s\n" % msg)
@@ -44,91 +60,219 @@ class MyParser(optparse.OptionParser):
 		return self.epilog
 
 
-
 class Langual(object):
+
 	def __init__(self):
-		pass
+
+		# READ THIS FROM langual.json
+		self.langual = {'langual_index': OrderedDict(), 'ontology': OrderedDict() } #empty case.
+		self.foodon_maxid = 3400000
+
+		self.counts = {}
+		self.has_taxonomy = 0
+		self.has_ITIS = 0
+		self.no_taxonomy = 0
+		self.food_additive = 0
+		self.output = ''
+
 
 	def __main__(self, file):
 		"""
-			Create memory-resident data structure of captured Langual items.  Includes:
-				- ALL FOOD SOURCE ITEMS, which have taxonomy.
-		"""
+		Create memory-resident data structure of captured Langual items.  Includes:
+			- ALL FOOD SOURCE ITEMS, including:
+				- animals and plants which have taxonomy.
+				- chemical food aditives which get converted to CHEBI ontology references.
 
-		langual = {}
+
+		# Each self.langual database entity has a primary status for its record:
+		status:
+			'ignore': Do not import this langual item.
+			'import': Import as a primary ontology term.
+			'archaic': Import code but associate it as a hasDbArchaicXref:____ of other primary term.
+					Arises when Langual term ids have been made archaic via merging or deduping.
+					Algorithm:
+					1st pass: ignore archaic terms
+					2nd pass: process only archaic terms
+						1: find primary term as [X1234] in <AI> content, OR
+						2: Find primary term code in <RELATEDTERM>, OR
+						3: Search for exact match on LABEL of ACTIVE entry, OR
+						4: Assume PARENT is primary term.
+						e.g.
+						<AI>Duplicate entry of *YELLOWTAIL [B1779]*.
+						<AI>Synonym of *CHILEAN PILCHARD [B1847]*</AI>
+						... Descriptor inactivated. The descriptor is a synonym of *RED KINGKLIP [B1859]*.</AI>
+						<RELATEDTERM>B2177</RELATEDTERM>
+
+		"""
 
 		tree = ET.parse(file)
 		root = tree.getroot()
-		counts = {}
-		has_taxonomy = 0
-		has_ITIS = 0
-		no_taxonomy = 0
-		food_additive = 0
-		output = ''
 
 		for child in root.iter('DESCRIPTOR'):
-			active = child.find('ACTIVE').text
+			
+			entity = {'status': None}
 
-			'term is only kept for backward compatibility. DO NOT USE for new'
-			if active.lower() != 'true':
+			active = child.find('ACTIVE').text.lower()
+
+			#Only including Langual terms that are ACTIVE=true .
+			# HAVE TO DOWNGRADE Langual terms that go form active to inactive????
+			if active != 'true':
 				continue;
 
 			scope_note = child.find('SN').text
-			if scope_note and 'term is only kept for backward compatibility. DO NOT USE for new indexing' in scope_note :
-				continue;
+			if scope_note and 'DO NOT USE for new indexing' in scope_note:
+				continue
 
-			code = child.find('FTC')
+				entity['status'] = 'archaic'
 
-			category = code.text[0]
+			# Have a Langual term here.  Features common to all terms:
+			lid =	child.find('FTC').text # FTC = Food Thesaurus Code ?!
+			entity['langual_id'] = lid
+			entity['langual_parent_id'] = child.find('BT').text
+			entity['rdfs:label'] =		child.find('TERM').text
+		
+			#Synonyms:
+			entity['synonyms'] = []
+			for synxml in child.iter('SYNONYM'): #FUTURE: organize synonyms by language
+				entity['synonyms'].append(synxml.text)
 
 			# Stats on count of members of each facet
-			if category in counts: counts[category] += 1
-			else: counts[category] = 1;	
+			category = entity['langual_id'][0]
+			if category in self.counts: self.counts[category] += 1 
+			else: self.counts[category] = 1
 
-			if category == 'B':
-				term = child.find('TERM')
-				parent = child.find('BT')
-				taxonomy = child.find('AI').text
-				synonyms = []
-				for synxml in child.iter('SYNONYM'): #FUTURE: organize synonyms by language
-					synonyms.append(synxml.text)
+			l_import = False
 
+			# A. PRODUCT TYPE [A0361]
+			#if category == 'A': 
+			#	pass
 
-				if taxonomy:
-					taxObj = self.getTaxonomy(taxonomy)
-					# Ignoring food additives here
-					if 'DICTION' in taxObj and 'food additive' in taxObj['DICTION'].lower():
-						food_additive += 1
-						
-					else:
-						has_taxonomy += 1
-						if 'ITIS' in taxObj: 
-							has_ITIS += 1 #print "TAXONOMY ITIS: ", taxObj['ITIS']
-							#eol.org/pages/328663
-							continue
+			# B. FOOD SOURCE [B1564]
+			elif category == 'B':
+				l_import = self.getFoodSource(entity, child)
+
+			# C. PART OF PLANT OR ANIMAL [C0116]
+			#elif category == 'C': 
+			#	pass
+
+			# E. PHYSICAL STATE, SHAPE OR FORM [E0113]
+			#elif category == 'E': 
+			#	pass
+
+			# F. EXTENT OF HEAT TREATMENT [F0011]
+			elif category == 'F': 
+				pass
+
+			# G. COOKING METHOD [G0002]
+			elif category == 'G': 
+				pass
+
+			#H. TREATMENT APPLIED [H0111]
+			#elif category == 'H': 
+			#	pass
+
+			#J. PRESERVATION METHOD [J0107]
+			elif category == 'J': 
+				pass
+
+			#K. PACKING MEDIUM [K0020]
+			elif category == 'K': 
+				pass
+
+			#M. CONTAINER OR WRAPPING [M0100]
+			elif category == 'M': 
+				pass
+
+			#N. FOOD CONTACT SURFACE [N0010]
+			#elif category == 'N': 
+			#	pass
+
+			#P. CONSUMER GROUP/DIETARY USE/LABEL CLAIM [P0032]
+			#elif category == 'P': 
+			#	pass
+
+			#R. GEOGRAPHIC PLACES AND REGIONS [R0010]
+			#elif category == 'R': 
+			#	pass
+
+			#Z. ADJUNCT CHARACTERISTICS OF FOOD [Z0005]
+			#elif category == 'Z': 
+			#	pass
+
+			if l_import:
+
+				# Determine if item already exists in json data file
+				if not lid in self.langual['langual_index']:
+					entity['langual_parents'] = [entity['langual_parent_id']]
+					self.langual['langual_index'][lid] = entity
+					self.langual['ontology']['FOODON_'+ str(self.foodon_maxid)] = entity
+					self.foodon_maxid += 1
 				else:
-					no_taxonomy += 1
+					# Within a new database, duplicates arise simply because of multi-homing an item
+					# Duplicates appear only to differ by parent_id.
+					# print "DUPLICATE", entity
 
-					output += '		'+ parent.text + '-' + code.text + ':' + term.text + ':' + '|'.join(synonyms) + '\n'
+					existing_entity = self.langual['langual_index'][lid]
+					existing_entity['langual_parents'].append(entity['langual_parent_id'])
 
-		print
-		print "LANGUAL IMPORT of [" + file + ']'
-		print "Facet item counts"
-		print counts				
-		print
-		print "Food source (facet B) stats"
-		print "	Food additive items: ", food_additive
-		print "	Items with taxonomy: ", has_taxonomy
-		print "	  Items having ITIS: ", has_ITIS
-		print "	Items without taxon: ", no_taxonomy
-		print "		parent_id-child_id : name : synonyms"	
-		print output
+					pass
+					# Update existing record
+					# Allow for archiving of current record. 
+				
+		# 2nd pass: link up as many archaic langual terms as possible:
+		for child in root.iter('DESCRIPTOR'):
+			pass 
+
+		with (open('./langual.json','w')) as output_handle:
+			output_handle.write(json.dumps(self.langual,  sort_keys=False, indent=4, separators=(',', ': ')))
+
+		# Display stats and problem cases the import found
+		self.report(file)
 
 
+	def getFoodSource(self, entity, child):
+		"""
+		FIRST: trust ITIS identifier.
+		IF NOT AVAILABLE, 
+			TRY to get a TAXONOMIC HIT VIA SYNONYMS
+				MANUALLY SET AUTO-PROCESS FLAGS ('archaic','ignore'), etc.) WHICH GUIDE CURATION OF RESULTS.
+
+		"""
+
+		taxonomy = child.find('AI').text
+
+		if taxonomy:
+			taxObj = self.getTaxonomy(taxonomy)
+			# Ignoring food additives here.  Long list, but perhaps we should just collect these as cross-references to CHEBI entries?
+			if 'DICTION' in taxObj and 'food additive' in taxObj['DICTION'].lower():
+				self.food_additive += 1
+				# FOR NOW SKIP THESE
+				return False
+
+			else:
+				self.has_taxonomy += 1
+				entity['taxonomy'] = []
+				if 'ITIS' in taxObj: 
+					self.has_ITIS += 1 #print "TAXONOMY ITIS: ", taxObj['ITIS']
+					entity['taxonomy'].append(taxObj['ITIS'])
+
+					
+		else:
+			self.no_taxonomy += 1
+
+			self.output += '		' + entity['langual_parent_id'] + '-' + entity['langual_id'] + ':' + entity['rdfs:label'] + ':' + '|'.join(entity['synonyms']) + '\n'
 		
+			# Keeping Langual groupings of food.
+			return True
+
+		return True
+
+
 	def getTaxonomy(self, lines_of_text):
 		""" 
-		Objective is to find first instance of ITIS code - the most detailed one.
+		Objective is to find THE MOST DETAILED instance of ITIS code - the one associated with "SCINAM" which comes after "SCIFAM" is mentioned (which may have its own ITIS code).
+		If there is no ITIS code, then we may have to fallover to looking up SCINAM text, or synonym text, directly in ITIS OR EOL portal.
+
 		Taxonomy roles in Langual:
 			Kingdom / Subkingdom / Infrakingdom / Superdivision / Division / Subdivision [Phylum / Subphylum] / Class / Superorder / Order / Family / Genus / Species
 
@@ -161,7 +305,7 @@ class Langual(object):
 			<UPDATECOMMENT></UPDATECOMMENT>
 			<SINGLE>False</SINGLE>
 
-
+		# <SINGLE> appears to be an inconsequential tag.
 		# ISSUE: Some "lines" in lines_of_text might not be separated by a carriage return, e.g.
 			
 			<SCINAM>Hapalochlaena maculosa (Hoyle, 1883) [ITIS 556175]<.... > 
@@ -188,22 +332,30 @@ class Langual(object):
 					<SYNONYM>apium graveolens rapaceum</SYNONYM>
 					<SYNONYM>celery root</SYNONYM>
 				</SYNONYMS>
+		
+		PROBLEM CASE - solanum dulcamara
+		<SYNONYMS>
+			<SYNONYM>solanum dulcamara</SYNONYM>
+		</SYNONYMS>
+			- no taxonomy but scientific name will return ITIS / EOL / NCBITaxon lookup.
 
 		"""
 		taxObj = {}
 		for line in lines_of_text.split('\n'):
 			# SCIINFORD an error?
-			for taxlevel in ['SCINAM','SCIGEN','SCIINFCLASS','SCICLASS','SCISUPCLASS','SCIFAM','SCISUPFAM','SCISUBPHY','SCIPHY','SCISUBORD','SCIINFORD','SCIORD','SCIDIV','DICTION']:
+			for taxlevel in ['SCIGEN','SCIINFCLASS','SCICLASS','SCISUPCLASS','SCIFAM','SCISUPFAM','SCISUBPHY','SCIPHY','SCISUBORD','SCIINFORD','SCIORD','SCIDIV','SCINAM','DICTION']:
 				if taxlevel in line: 
 					name = line[len(taxlevel)+2:]
 					taxObj[taxlevel] = name
 					# Match to reference databases that encyclopedia of life knows
-					for db in ['ITIS','INDEX FUNGORUM','FISHBASE']: # GRIN, MANSFELD, NETTOX, PLANTS, , EuroFIR-NETTOX, DPNL
+					# Also other dbs: GRIN, MANSFELD, NETTOX, PLANTS, , EuroFIR-NETTOX, DPNL
+					for db in ['ITIS','INDEX FUNGORUM','FISHBASE']: 
+
 						prefix = '[' + db + ' '
 						nameptr = name.find(prefix)
 						if nameptr > -1 and db not in taxObj:
 							nameptrend = name.find(']',nameptr + len(prefix) )
-							taxObj[db] = name[nameptr + len(prefix) : nameptrend] #Note: some dbs have space delimited codes
+							taxObj[db] = db + ':' + name[nameptr + len(prefix) : nameptrend] #Note: some dbs have space delimited codes
 						
 			# If no codes, e.g. for "broiler chicken", <AI> will contain only text definition rather than <DICTION>
 
@@ -214,6 +366,8 @@ class Langual(object):
 	def getEOLData(self):
 		"""
 		Perform Lookup of NCBI_Taxon data directly from EOL.org via API and ITIS code.
+
+		eol.org/pages/328663
 
 		ITIS (903) SEARCH TO EOL ID/Batch of IDs:
 
@@ -246,6 +400,21 @@ class Langual(object):
 
 		"""
 		pass
+
+
+	def report(self, file):
+		print
+		print "LANGUAL IMPORT of [" + file + ']'
+		print "Facet item counts"
+		print self.counts				
+		print
+		print "Food source (facet B) stats"
+		print "	Food additive items: ", self.food_additive
+		print "	Items with taxonomy: ", self.has_taxonomy
+		print "	  Items having ITIS: ", self.has_ITIS
+		print "	Items without taxon: ", self.no_taxonomy
+		print "		parent_id-child_id : name : synonyms"	
+		print self.output
 
 
 	def getCurrentOntology(self, file):
