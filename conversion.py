@@ -17,7 +17,7 @@ Every Langual item maps over to any existing FOODON item by way of a hasDbXref: 
 The langual.json file has entities organized (the key) by langual_id, but entity itself includes the assigned FOODON id so that when it comes time to adjust an existing langual.OWL file, entries are located/written out by FOODON ID.  
 
 This script assigns FOODON ids in range of 3400000 - 3499999 for any new langual terms that script
-allows to be imported into langual.json
+allows to be imported into langual.json .  For now, Langual IDs are being coded in as FOODON_3[4+letter as 2 digit offset][9999]
 
 Food Source facet import notes:
 
@@ -33,7 +33,11 @@ import json
 #from pprint import pprint
 import optparse
 import sys
+import os.path
 import xml.etree.ElementTree as ET
+import codecs
+import re
+import time
 
 try: #Python 2.7
 	from collections import OrderedDict
@@ -64,8 +68,14 @@ class Langual(object):
 
 	def __init__(self):
 
-		# READ THIS FROM langual.json
-		self.langual = {'langual_index': OrderedDict(), 'ontology': OrderedDict() } #empty case.
+		# READ THIS FROM database.json
+		self.database_path = './database.json'
+		self.ontology_path = './ontology.obo'
+		self.database = { #empty case.
+			'index': OrderedDict(), 
+			'ontology': OrderedDict(), 
+			'version':0 
+		} 
 		self.foodon_maxid = 3400000
 
 		self.counts = {}
@@ -74,6 +84,10 @@ class Langual(object):
 		self.no_taxonomy = 0
 		self.food_additive = 0
 		self.output = ''
+		self.version = 0
+
+		self.re_wikipedia_url = re.compile(r'http://en.wikipedia.org/wiki/(?P<reference>[^])]*)')
+		self.re_duplicate_entry = re.compile(r'Duplicate entry of[^[]*\[(?P<id>[^\]]+)\]\*.') # e.g. "Duplicate entry of *CHILEAN CROAKER [B1814]*."
 
 
 	def __main__(self, file):
@@ -88,146 +102,327 @@ class Langual(object):
 		status:
 			'ignore': Do not import this langual item.
 			'import': Import as a primary ontology term.
-			'archaic': Import code but associate it as a hasDbArchaicXref:____ of other primary term.
-					Arises when Langual term ids have been made archaic via merging or deduping.
-					Algorithm:
-					1st pass: ignore archaic terms
-					2nd pass: process only archaic terms
-						1: find primary term as [X1234] in <AI> content, OR
-						2: Find primary term code in <RELATEDTERM>, OR
-						3: Search for exact match on LABEL of ACTIVE entry, OR
-						4: Assume PARENT is primary term.
-						e.g.
-						<AI>Duplicate entry of *YELLOWTAIL [B1779]*.
-						<AI>Synonym of *CHILEAN PILCHARD [B1847]*</AI>
-						... Descriptor inactivated. The descriptor is a synonym of *RED KINGKLIP [B1859]*.</AI>
-						<RELATEDTERM>B2177</RELATEDTERM>
+			'is_obsolete': Import code but associate it as a hasDbArchaicXref:____ of other primary term.
+				Arises when Langual term ids have been made archaic via merging or deduping.
+				Algorithm:
+				1st pass: ignore archaic terms
+				2nd pass: process only archaic terms
+					1: find primary term as [X1234] in <AI> content, OR
+					2: Find primary term code in <RELATEDTERM>, OR
+					3: Search for exact match on LABEL of ACTIVE entry, OR
+					4: Assume PARENT is primary term.
+					e.g.
+					<AI>Duplicate entry of *YELLOWTAIL [B1779]*.
+					<AI>Synonym of *CHILEAN PILCHARD [B1847]*</AI>
+					... Descriptor inactivated. The descriptor is a synonym of *RED KINGKLIP [B1859]*.</AI>
+					<RELATEDTERM>B2177</RELATEDTERM>
 
 		"""
+		if os.path.isfile(self.database_path):
+			self.database = self.get_database_JSON(self.database_path)
+			self.database['version'] +=1
+			self.version = self.database['version']
 
-		tree = ET.parse(file)
+		#file_handle = codecs.open(file, "r", "iso-8859-1")
+		tree = ET.parse(file) # Incoming raw XML database file
 		root = tree.getroot()
 
 		for child in root.iter('DESCRIPTOR'):
 			
-			entity = {'status': None}
+			entity = { # Barebones entity
+				'status': 'new',
+				'is_a':[]
+			} 
 
-			active = child.find('ACTIVE').text.lower()
+			# The source database's term ID is the one datum that can't be differentially compared to an existing entity value.
+			database_id = self.load_attribute(entity, child, 'FTC') # FTC = Food Thesaurus Code ?!
 
-			#Only including Langual terms that are ACTIVE=true .
-			# HAVE TO DOWNGRADE Langual terms that go form active to inactive????
-			if active != 'true':
-				continue;
+			# Bring in existing entity if any
+			if database_id in self.database['index']:
+				entity = self.database['index'][database_id]
+				if entity['status'] == 'new':
+					entity['status'] = 'import'
+			else:
+				entity['database_id'] = database_id	
+				self.database['index'][database_id] = entity
 
-			scope_note = child.find('SN').text
-			if scope_note and 'DO NOT USE for new indexing' in scope_note:
+			if not entity['status'] in ['ignore', 'is_obsolete']:
+				# Langual terms that are ACTIVE=false are by default imported as 'is_obsolete' 
+				# ontology terms so we can still capture their ids for database cross-referencing.  
+				# Downgrades Langual terms that go form active to inactive. But not reverse.
+				if self.load_attribute(entity, child, 'ACTIVE','active') == 'False':
+					entity['status'] = 'is_obsolete'
+
+				scope_note = child.find('SN').text
+				if scope_note and 'DO NOT USE for new indexing' in scope_note:
+					entity['status'] = 'is_obsolete'
+
+			# Pre-existing entity status controls whether item revisions are considered.  We skip doing updates on archaic items.
+			if entity['status'] == 'ignore': 
 				continue
 
-				entity['status'] = 'archaic'
+			label = self.load_attribute(entity, child, 'TERM', 'label')
 
-			# Have a Langual term here.  Features common to all terms:
-			lid =	child.find('FTC').text # FTC = Food Thesaurus Code ?!
-			entity['langual_id'] = lid
-			entity['langual_parent_id'] = child.find('BT').text
-			entity['rdfs:label'] =		child.find('TERM').text
-		
-			#Synonyms:
-			entity['synonyms'] = []
-			for synxml in child.iter('SYNONYM'): #FUTURE: organize synonyms by language
-				entity['synonyms'].append(synxml.text)
+			# ITEM IN DATABASE MAY BE MULTI-HOMED.  As new parent_id is introduced, we need to keep old ones though.
+			# Could keep it simple - not really using parent_ids directly.  Could remain a low-level set of ids.
+			parent_id = self.load_attribute(entity, child, 'BT', 'parent_id')
 
-			# Stats on count of members of each facet
-			category = entity['langual_id'][0]
-			if category in self.counts: self.counts[category] += 1 
-			else: self.counts[category] = 1
+			# Langual has some tagged text imbedded within other XML text.
+			AI = child.find('AI').text
+			if AI is not None:
+				# Langual encoded html -> markdown italics
+				AI = AI.replace('$i$','*').replace('$/i$','*').replace('$br/$','\n') 
 
-			l_import = False
+				# FIRST CONVERT [http://en.wikipedia.org/wiki/Roselle_(plant)] references to IAO_0000119 'definition_source'
+				wikipedia_ref = re.search(self.re_wikipedia_url, AI)
+				if wikipedia_ref:
+					entity['definition_source'] = 'WIKIPEDIA:' + wikipedia_ref.group('reference')
+					AI = re.sub(self.re_wikipedia_url, '', AI)
+					AI = AI.replace('[]','').replace('()', '')
 
-			# A. PRODUCT TYPE [A0361]
-			#if category == 'A': 
-			#	pass
+				# SOME DUPLICATE ENTRIES EXIST
+				duplicate = re.search(self.re_duplicate_entry, AI)
+				# E.g "Duplicate entry of *CHILEAN CROAKER [B1814]*.""
+				if duplicate:
+					entity['replaced_by'] = duplicate.group('id')
+					AI = re.sub(self.re_duplicate_entry, '', AI)
 
-			# B. FOOD SOURCE [B1564]
-			elif category == 'B':
-				l_import = self.getFoodSource(entity, child)
+				self.load_attribute(entity, AI, '<DICTION>', 'definition')
 
-			# C. PART OF PLANT OR ANIMAL [C0116]
-			#elif category == 'C': 
-			#	pass
+			if entity['status'] == 'is_obsolete': 
+				continue
 
-			# E. PHYSICAL STATE, SHAPE OR FORM [E0113]
-			#elif category == 'E': 
-			#	pass
+			self.load_synonyms(entity, child)
 
-			# F. EXTENT OF HEAT TREATMENT [F0011]
-			elif category == 'F': 
-				pass
+			self.load_facet_details(entity, child)
 
-			# G. COOKING METHOD [G0002]
-			elif category == 'G': 
-				pass
 
-			#H. TREATMENT APPLIED [H0111]
-			#elif category == 'H': 
-			#	pass
+		# 2nd pass: link up as many archaic langual terms as possible to primary entries
+		for entityid in self.database['index']:
+			entity = self.database['index'][entityid]
+			if entity['status'] != 'ignore':
+				ontology_id = self.load_ontology_id(entity)
+				self.database['ontology'][ontology_id] = entity
 
-			#J. PRESERVATION METHOD [J0107]
-			elif category == 'J': 
-				pass
 
-			#K. PACKING MEDIUM [K0020]
-			elif category == 'K': 
-				pass
-
-			#M. CONTAINER OR WRAPPING [M0100]
-			elif category == 'M': 
-				pass
-
-			#N. FOOD CONTACT SURFACE [N0010]
-			#elif category == 'N': 
-			#	pass
-
-			#P. CONSUMER GROUP/DIETARY USE/LABEL CLAIM [P0032]
-			#elif category == 'P': 
-			#	pass
-
-			#R. GEOGRAPHIC PLACES AND REGIONS [R0010]
-			#elif category == 'R': 
-			#	pass
-
-			#Z. ADJUNCT CHARACTERISTICS OF FOOD [Z0005]
-			#elif category == 'Z': 
-			#	pass
-
-			if l_import:
-
-				# Determine if item already exists in json data file
-				if not lid in self.langual['langual_index']:
-					entity['langual_parents'] = [entity['langual_parent_id']]
-					self.langual['langual_index'][lid] = entity
-					self.langual['ontology']['FOODON_'+ str(self.foodon_maxid)] = entity
-					self.foodon_maxid += 1
-				else:
-					# Within a new database, duplicates arise simply because of multi-homing an item
-					# Duplicates appear only to differ by parent_id.
-					# print "DUPLICATE", entity
-
-					existing_entity = self.langual['langual_index'][lid]
-					existing_entity['langual_parents'].append(entity['langual_parent_id'])
-
-					pass
-					# Update existing record
-					# Allow for archiving of current record. 
-				
-		# 2nd pass: link up as many archaic langual terms as possible:
-		for child in root.iter('DESCRIPTOR'):
-			pass 
-
-		with (open('./langual.json','w')) as output_handle:
-			output_handle.write(json.dumps(self.langual,  sort_keys=False, indent=4, separators=(',', ': ')))
+		with (open(self.database_path, 'w')) as output_handle:
+			output_handle.write(json.dumps(self.database, sort_keys=False, indent=4, separators=(',', ': ')))
 
 		# Display stats and problem cases the import found
 		self.report(file)
+
+		self.save_ontology()
+
+
+	# Customized for each ontology import source database.
+	def load_ontology_id(self, entity):
+		database_id = entity['database_id']
+		# First character of Langual ontology id is a letter; we convert that to an integer 0-12
+		# Yields FOODON_3[40-52][0000-9999]
+		# I bet D,I,O missing because they can be confused with digits in printout
+		if database_id == '00000':
+			entity['ontology_id'] = 'FOODON_3400000'
+		else:
+			offset = 'ABCEFGHJKMNPRZ'.index(database_id[0]) 
+			entity['ontology_id'] = 'FOODON_3' + str(40+offset) + database_id[1:5]
+		return entity['ontology_id']
+
+
+	def load_attribute(self, entity, child, xmltag, attribute=None):
+
+		value = None
+
+		# Have a Langual term here.  Features common to all terms:
+		if isinstance(child, basestring): # Usually child is an xml parse object but added ability to spot text...
+			ptr = child.find(xmltag)
+			if ptr > -1:
+				value = child[ptr+len(xmltag):] 
+				# Would fetch everything from tag to beginning of next tag but issue is 
+				# some <DESCR> tags have other tags injected in them but no closing tag.
+			else:
+				attribute = False
+
+		elif child is not None:
+			for value in child.iter(xmltag):	# was FIND 
+				value = value.text
+
+		#print xmltag, value
+
+		if attribute:
+			self.set_attribute_diff(entity, attribute, value)
+		else:
+			pass
+			# WHAT TO DO WITH OLD ATTRIBUTES that no longer exist?
+
+
+		return value
+
+
+	def set_attribute_diff(self, entity, attribute, value):
+		# All new values assumed to be ok.
+		if not attribute in entity:
+			entity[attribute] = OrderedDict()
+			entity[attribute] = {
+				'value': value, # Value ready for import
+				'import': True, # False = do not import this attribute
+				'locked': False, # Prevent database import from modifying its value
+				'changed': True # Indicates if changed between between database.json and fresh version value.
+			}
+
+		# 'ignore' signals not to accept any values here.
+		elif entity[attribute]['value'] != value:
+			entity[attribute]['changed'] = True
+			if entity[attribute]['locked'] == False:
+				entity[attribute]['value'] = value
+			# could push old values + versions onto a history stack
+		else:
+			entity[attribute]['changed'] = False
+
+
+	def	load_synonyms(self, entity, child):
+
+		entity['synonyms'] = {}
+		#FUTURE: organize synonyms by language ?
+		for synxml in child.iter('SYNONYM'): 
+			if synxml[0:5] == 'INS ': # Intercepting Codex references
+				entity['xref'] = 'Codex:' + synxml
+			else:
+				# Value could be shoehorned to mark up synonym language/source etc? 
+				self.set_attribute_diff(entity['synonyms'], synxml.text, 'EXACT') 
+
+
+	def save_ontology(self):
+		# Now generate OWL or OBO ontology input file.
+		obo_format = 'ontology: FOODON\n'
+		obo_format += 'auto-generated-by:conversion.py\n'
+		obo_format += 'date: ' +  time.strftime('%d:%m:%Y')  #dd:MM:yyyy
+		obo_format += 'treat-xrefs-as-equivalent: NCBI_taxon\n'
+
+		for entityid in self.database['index']:
+			entity = self.database['index'][entityid]
+			if entity['status'] != 'ignore':
+
+				# For now accept only first parent as is_a parent
+				# pick only items that are not marked "ignore"
+				obo_format += '\n\n[Term]\n'
+				obo_format += 'id: ' + entity['ontology_id'].replace('_',':') + '\n'
+				obo_format += 'name: ' + entity['label']['value'] + '\n'
+				obo_format += 'xref: [Langual:' + entity['database_id']
+				if 'xref' in entity:
+					obo_format += ', entity['xref'] 
+				obo_format += ']\n'
+
+				# TAXONOMY counts as xref
+
+				if self.term_import(entity, 'parent_id'):
+					parent = self.database['index'][entity['parent_id']['value']]
+					parent_name = parent['label']['value']
+					parent_id = parent['ontology_id']
+					obo_format += 'is_a: ' + parent_id.replace('_',':') +' ! ' + parent_name + '\n'
+
+				if self.term_import(entity, 'definition'):
+					obo_format += 'def: "' + entity['definition']['value']
+					if 'definition_source' in entity:
+						obo_format += ' [' + entity['definition_source'] + ']\n'
+					else:
+						obo_format += '\n'
+
+				if entity['status'] == 'is_obsolete':
+					obo_format += 'is_obsolete: true\n'
+
+				if 'replaced_by' in entity:
+					replacement = self.database['index'][entity['replaced_by']]['ontology_id']
+					obo_format += 'replaced_by: ' + replacement.replace('_',':') +'\n'
+
+				if 'synonyms' in entity:
+					for item in entity['synonyms']:
+						if self.term_import(entity['synonyms'], item):
+							detail = entity['synonyms'][item]['value']
+							obo_format += 'synonym: "%s" %s\n' % detail , type # EXACT / NARROW / BROAD 
+
+
+			"""
+			OBO File Format: http://owlcollab.github.io/oboformat/doc/obo-syntax.html
+			# treat-xrefs-as-equivalent
+			# id-mapping: part_of OBO_REL:part_of
+			"""
+
+		with (codecs.open(self.ontology_path, 'w', 'utf-8')) as output_handle:
+			output_handle.write(obo_format)
+
+
+	def term_import(self, entity, term):
+		return term in entity and entity[term]['value'] != None and entity[term]['import'] == True
+#************************************************************
+
+	def load_facet_details(self, entity, child):
+		"""
+		ENHANCE ENTITY WITH FACET-SPECIFIC ATTRIBUTES
+		"""	
+
+		# Stats on count of members of each Langual facet, which is first letter of entity id.
+		category = entity['database_id'][0]
+		if category in self.counts: 
+			self.counts[category] += 1 
+		else: 
+			self.counts[category] = 1
+
+
+		# A. PRODUCT TYPE [A0361]
+		#if category == 'A': 
+		#	pass
+
+		# B. FOOD SOURCE [B1564]
+		if category == 'B':
+			self.getFoodSource(entity, child)
+
+		# C. PART OF PLANT OR ANIMAL [C0116]
+		#elif category == 'C': 
+		#	pass
+
+		# E. PHYSICAL STATE, SHAPE OR FORM [E0113]
+		#elif category == 'E': 
+		#	pass
+
+		# F. EXTENT OF HEAT TREATMENT [F0011]
+		elif category == 'F': 
+			pass
+
+		# G. COOKING METHOD [G0002]
+		elif category == 'G': 
+			pass
+
+		#H. TREATMENT APPLIED [H0111]
+		#elif category == 'H': 
+		#	pass
+
+		#J. PRESERVATION METHOD [J0107]
+		elif category == 'J': 
+			pass
+
+		#K. PACKING MEDIUM [K0020]
+		elif category == 'K': 
+			pass
+
+		#M. CONTAINER OR WRAPPING [M0100]
+		elif category == 'M': 
+			pass
+
+		#N. FOOD CONTACT SURFACE [N0010]
+		#elif category == 'N': 
+		#	pass
+
+		#P. CONSUMER GROUP/DIETARY USE/LABEL CLAIM [P0032]
+		#elif category == 'P': 
+		#	pass
+
+		#R. GEOGRAPHIC PLACES AND REGIONS [R0010]
+		#elif category == 'R': 
+		#	pass
+
+		#Z. ADJUNCT CHARACTERISTICS OF FOOD [Z0005]
+		#elif category == 'Z': 
+		#	pass
 
 
 	def getFoodSource(self, entity, child):
@@ -235,7 +430,7 @@ class Langual(object):
 		FIRST: trust ITIS identifier.
 		IF NOT AVAILABLE, 
 			TRY to get a TAXONOMIC HIT VIA SYNONYMS
-				MANUALLY SET AUTO-PROCESS FLAGS ('archaic','ignore'), etc.) WHICH GUIDE CURATION OF RESULTS.
+				MANUALLY SET AUTO-PROCESS FLAGS ('is_obsolete','ignore'), etc.) WHICH GUIDE CURATION OF RESULTS.
 
 		"""
 
@@ -259,8 +454,8 @@ class Langual(object):
 					
 		else:
 			self.no_taxonomy += 1
-
-			self.output += '		' + entity['langual_parent_id'] + '-' + entity['langual_id'] + ':' + entity['rdfs:label'] + ':' + '|'.join(entity['synonyms']) + '\n'
+			# + ':' + '|'.join(entity['synonyms'])
+			self.output += '		' + str(entity['parent_id']) + '-' + entity['database_id'] + ':' + str(entity['label'])  + '\n'
 		
 			# Keeping Langual groupings of food.
 			return True
@@ -414,21 +609,23 @@ class Langual(object):
 		print "	  Items having ITIS: ", self.has_ITIS
 		print "	Items without taxon: ", self.no_taxonomy
 		print "		parent_id-child_id : name : synonyms"	
-		print self.output
+		# Getting: UnicodeEncodeError: 'ascii' codec can't encode character u'\xd7' in position 17332: ordinal not in range(128)
+
+		print (self.output)
 
 
-	def getCurrentOntology(self, file):
+	def get_database_JSON(self, file):
 		"""
-		Load existing JSON representation of OWL ontology (created last time OWL ontology was saved)
-		Will be updated if LANGUAL database has changed.
+		Load existing JSON representation of import database (created last time OWL ontology was saved)
+		Will be updated if database has changed.
 		"""
 		with open(file) as data_file:    
- 			self.struct = json.load(data_file, object_pairs_hook=OrderedDict)
+ 			return json.load(data_file, object_pairs_hook=OrderedDict)
 
 
 if __name__ == '__main__':
 
 	foodstruct = Langual()
-	foodstruct.__main__('langual2014.xml')
+	foodstruct.__main__('langual2014.utf.xml')
 
 
