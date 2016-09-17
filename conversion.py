@@ -6,26 +6,18 @@
 conversion.py
 Author: Damion Dooley
 
-This script uses the Langual.org food description thesaurus (published yearly in XML) 
-to provide a differential update of a langual.JSON data file.  From this the langual.OWL file
-is regenerated, and can then be imported into FOODON food ontology.  
+This script uses the LanguaL.org food description thesaurus (published yearly in XML) 
+to provide a differential update of a database.json data file.  From this the LANGUAL_import.owl
+file is regenerated, and can then be imported into FOODON food ontology.  
 It provides many of the facets - food source, cooking method, preservation method, etc. 
 
-Key to the management of the langual.json file and subsequent OWL file is that one can 
-manually add elements to it which are not overwritten by subsequent langual XML file imports.
-Every Langual item maps over to any existing FOODON item by way of a hasDbXref: Langual [id]" entry.
-The langual.json file has entities organized (the key) by langual_id, but entity itself includes the assigned FOODON id so that when it comes time to adjust an existing langual.OWL file, entries are located/written out by FOODON ID.  
+Key to the management of the database.json file and subsequent OWL file is that one can 
+manually add elements to it which are not overwritten by subsequent LanguaL XML file imports.
+Every LanguaL item maps over to any existing FOODON item by way of a hasDbXref: LANGUAL [id]" entry.
+The database.json file has entities organized (the key) by LanguaL's FTC id, but entity itself includes the assigned FOODON id so that when it comes time to adjust an existing LANGUAL_import.owl file, entries are located/written out by FOODON ID.  
 
-This script assigns FOODON ids in range of 3400000 - 3499999 for any new langual terms that script
-allows to be imported into langual.json .  For now, Langual IDs are being coded in as FOODON_3[ 4 + (facet letter[A-Z] as 2 digit offset [00-12])][9999]
-
-Food Source facet import notes:
-
-    - Includes raw animal, plant, bacteria and fungi ingredients.
-    - Most items having taxonomic scientific names.  A lookup of eol.org 
-        taxonomic database reference to NCBI taxonomy name is performed 
-        (alternatly make entries to cover ITIS items?)  
-    - Result is an NCBI taxon tree as well as a tree of food source items. 
+This script uses FOODON ids in range of 3400000 - 3499999 imported LanguaL terms.  
+For now, Langual IDs are being coded in as FOODON_3[ 4 + (facet letter[A-Z] as 2 digit offset [00-12])][9999]
 
 **************************************************
 """
@@ -50,7 +42,7 @@ try:
 except ImportError: # Python 2.6
     import json
 
-CODE_VERSION = '0.0.2'
+CODE_VERSION = '0.0.3'
 
 def stop_err( msg, exit_code=1 ):
     sys.stderr.write("%s\n" % msg)
@@ -76,7 +68,7 @@ class Langual(object):
             'version': 0 
         } 
         self.ontology_index = {}
-        #self.foodon_maxid = 3400000
+        #self.foodon_maxid = 3400000  #Foodon Ids for LanguaL entries are currently mapped over from LanguaL ids directly.
 
         self.counts = {}
         self.has_taxonomy = 0
@@ -85,7 +77,7 @@ class Langual(object):
         self.food_additive = 0
         self.output = ''
         self.version = 0
-        # Lookup table to convert Langual to NCBI_Taxon codes; typos are: SCISUNFAM, SCITRI,
+        # Lookup table to convert LanguaL to NCBI_Taxon codes; typos are: SCISUNFAM, SCITRI,
         self.ranklookup = OrderedDict([('SCIDIV','phylum'), ('SCIPHY','phylum'), ('SCISUBPHY','subphylum'), ( 'SCISUPCLASS','superclass'), ( 'SCICLASS','class'), ( 'SCIINFCLASS','infraclass'), ( 'SCIORD','order'), ( 'SCISUBORD','suborder'), ( 'SCIINFORD','infraorder'), ( 'SCISUPFAM','superfamily'), ( 'SCIFAM','family'), ( 'SCISUBFAM','subfamily'), ( 'SCISUNFAM', 'subfamily'), ( 'SCITRI','tribe'), ( 'SCITRIBE','tribe'), ( 'SCIGEN','genus'), ( 'SCINAM','species'), ( 'SCISYN','species')])
 
         # Text mining regular expressions
@@ -98,19 +90,20 @@ class Langual(object):
         # e.g. <SCINAM>Balaenoptera bonaerensis Burmeister, 1867 [FAO ASFIS BFW]
         self.re_taxonomy = re.compile(r'<?(?P<rank>[A-Z]+)>(?P<name>[^\]]+) ?\[((?P<ref>[A-Z]+[0-9]*)|(?P<db>[A-Z 0-9]+) (?P<id>[^\]]+))]')
 
+
     def __main__(self, file):
         """
-        Create memory-resident data structure of captured Langual items.  Includes:
+        Create memory-resident data structure of captured LanguaL items.  Includes:
             - ALL FOOD SOURCE ITEMS, including:
                 - animals and plants which have taxonomy.
                 - chemical food aditives which get converted to CHEBI ontology references.
 
-        # Each self.langual database entity has a primary status for its record:
+        # Each self.database entity has a primary status for its record:
         status:
-            'ignore': Do not import this langual item.
+            'ignore': Do not import this LanguaL item.
             'import': Import as a primary ontology term.
             'is_obsolete': Import code but mark it as a hasDbArchaicXref:____ of other primary term.
-                Arises when Langual term ids have been made archaic via merging or deduping.
+                Arises when LanguaL term ids have been made archaic via merging or deduping.
 
             ... Descriptor inactivated. The descriptor is a synonym of *RED KINGKLIP [B1859]*.</AI>
             <RELATEDTERM>B2177</RELATEDTERM>
@@ -149,7 +142,7 @@ class Langual(object):
 
             else:
                 entity['database_id'] = database_id 
-                self.set_attribute_diff(entity['xrefs'], 'Langual:' + database_id, '')
+                self.set_attribute_diff(entity['xrefs'], 'LANGUAL:' + database_id, '')
                 self.database['index'][database_id] = entity
                 self.load_attribute(entity, child, 'ACTIVE','active')
                 entity['active']['import'] = False #Not an attribute that is directly imported
@@ -161,14 +154,14 @@ class Langual(object):
             if parent_id is not None:
                 self.set_attribute_diff(entity['is_a'], self.get_ontology_id(parent_id), '') # don't have parents loaded yet necessarily so '' for name
             
-            # XML file suffers from inability to add multiple parents under a single entry so remaining ones are duplicates except for parent_id    
+            # XML file suffers from inability to add multiple parents under a single entry so remaining multi-homed entries are duplicates except for parent_id value which changes (handled above)  
             if len(entity['is_a']) > 1:
                 continue 
 
             if not entity['status'] in ['ignore', 'is_obsolete']:
-                # Langual terms that are ACTIVE=false are by default imported as 'is_obsolete' 
+                # LanguaL terms that are ACTIVE=false are by default imported as 'is_obsolete' 
                 # ontology terms so we can still capture their ids for database cross-referencing.  
-                # Downgrades Langual terms that go form active to inactive. But not reverse.
+                # Downgrades LanguaL terms that go form active to inactive. But not reverse.
                 if self.load_attribute(entity, child, 'ACTIVE','active') == 'False':
                     entity['status'] = 'is_obsolete'
 
@@ -189,10 +182,10 @@ class Langual(object):
             label = self.load_attribute(entity, child, 'TERM', 'label', 'en')
             self.load_attribute(entity, child, 'SN', 'note', 'en')
 
-            # Langual has some tagged text imbedded within other XML text.
+            # LanguaL has some tagged text imbedded within other XML text.
             AI = child.find('AI').text
             if AI is not None:
-                # Langual encoded html -> markdown italics
+                # LanguaL encoded html -> markdown italics
                 AI = AI.replace('$i$','*').replace('$/i$','*').replace('$br/$','\n').replace('$br /$','\n')
 
                 # FIRST CONVERT Wikipedia references, e.g. [http://en.wikipedia.org/wiki/Roselle_(plant)] references to IAO_0000119 'definition_source'
@@ -229,7 +222,7 @@ class Langual(object):
             self.load_facet_details(entity, child)
 
 
-        # 2nd pass: link up as many archaic langual terms as possible to primary entries
+        # 2nd pass: link up as many archaic LanguaL terms as possible to primary entries
         for database_id in self.database['index']:
             entity = self.database['index'][database_id]
             if entity['status'] != 'ignore':
@@ -253,7 +246,7 @@ class Langual(object):
 
     # Customized for each ontology import source database.
     def get_ontology_id(self, database_id):
-        # First character of Langual ontology id is a letter; we convert that to an integer 0-12
+        # First character of LanguaL ontology id is a letter; we convert that to an integer 0-12
         # Yields FOODON_3[40-52][0000-9999]
         # I bet D,I,O missing because they can be confused with digits in printout
         if database_id == '00000':
@@ -276,7 +269,7 @@ class Langual(object):
         """
         value = None
 
-        # Have a Langual term here.  Features common to all terms:
+        # Have a LanguaL term here.  Features common to all terms:
         if isinstance(content, basestring): # Usually content is an xml parse object but added ability to spot text...
             ptr = content.find(xmltag)
             if ptr > -1:
@@ -331,8 +324,8 @@ class Langual(object):
 
     def load_synonyms(self, entity, content):
         """
-        Convert Langual <SYNONYM> entries to ontology hasExeactSynonym
-        A synonym's language isn't always english.  Database import assumes english, but this can be overriden if entry is locked.
+        Convert LanguaL <SYNONYM> entries to ontology hasExactSynonym
+        A synonym's language isn't always english.  Database import assumes english, but this can be overriden if entry is locked. This way one can mark some entries as japonese, others as spanish etc.
         """
         for synxml in content.iter('SYNONYM'): 
             # Intercepting International Numbering System for Food Additives (INS) references
@@ -355,7 +348,7 @@ class Langual(object):
 
     def save_ontology_owl(self):
         """
-        Generate OWL ontology input file.
+        Generate LANGUAL_import.owl ontology file.
 
         """
 
@@ -416,7 +409,7 @@ class Langual(object):
 
                 for item in entity['is_a']:
                     # If parent isn't imported (even as an obsolete item), don't make an is_a for it.
-                    # is_a entries can be ABOUT non Langual ids.
+                    # is_a entries can be ABOUT non LanguaL ids.
                     if self.term_import(entity['is_a'], item): 
                         parent = entity['is_a'][item]
                         if len(parent['value']):
@@ -474,92 +467,19 @@ class Langual(object):
             output_handle.write(owl_format)
 
 
-    # ************************* OBO FORMAT *************************
-    def save_ontology_obo(self):
-        """
-        Generate OBO ontology input file.
-    
-        OBO File Format: http://owlcollab.github.io/oboformat/doc/obo-syntax.html
-        UNUSED: id-mapping: part_of OBO_REL:part_of
-
-
-        obo_format = 'ontology: FOODON\n'
-        obo_format += 'auto-generated-by:conversion.py\n'
-        obo_format += 'date: ' +  time.strftime('%d:%m:%Y')  #dd:MM:yyyy
-        obo_format += 'treat-xrefs-as-equivalent: NCBI_taxon\n'
-        obo_format += 'treat-xrefs-as-equivalent: CHEBI\n'
-
-        # xref entities: 
-        #   FAO ASFIS : http://www.fao.org/fishery/collection/asfis/en
-        # 
-
-        for entityid in self.database['index']:
-            entity = self.database['index'][entityid]
-            if entity['status'] != 'ignore':
-
-                # For now accept only first parent as is_a parent
-                # pick only items that are not marked "ignore"
-                obo_format += '\n\n[Term]\n'
-                obo_format += 'id: %s\n' % entity['ontology_id'].replace('_',':')
-                obo_format += 'name: "%s%s"\n' % (entity['label']['value'], self.get_language_tag(entity['label']) )
-
-                for item in entity['is_a']:
-                    # If parent isn't imported (even as an obsolete item), don't make an is_a for it.
-                    # is_a entries can be ABOUT non Langual ids.
-                    parent = entity['is_a'][item]
-                    if self.term_import(entity['is_a'], item): 
-                        if len(parent['value']):
-                            comment = ' ! ' + parent['value']
-                        else:
-                            comment = ''
-                        obo_format += 'is_a: ' + item.replace('_',':') + comment + '\n'
-
-                if self.term_import(entity, 'definition'):
-                    definition = entity['definition']['value'].replace('"',r'\"').replace('\n',r'\n')
-                    obo_format += 'def: "%s%s"' % (definition, self.get_language_tag(entity['definition']) ) #def has to be 1 liner.
-                    if 'definition_source' in entity:
-                        obo_format += ' [' + entity['definition_source'] + ']\n'
-                    else:
-                        obo_format += '\n'
-
-                if entity['status'] == 'is_obsolete':
-                    obo_format += 'is_obsolete: true\n'
-
-                if 'replaced_by' in entity:
-                    replacement = self.database['index'][entity['replaced_by']]['ontology_id']
-                    obo_format += 'replaced_by: ' + replacement.replace('_',':') +'\n'
-
-                if 'synonyms' in entity:
-                    for item in entity['synonyms']:
-                        if self.term_import(entity['synonyms'], item):
-                            detail = entity['synonyms'][item]['value'] # EXACT / NARROW / BROAD 
-                            obo_format += 'synonym: "%s%s" %s\n' % (item, self.get_language_tag(entity['synonyms'][item]), detail) 
-
-                if 'xrefs' in entity:
-                    for item in entity['xrefs']:
-                        if self.term_import(entity['xrefs'], item):
-                            obo_format += 'xref: ' + item + '\n'
-
-                # TAXONOMY counts as xref
-                if 'taxonomy' in entity:
-                    for item in entity['taxonomy']:
-                        obo_format += 'xref: ' + item + '\n'
-
-
-        with (codecs.open(self.ontology_path + '.obo', 'w', 'utf-8')) as output_handle:
-            output_handle.write(obo_format)
-
-        """
-
-
     def term_import(self, entity, term):
+        """
+        returns boolean test of whether a particular entity attribute exists and should be imported into ontology file.
+        """
         return term in entity and entity[term]['value'] != None and entity[term]['import'] == True
+
 
     def get_language_tag(self, entity):
         if 'language' in entity:
             return '@' + entity['language']
         else:
             return ''
+
 
     def get_language_tag_owl(self, entity):
         if 'language' in entity:
@@ -572,10 +492,10 @@ class Langual(object):
 
     def load_facet_details(self, entity, content):
         """
-        Enhance entity with facet-specific attributes.
+        Enhance entity with LanguaL facet-specific attributes.
         """ 
 
-        # Stats on count of members of each Langual facet, which is first letter of entity id.
+        # Stats on count of members of each LanguaL facet, which is first letter of entity id.
         category = entity['database_id'][0]
         if category in self.counts: 
             self.counts[category] += 1 
@@ -589,6 +509,15 @@ class Langual(object):
 
         # B. FOOD SOURCE [B1564]
         if category == 'B':
+            """
+            Food Source facet import notes:
+
+                - Includes raw animal, plant, bacteria and fungi ingredients.
+                - Most items having taxonomic scientific names.  A lookup of eol.org 
+                    taxonomic database reference to NCBI taxonomy name is performed 
+                    (alternatly make entries to cover ITIS items?)  
+                - Result is an NCBI taxon tree as well as a tree of food source items. 
+            """
             self.getFoodSource(entity, content)
 
         # C. PART OF PLANT OR ANIMAL [C0116]
@@ -704,8 +633,8 @@ class Langual(object):
         If there is no ITIS code, then we may have to fallover to looking up 
         SCINAM text, or synonym text, directly in ITIS OR EOL portal.
 
-        Taxonomy roles in Langual VS NCBI (NCBITaxon#_taxonomic_rank , relation: ncbitaxon#has_rank)
-        Langual code                    NCBI_Taxon_
+        Taxonomy roles in LanguaL VS NCBI (NCBITaxon#_taxonomic_rank , relation: ncbitaxon#has_rank)
+        LanguaL code                    NCBI_Taxon_
                                         superkingdom
                        Kingdom          kingdom 
                        Subkingdom       subkingdom
@@ -746,7 +675,7 @@ class Langual(object):
 
     NOTE EOL: http://eol.org/pages/582002/names/synonyms synonyms categorized by preferred, misspelling, authority,  etc. and relate to scientific names.
 
-        Example Langual record
+        Example LanguaL record
         <DESCRIPTOR>
             <FTC>B1249</FTC>
             <TERM lang="en UK">PAPAYA</TERM>
