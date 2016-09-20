@@ -88,7 +88,7 @@ class Langual(object):
         self.re_europe = re.compile(r'\nCodex: .*\.')
 
         # e.g. <SCINAM>Balaenoptera bonaerensis Burmeister, 1867 [FAO ASFIS BFW]
-        self.re_taxonomy = re.compile(r'<?(?P<rank>[A-Z]+)>(?P<name>[^\]]+) ?\[((?P<ref>[A-Z]+[0-9]*)|(?P<db>[A-Z 0-9]+) (?P<id>[^\]]+))]')
+        self.re_taxonomy = re.compile(r'<?(?P<rank>[A-Z]+)>(?P<name>[^\]]+) ?\[((?P<ref>([A-Z]+[0-9]*|2010 FDA Seafood List))|(?P<db>[A-Z 0-9]+) (?P<id>[^\]]+))]')
 
 
     def __main__(self, file):
@@ -102,7 +102,7 @@ class Langual(object):
         status:
             'ignore': Do not import this LanguaL item.
             'import': Import as a primary ontology term.
-            'is_obsolete': Import code but mark it as a hasDbArchaicXref:____ of other primary term.
+            'deprecated': Import code but mark it as a hasDbArchaicXref:____ of other primary term.
                 Arises when LanguaL term ids have been made archaic via merging or deduping.
 
             ... Descriptor inactivated. The descriptor is a synonym of *RED KINGKLIP [B1859]*.</AI>
@@ -142,7 +142,7 @@ class Langual(object):
 
             else:
                 entity['database_id'] = database_id 
-                self.set_attribute_diff(entity['xrefs'], 'LANGUAL:' + database_id, '')
+                self.set_attribute_diff(entity['xrefs'], 'LANGUAL', database_id)
                 self.database['index'][database_id] = entity
                 self.load_attribute(entity, child, 'ACTIVE','active')
                 entity['active']['import'] = False #Not an attribute that is directly imported
@@ -158,16 +158,16 @@ class Langual(object):
             if len(entity['is_a']) > 1:
                 continue 
 
-            if not entity['status'] in ['ignore', 'is_obsolete']:
-                # LanguaL terms that are ACTIVE=false are by default imported as 'is_obsolete' 
+            if not entity['status'] in ['ignore', 'deprecated']:
+                # LanguaL terms that are ACTIVE=false are by default imported as 'deprecated' 
                 # ontology terms so we can still capture their ids for database cross-referencing.  
                 # Downgrades LanguaL terms that go form active to inactive. But not reverse.
                 if self.load_attribute(entity, child, 'ACTIVE','active') == 'False':
-                    entity['status'] = 'is_obsolete'
+                    entity['status'] = 'deprecated'
 
                 scope_note = child.find('SN').text
                 if scope_note and 'DO NOT USE for new indexing' in scope_note:
-                    entity['status'] = 'is_obsolete'
+                    entity['status'] = 'deprecated'
 
             # Pre-existing entity status controls whether item revisions are considered.  We skip doing updates on archaic items.
             if entity['status'] == 'ignore': 
@@ -180,7 +180,9 @@ class Langual(object):
 
             # NOTE: This assumes ENGLISH; will have to redesign for multi-lingual.
             label = self.load_attribute(entity, child, 'TERM', 'label', 'en')
-            self.load_attribute(entity, child, 'SN', 'note', 'en')
+            comment = child.find('SN').text
+            if comment and len(comment) > 0: # not sure why this isn't getting filtered out below.
+                self.load_attribute(entity, child, 'SN', 'comment', 'en')
 
             # LanguaL has some tagged text imbedded within other XML text.
             AI = child.find('AI').text
@@ -191,7 +193,8 @@ class Langual(object):
                 # FIRST CONVERT Wikipedia references, e.g. [http://en.wikipedia.org/wiki/Roselle_(plant)] references to IAO_0000119 'definition_source'
                 wikipedia_ref = re.search(self.re_wikipedia_url, AI)
                 if wikipedia_ref:
-                    entity['definition_source'] = 'WIKIPEDIA:' + wikipedia_ref.group('reference')
+                    self.set_attribute_diff(entity, 'definition_source', 'WIKIPEDIA:' + wikipedia_ref.group('reference'))
+                    #entity['definition_source'] = 'WIKIPEDIA:' + wikipedia_ref.group('reference')
                     AI = re.sub(self.re_wikipedia_url, '', AI)
                     AI = AI.replace('[]','').replace('()', '')
 
@@ -202,19 +205,26 @@ class Langual(object):
                     entity['replaced_by'] = duplicate.group('id')
                     AI = re.sub(self.re_duplicate_entry, '', AI)
 
-                # "\nEurope: E 230.\nCodex: INS 230." ... are extra references already covered by synonyms
+                # "\nEurope: E 230.\nCodex: INS 230." ... are extra references already covered by <SYNONYM> so drop them here
                 AI = re.sub(self.re_europe, '', AI)
                 AI = re.sub(self.re_codex, '', AI)
+
+                # Get term definition text
                 if len(AI) > 0:
                     if AI[0] == '<':
                         self.load_attribute(entity, AI, '<DICTION>', 'definition', 'en')
+                        self.load_attribute(entity, AI, '<SOURCE>', 'definition_source', 'en') # above definition_source appears never to conflict.
+                        self.load_attribute(entity['xrefs'], AI, '<MANSFELD>', 'MANSFELD')
+
                     # If no codes, e.g. for "broiler chicken", <AI> will contain only text definition rather than <DICTION>
                     else: 
                         self.load_attribute(entity, child, 'AI', 'definition', 'en') 
-                    if 'definition' in entity: #ISSUE: WILL ALWAYS TRIGGER CHANGE
+
+                    # Now clear out the taxonomic entries found within the definition text
+                    if 'definition' in entity: 
                         entity['definition']['value'] = self.re_taxonomy.sub('', entity['definition']['value'])
 
-            if entity['status'] == 'is_obsolete': 
+            if entity['status'] == 'deprecated': 
                 continue
 
             self.load_synonyms(entity, child)
@@ -235,12 +245,14 @@ class Langual(object):
                         entity['is_a'][item]['value'] = db_name
                 
 
+        print "Updating ", self.database_path
         with (open(self.database_path, 'w')) as output_handle:
             output_handle.write(json.dumps(self.database, sort_keys=False, indent=4, separators=(',', ': ')))
 
         # Display stats and problem cases the import found
         self.report(file)
 
+        print "Generating ", self.ontology_path + '.owl'
         self.save_ontology_owl()
 
 
@@ -299,27 +311,33 @@ class Langual(object):
 
     def set_attribute_diff(self, entity, attribute, value, language = None):
         # All new values assumed to be ok.
-        if not attribute in entity:
-            entity[attribute] = OrderedDict()
-            entity[attribute] = {
-                'value': value, # Value ready for import
-                'import': True, # False = do not import this attribute
-                'locked': False, # Prevent database import from modifying its value
-                'changed': True # Indicates if changed between between database.json and fresh version value.
-            }
-            if language is not None:
-                entity[attribute]['language'] = language
+        # if value == '': return # We don't set empty tags. PROBLEM: Multiple parents set '' value
 
-        # 'ignore' signals not to accept any values here.
-        elif entity[attribute]['value'] != value:  # ADD TEST FOR LANGUAGE CHANGE?
-            entity[attribute]['changed'] = True
-            if entity[attribute]['locked'] == False:
-                entity[attribute]['value'] = value
+        try:
+            if not attribute in entity:
+                entity[attribute] = OrderedDict()
+                entity[attribute] = {
+                    'value': value, # Value ready for import
+                    'import': True, # False = do not import this attribute
+                    'locked': False, # Prevent database import from modifying its value
+                    'changed': True # Indicates if changed between between database.json and fresh version value.
+                }
                 if language is not None:
                     entity[attribute]['language'] = language
-            # could push old values + versions onto a history stack
-        else:
-            entity[attribute]['changed'] = False
+
+            # 'ignore' signals not to accept any values here.
+            elif entity[attribute]['value'] != value:  # ADD TEST FOR LANGUAGE CHANGE?
+                entity[attribute]['changed'] = True
+                if entity[attribute]['locked'] == False:
+                    entity[attribute]['value'] = value
+                    if language is not None:
+                        entity[attribute]['language'] = language
+                # could push old values + versions onto a history stack
+            else:
+                entity[attribute]['changed'] = False
+
+        except Exception as e:
+            print "ERROR IN SETTING ATTRIBUTE: ", entity, '\nATTRIBUTE:', attribute, '\nVALUE:', value + '\n', language, str(e)
 
 
     def load_synonyms(self, entity, content):
@@ -342,8 +360,9 @@ class Langual(object):
                 continue
 
             else:
-                # Value could be shoehorned to mark up synonym language/source etc? 
-                self.set_attribute_diff(entity['synonyms'], synxml.text, 'EXACT', 'en') 
+                # Value could be shoehorned to mark up synonym language/source etc?  
+                # Empty '' value is where Broad/Narrow/Exact could go if we could make that decision.
+                self.set_attribute_diff(entity['synonyms'], synxml.text, '', 'en') 
 
 
     def save_ontology_owl(self):
@@ -353,41 +372,67 @@ class Langual(object):
         """
 
         owl_format = """<?xml version="1.0"?>
+
+            <!DOCTYPE rdf:RDF [
+                <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+                <!ENTITY obo "http://purl.obolibrary.org/obo/" >
+                <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+                <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+                <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+                <!ENTITY oboInOwl "http://www.geneontology.org/formats/oboInOwl#" >  
+                <!ENTITY taxon "http://purl.obolibrary.org/obo/NCBITaxon#" >     
+            ]>
+
             <rdf:RDF xmlns="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl#"
-                 xml:base="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl"
-                 xmlns:obo="http://purl.obolibrary.org/obo/"
-                 xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-                 xmlns:foodon="purl.obolibrary.org/obo/FOODON/"
-                 xmlns:go="http://www.geneontology.org/formats/oboInOwl#"
-                 xmlns:owl="http://www.w3.org/2002/07/owl#"
-                 xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-                 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                 xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#">
+                xml:base="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl"
+                xmlns:xml="http://www.w3.org/XML/1998/namespace"
+                xmlns:obo="http://purl.obolibrary.org/obo/"
+                xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+                xmlns:owl="http://www.w3.org/2002/07/owl#"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                xmlns:taxon="http://purl.obolibrary.org/obo/NCBITaxon#"
+                xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+                xmlns:dc="http://purl.org/dc/elements/1.1/"
+                >
 
-                <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl"/>
+                <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl">
+                    <dc:contributor xml:lang="en">Damion Dooley</dc:contributor>
+                </owl:Ontology>
 
-                    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
-                        <rdfs:label xml:lang="en">definition</rdfs:label>
-                    </owl:AnnotationProperty>
-                    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000412">
-                        <rdfs:label xml:lang="en">imported from</rdfs:label>
-                    </owl:AnnotationProperty>
-                    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000114">
-                        <rdfs:label xml:lang="en">has curation status</rdfs:label>
-                    </owl:AnnotationProperty>
-                    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000119">
-                        <rdfs:label xml:lang="en">definition source</rdfs:label>
-                    </owl:AnnotationProperty>
-                    <owl:AnnotationProperty rdf:about="oboInOwl:hasDbXref">
-                        <rdfs:label rdf:datatype="xsd:string">database_cross_reference</rdfs:label>
-                    </owl:AnnotationProperty>
-                    <owl:AnnotationProperty rdf:about="oboInOwl:hasAlternativeId">
-                        <rdfs:label rdf:datatype="xsd:string">has_alternative_id</rdfs:label>
-                    </owl:AnnotationProperty>
-                    <owl:AnnotationProperty rdf:about="oboInOwl:hasExactSynonym">
-                        <rdfs:label rdf:datatype="xsd:string">has_exact_synonym</rdfs:label>
-                    </owl:AnnotationProperty>
-
+                <owl:AnnotationProperty rdf:about="&rdfs;label">
+                    <rdfs:label xml:lang="en">label</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&obo;IAO_0000115">
+                    <rdfs:label xml:lang="en">definition</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&obo;IAO_0000412">
+                    <rdfs:label xml:lang="en">imported from</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&obo;IAO_0000114">
+                    <rdfs:label xml:lang="en">has curation status</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&obo;IAO_0000119">
+                    <rdfs:label xml:lang="en">definition source</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&oboInOwl;hasDbXref">
+                    <rdfs:label xml:lang="en">database cross reference</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&oboInOwl;hasSynonym">
+                    <rdfs:label xml:lang="en">has synonym</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&oboInOwl;hasBroadSynonym">
+                    <rdfs:label xml:lang="en">has broad synonym</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&oboInOwl;hasNarrowSynonym">
+                    <rdfs:label xml:lang="en">has narrow synonym</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&taxon;_taxonomic_rank">
+                    <rdfs:label xml:lang="en">taxanomic rank</rdfs:label>
+                </owl:AnnotationProperty>
+                <owl:AnnotationProperty rdf:about="&rdf;value">
+                    <rdfs:label xml:lang="en">has value</rdfs:label>
+                </owl:AnnotationProperty>
         """
 
         # xref entities: 
@@ -400,7 +445,7 @@ class Langual(object):
 
                 # For now accept only first parent as is_a parent
                 label = entity['label']['value'].replace('>','&gt;').replace('<','&lt;').lower()
-                ontology_id = 'foodon:' + entity['ontology_id']
+                ontology_id = '&obo;' + entity['ontology_id']
                 owl_format += '\n\n<owl:Class rdf:about="%s">\n' % ontology_id
                 owl_format += '\t<rdfs:label %(language)s>%(label)s</rdfs:label>\n' % { 
                     'label': label, 
@@ -411,31 +456,28 @@ class Langual(object):
                     # If parent isn't imported (even as an obsolete item), don't make an is_a for it.
                     # is_a entries can be ABOUT non LanguaL ids.
                     if self.term_import(entity['is_a'], item): 
-                        parent = entity['is_a'][item]
-                        if len(parent['value']):
-                            comment = ' <!-- ' + parent['value'] + ' -->'
-                        else:
-                            comment = ''
-
-                        parent_id = 'foodon:' + item
-                        owl_format += '\t<rdfs:subClassOf rdf:resource="%s"/>%s\n' % (parent_id, comment)
+                        parent_id = '&obo;' + item
+                        owl_format += '\t<rdfs:subClassOf rdf:resource="%s"/>\n' % parent_id
                         
+
+                # All terms imported from LanguaL
+                owl_format += "\t<obo:IAO_0000412>http://langual.org</obo:IAO_0000412>\n"
 
                 if self.term_import(entity, 'definition'):
                     definition = entity['definition']['value']  #.replace('"',r'\"').replace('\n',r'\n')
                     owl_format += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition.replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;')
-                  
-                    if 'definition_source' in entity:
-                        owl_format += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']
+              
+                if self.term_import(entity, 'definition_source'):
+                    owl_format += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']['value']
 
-                if entity['status'] == 'is_obsolete': #AnnotationAssertion(owl:deprecated obo:BFO_0000068 "true"^^xsd:boolean) 
-                    owl_format += '\t<owl:deprecated rdf:datatype="xsd:boolean">true</owl:deprecated>\n'
+                if entity['status'] == 'deprecated':
+                    owl_format += '\t<owl:deprecated rdf:datatype="&xsd;boolean">true</owl:deprecated>\n'
 
-                if self.term_import(entity, 'note'):
-                    owl_format += '\t<rdfs:comment xml:lang="en">%s</rdfs:comment>\n' % entity['note']['value']
+                if self.term_import(entity, 'comment'):
+                    owl_format += '\t<rdfs:comment xml:lang="en">%s</rdfs:comment>\n' % entity['comment']['value']
 
                 if 'replaced_by' in entity: #AnnotationAssertion(<obo:IAO_0100001> <obo:CL_0007015> <obo:CLO_0000018>)
-                    replacement = 'foodon:' + self.database['index'][entity['replaced_by']]['ontology_id']
+                    replacement = '&obo;' + self.database['index'][entity['replaced_by']]['ontology_id']
                     owl_format += '\t<obo:IAO_0100001 rdf:resource="%s"/>\n' % replacement
 
                 if 'synonyms' in entity:
@@ -451,17 +493,57 @@ class Langual(object):
                 if 'xrefs' in entity:
                     for item in entity['xrefs']:
                         if self.term_import(entity['xrefs'], item):
-                            owl_format += '\t<oboInOwl:hasDbXref>%s</oboInOwl:hasDbXref>\n' % item
+                            owl_format += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
 
 
-                # TAXONOMY counts as xref
-                if 'taxonomy' in entity:
-                    for item in entity['taxonomy']:
-                        owl_format += '\t<oboInOwl:hasDbXref>%s</oboInOwl:hasDbXref>\n' % item
-            
+                tailings = ''
+                '''
+                TAXONOMY handled as hasNarrowSynonym for or hasBroadSynonym, with annotations on that off to various taxonomy databases.
+                NEAR FUTURE: An ITIS taxonomy reference will allow corresponding NCBITaxon term import by way of EOL.org.
+                Anything without a latin name remains a hasDbXref
+                "taxon": {
+                    "family:Terapontidae": {
+                        "ITIS": {
+                            "import": true,
+                            "changed": true,
+                            "locked": false,
+                            "value": "650201"
+                        }
+                    },
+                '''
+
+                if 'taxon' in entity:
+                    for taxon_rank_name in entity['taxon']:
+                        #try
+                        (rank, latin_name) = taxon_rank_name.split(':',1)
+                        #except Exception as e:
+                        #    print taxon_rank_name
+                        latin_name = latin_name.replace('&','&amp;')
+
+                        synonymTag = 'hasNarrowSynonym' if rank == 'species' else 'hasBroadSynonym'
+                        owl_format += '\t<oboInOwl:%(synonymTag)s>%(latin_name)s</oboInOwl:%(synonymTag)s>\n' % {'synonymTag': synonymTag, 'latin_name': latin_name}
+
+                        for database in entity['taxon'][taxon_rank_name]:
+                            dbid = entity['taxon'][taxon_rank_name][database]['value']
+
+                            # The rdf:resource="..." value requires an absolute URL, no namespace abbreviation.  Probably because string substition isn't allowed within values of tags or attributes of tags.
+                            tailings += """
+                            <owl:Axiom>
+                                <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
+                                <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
+                                <owl:annotatedTarget>%(latin_name)s</owl:annotatedTarget>
+                                <oboInOwl:hasDbXref>%(database)s</oboInOwl:hasDbXref> 
+                                <taxon:_taxonomic_rank>%(rank)s</taxon:_taxonomic_rank>
+                                <rdf:value rdf:datatype="&xsd;string">%(dbid)s</rdf:value>
+                            </owl:Axiom>
+                            """ % {'ontology_id': ontology_id, 'rank':rank, 'database':database, 'dbid': dbid, 'latin_name': latin_name, 'synonymTag':synonymTag }
+
                 owl_format += '</owl:Class>'
+                owl_format += tailings
 
         owl_format += '</rdf:RDF>'
+
+        print "Saving ", self.ontology_path + '.owl'
 
         with (codecs.open(self.ontology_path + '.owl', 'w', 'utf-8')) as output_handle:
             output_handle.write(owl_format)
@@ -471,7 +553,7 @@ class Langual(object):
         """
         returns boolean test of whether a particular entity attribute exists and should be imported into ontology file.
         """
-        return term in entity and entity[term]['value'] != None and entity[term]['import'] == True
+        return ( (term in entity) and (entity[term]['value'] != None) and entity[term]['import'] == True)
 
 
     def get_language_tag(self, entity):
@@ -519,6 +601,7 @@ class Langual(object):
                 - Result is an NCBI taxon tree as well as a tree of food source items. 
             """
             self.getFoodSource(entity, content)
+
 
         # C. PART OF PLANT OR ANIMAL [C0116]
         #elif category == 'C': 
@@ -575,6 +658,17 @@ class Langual(object):
         IF NOT AVAILABLE, 
             TRY to get a TAXONOMIC HIT VIA SYNONYMS
         """
+        '''
+        "taxon": {
+            "family:Terapontidae": {
+                "ITIS": {
+                    "import": true,
+                    "changed": true,
+                    "locked": false,
+                    "value": "650201"
+                }
+            },
+        '''
 
         taxonomyblob = content.find('AI').text
         if taxonomyblob:
@@ -586,27 +680,32 @@ class Langual(object):
                 if taxonomyobj:
 
                     if taxonomyobj.group('rank') == 'DICTION':
-                        if taxonomyobj.group('name')[0:13].lower() == 'food additive':
+                        if taxonomyobj.group('name')[0:14].lower() == 'food additive':
                             self.food_additive += 1
                     else:
-                        if 'rank' not in entity: entity['rank'] = OrderedDict()
-                        rank = self.ranklookup[taxonomyobj.group('rank')]
-                        name = taxonomyobj.group('name').strip()
-                        self.set_attribute_diff(entity['rank'], rank, name)
+                        try:
+                            taxon_rank = self.ranklookup[taxonomyobj.group('rank')] # family, species, etc...
+                            taxon_name = taxon_rank + ':' + taxonomyobj.group('name').strip()
+                            if taxonomyobj.group('db'):  # Usually [[db] [id]]
+                                taxon_db = taxonomyobj.group('db')
+                            else: #sometimes just [[db]]
+                                taxon_db = taxonomyobj.group('ref')
 
-                        if rank == 'species': 
-                            if taxonomyobj.group('ref') is None:
-                                id = taxonomyobj.group('db') + ':'+ taxonomyobj.group('id')
-                                self.set_attribute_diff(entity['xrefs'], id, name)
+                            if taxonomyobj.group('id'):
+                                taxon_id = taxonomyobj.group('id')
                             else:
-                                pass  # what can we do with a single identifier? 
-                                            
-                """
-                hasExactSynonym
-                hasBroadSynonym
-                hasNarrowSynonym
-                hasRelatedSynonym
-                """
+                                taxon_id = ''
+
+                            if 'taxon' not in entity: entity['taxon'] = OrderedDict()
+                            if taxon_name not in entity['taxon']: entity['taxon'][taxon_name] = OrderedDict()
+                            
+                            self.set_attribute_diff(entity['taxon'][taxon_name], taxon_db, taxon_id)
+
+                        except Exception as e:
+
+                            print "TAXON CREATION PROBLEM:", line, taxonomyobj, str(e)
+                        
+              
                 # Match to reference databases that encyclopedia of life knows
                 #for db in ['ITIS','INDEX FUNGORUM','FISHBASE'] 
                 # OTHERS: 'GRIN', 'PLANTS', MANSFELD, NETTOX, EuroFIR-NETTOX, DPNL]: 
