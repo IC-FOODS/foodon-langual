@@ -30,6 +30,7 @@ import xml.etree.ElementTree as ET
 import codecs
 import re
 import time
+import requests
 
 try: #Python 2.7
     from collections import OrderedDict
@@ -41,6 +42,7 @@ try:
     import simplejson as json
 except ImportError: # Python 2.6
     import json
+
 
 CODE_VERSION = '0.0.3'
 
@@ -75,10 +77,16 @@ class Langual(object):
         self.has_ITIS = 0
         self.no_taxonomy = 0
         self.food_additive = 0
+        # The time consuming part is writing the OWL file; can reduce this by skipping lots of entries
+        self.owl_test_max_entry =  'Z9999' # 'Z9999'
         self.output = ''
         self.version = 0
         # Lookup table to convert LanguaL to NCBI_Taxon codes; typos are: SCISUNFAM, SCITRI,
         self.ranklookup = OrderedDict([('SCIDIV','phylum'), ('SCIPHY','phylum'), ('SCISUBPHY','subphylum'), ( 'SCISUPCLASS','superclass'), ( 'SCICLASS','class'), ( 'SCIINFCLASS','infraclass'), ( 'SCIORD','order'), ( 'SCISUBORD','suborder'), ( 'SCIINFORD','infraorder'), ( 'SCISUPFAM','superfamily'), ( 'SCIFAM','family'), ( 'SCISUBFAM','subfamily'), ( 'SCISUNFAM', 'subfamily'), ( 'SCITRI','tribe'), ( 'SCITRIBE','tribe'), ( 'SCIGEN','genus'), ( 'SCINAM','species'), ( 'SCISYN','species')])
+        
+        # See full list of www.eol.org data sources at http://eol.org/api/docs/provider_hierarchies; only using ITIS now.
+        self.EOL_providers = OrderedDict([('ITIS',903), ('INDEX FUNGORUM',596), ('Fishbase 2004',143), ('NCBI Taxonomy',1172)])
+        self.ITIS_lookup_queue = []
 
         # Text mining regular expressions
         self.re_wikipedia_url = re.compile(r'http://en.wikipedia.org/wiki/(?P<reference>[^]]+)')
@@ -120,6 +128,11 @@ class Langual(object):
 
         for child in root.iter('DESCRIPTOR'):
             
+            # Place facet characters here to skip them
+            category = child.find('FTC').text[0]
+            if category in 'A':
+                continue
+
             entity = OrderedDict() # Barebones entity
             #Status ranges:
             #   'ignore' (don't import)
@@ -142,21 +155,33 @@ class Langual(object):
 
             else:
                 entity['database_id'] = database_id 
-                self.set_attribute_diff(entity['xrefs'], 'LANGUAL', database_id)
                 self.database['index'][database_id] = entity
                 self.load_attribute(entity, child, 'ACTIVE','active')
                 entity['active']['import'] = False #Not an attribute that is directly imported
-
+            
 
             # TERM IN DATABASE MAY BE MULTI-HOMED.  
             # If a parent shouldn't be imported, mark it as 'import' = false in database.
             parent_id = child.find('BT').text
             if parent_id is not None:
-                self.set_attribute_diff(entity['is_a'], self.get_ontology_id(parent_id), '') # don't have parents loaded yet necessarily so '' for name
-            
-            # XML file suffers from inability to add multiple parents under a single entry so remaining multi-homed entries are duplicates except for parent_id value which changes (handled above)  
-            if len(entity['is_a']) > 1:
-                continue 
+                if parent_id in self.database['index']: # Get onto_id of parent if possible.
+                    parent_onto_id = self.database['index'][parent_id]['ontology_id']
+                else:
+                    parent_onto_id = self.get_ontology_id(parent_id)
+
+                self.set_attribute_diff(entity['is_a'], parent_onto_id, parent_id) # not providing a value for this.
+
+                # In LanguaL XML, to describe multi-homed item rather than have <BT> be a more complex broader term list, repeated identical xml records are provided, each having its own <BT>.  In order for simple, clean "changed" status of an entities parts to be maintained, can't have entity go through system twice; but we do need to add to its parents list.            
+                (itemId, ItemDelta) = entity['is_a'].iteritems().next() #picks first is_a item.
+                #print parent_id, itemId
+
+                if parent_id != ItemDelta['value']: 
+                    #Means we've already processed the first item on the list.  
+                    #ISSUE: Might not work for successive versions of Langual if XML is reordering presentation of <BT> data.
+                    continue
+
+
+            self.set_attribute_diff(entity['xrefs'], 'LANGUAL', database_id)
 
             if not entity['status'] in ['ignore', 'deprecated']:
                 # LanguaL terms that are ACTIVE=false are by default imported as 'deprecated' 
@@ -173,9 +198,14 @@ class Langual(object):
             if entity['status'] == 'ignore': 
                 continue
 
-            # Enable any database item to be looked up by its FOODON assigned ontology id
-            ontology_id = self.get_ontology_id(database_id)
-            entity['ontology_id'] = ontology_id
+            # Enable any database item to be looked up by its FOODON assigned ontology id (which could be a CHEBI_xxxxx or other id too.)
+
+            if 'ontology_id' in entity:
+                ontology_id = entity['ontology_id']
+            else:
+                ontology_id = self.get_ontology_id(database_id)
+                entity['ontology_id'] = ontology_id
+            
             self.ontology_index[ontology_id] = entity['database_id']
 
             # NOTE: This assumes ENGLISH; will have to redesign for multi-lingual.
@@ -212,45 +242,59 @@ class Langual(object):
                 # Get term definition text
                 if len(AI) > 0:
                     if AI[0] == '<':
-                        self.load_attribute(entity, AI, '<DICTION>', 'definition', 'en')
-                        self.load_attribute(entity, AI, '<SOURCE>', 'definition_source', 'en') # above definition_source appears never to conflict.
+                        definition = self.load_attribute(entity, AI, '<DICTION>')
+
+                        # above definition_source appears never to conflict.
+                        source = self.load_attribute(entity, AI, '<SOURCE>') 
+                        if source is not None and source != '':
+                            self.set_attribute_diff(entity, 'definition_source', source, 'en')
+
+                        self.load_attribute(entity['xrefs'], AI, '<ITIS>', 'ITIS')
+                        self.load_attribute(entity['xrefs'], AI, '<GRIN>', 'GRIN')
                         self.load_attribute(entity['xrefs'], AI, '<MANSFELD>', 'MANSFELD')
 
                     # If no codes, e.g. for "broiler chicken", <AI> will contain only text definition rather than <DICTION>
                     else: 
-                        self.load_attribute(entity, child, 'AI', 'definition', 'en') 
+                        definition = self.load_attribute(entity, child, 'AI')
 
-                    # Now clear out the taxonomic entries found within the definition text
-                    if 'definition' in entity: 
-                        entity['definition']['value'] = self.re_taxonomy.sub('', entity['definition']['value'])
+                    if definition is not None: # can be "None"
+                        # Now clear out the taxonomic entries found within the definition text, and store it
+                        self.set_attribute_diff(entity, 'definition', self.re_taxonomy.sub('', definition), 'en')
 
+            # Don't do any more work for depreciated items
             if entity['status'] == 'deprecated': 
                 continue
 
-            self.load_synonyms(entity, child)
-
             self.load_facet_details(entity, child)
 
+            # Do synonyms after load_facet_details so for food ingredients synonyms can be 
+            # dropped if they are latin names already covered by hasNarrowSynonym
+            self.load_synonyms(entity, child)
 
         # 2nd pass: link up as many archaic LanguaL terms as possible to primary entries
-        for database_id in self.database['index']:
-            entity = self.database['index'][database_id]
-            if entity['status'] != 'ignore':
-                # Need to add parent_id label just for OBO output file "is_a ... ! ..." comment
-                for item in entity['is_a']:
-                    # LOOKUP is ontology_id - need cross reference
-                    if item in self.ontology_index:  # And item not locked or ignore
-                        dbid = self.ontology_index[item]
-                        db_name = self.database['index'][dbid]['label']['value']
-                        entity['is_a'][item]['value'] = db_name
+        #for database_id in self.database['index']:
+        #    entity = self.database['index'][database_id]
+        #    if entity['status'] != 'ignore':
+        #        # Need to add parent_id label just for OBO output file "is_a ... ! ..." comment
+        #        for item in entity['is_a']:
+        #            # LOOKUP is ontology_id - need cross reference
+        #            if item in self.ontology_index:  # And item not locked or ignore
+        #                dbid = self.ontology_index[item]
+        #                db_name = self.database['index'][dbid]['label']['value']
+        #                entity['is_a'][item]['value'] = db_name
                 
-
+        # Do bulk fetch of ITIS to NCBITaxon codes
+        self.getEOLNCBITaxonData('ITIS')
+        self.getEOLNCBITaxonData('INDEX FUNGORUM')
+        
         print "Updating ", self.database_path
         with (open(self.database_path, 'w')) as output_handle:
             output_handle.write(json.dumps(self.database, sort_keys=False, indent=4, separators=(',', ': ')))
 
         # Display stats and problem cases the import found
         self.report(file)
+
+        self.writeNCBITaxon_OntoFox_spec()
 
         print "Generating ", self.ontology_path + '.owl'
         self.save_ontology_owl()
@@ -262,10 +306,10 @@ class Langual(object):
         # Yields FOODON_3[40-52][0000-9999]
         # I bet D,I,O missing because they can be confused with digits in printout
         if database_id == '00000':
-            return 'FOODON_3400000'
+            return 'FOODON_03400000'
         else:
             offset = 'ABCEFGHJKMNPRZ'.index(database_id[0]) 
-            return 'FOODON_3' + str(40+offset) + database_id[1:5]
+            return 'FOODON_03' + str(40+offset) + database_id[1:5]
 
 
     def load_attribute(self, entity, content, xmltag, attribute=None, language=None):
@@ -290,6 +334,11 @@ class Langual(object):
                 # some <DICTION> tags have other tags injected in them but no closing tag.
                 #Sometimes multiple <DICTION>
                 value = value.replace('<DICTION>',r'\n\n')
+
+                # HACK! These are all meant to be one-liners, must strip \n of subsequent text
+                if xmltag in ['<MANSFELD>','<GRIN>','<ITIS>']:
+                    value = value.split('\n',1)[0]
+
             else:
                 attribute = False
 
@@ -397,6 +446,9 @@ class Langual(object):
                 >
 
                 <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl">
+                    <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/NCBITaxon_import.owl"/>
+                    <owl:imports rdf:resource="http://purl.obolibrary.org/obo/envo-food-terms.owl"/>
+
                     <dc:contributor xml:lang="en">Damion Dooley</dc:contributor>
                 </owl:Ontology>
 
@@ -433,6 +485,52 @@ class Langual(object):
                 <owl:AnnotationProperty rdf:about="&rdf;value">
                     <rdfs:label xml:lang="en">has value</rdfs:label>
                 </owl:AnnotationProperty>
+
+                <owl:AnnotationProperty rdf:about="&obo;IAO_0000114">
+                    <rdfs:label xml:lang="en">has curation status</rdfs:label>
+                </owl:AnnotationProperty>
+
+
+                <owl:NamedIndividual rdf:about="&obo;IAO_0000428">
+                    <rdfs:label xml:lang="en">requires discussion</rdfs:label>
+                    <obo:IAO_0000115 xml:lang="en">A term that is metadata complete, has been reviewed, and problems have been identified that require discussion before release. Such a term requires editor note(s) to identify the outstanding issues.</obo:IAO_0000115>
+                </owl:NamedIndividual>
+
+                <owl:NamedIndividual rdf:about="&obo;IAO_0000120">
+                    <rdfs:label xml:lang="en">metadata complete</rdfs:label>
+                    <obo:IAO_0000115 xml:lang="en">Class has all its metadata, but is either not guaranteed to be in its final location in the asserted IS_A hierarchy or refers to another class that is not complete.</obo:IAO_0000115>
+                </owl:NamedIndividual>
+                
+                <owl:NamedIndividual rdf:about="&obo;IAO_0000121">
+                    <rdfs:label xml:lang="en">organizational term</rdfs:label>
+                    <obo:IAO_0000115 xml:lang="en">term created to ease viewing/sort terms for development purpose, and will not be included in a release</obo:IAO_0000115>
+                </owl:NamedIndividual>
+                
+                <owl:NamedIndividual rdf:about="&obo;IAO_0000122">
+                    <rdfs:label xml:lang="en">ready for release</rdfs:label>
+                    <obo:IAO_0000115 xml:lang="en">Class has undergone final review, is ready for use, and will be included in the next release. Any class lacking &quot;ready_for_release&quot; should be considered likely to change place in hierarchy, have its definition refined, or be obsoleted in the next release.  Those classes deemed &quot;ready_for_release&quot; will also derived from a chain of ancestor classes that are also &quot;ready_for_release.&quot;</obo:IAO_0000115>
+                </owl:NamedIndividual>
+                
+                <owl:NamedIndividual rdf:about="&obo;IAO_0000123">
+                    <rdfs:label xml:lang="en">metadata incomplete</rdfs:label>
+                    <obo:IAO_0000115 xml:lang="en">Class is being worked on; however, the metadata (including definition) are not complete or sufficiently clear to the branch editors.</obo:IAO_0000115>
+                </owl:NamedIndividual>
+                
+                <owl:NamedIndividual rdf:about="&obo;IAO_0000124">
+                    <rdfs:label xml:lang="en">uncurated</rdfs:label>
+                    <obo:IAO_0000115 xml:lang="en">Nothing done yet beyond assigning a unique class ID and proposing a preferred term.</obo:IAO_0000115>
+                </owl:NamedIndividual>
+                
+                <owl:NamedIndividual rdf:about="&obo;IAO_0000125">
+                    <rdfs:label xml:lang="en">pending final vetting</rdfs:label>
+                    <obo:IAO_0000115 xml:lang="en">All definitions, placement in the asserted IS_A hierarchy and required minimal metadata are complete. The class is awaiting a final review by someone other than the term editor.</obo:IAO_0000115>
+                </owl:NamedIndividual>
+                
+
+                <owl:Class rdf:about="&obo;OBI_0100026">
+                    <rdfs:label xml:lang="en">organism</rdfs:label>
+                </owl:Class>
+
         """
 
         # xref entities: 
@@ -441,6 +539,10 @@ class Langual(object):
 
         for entityid in self.database['index']:
             entity = self.database['index'][entityid]
+            
+            if entity['database_id'] > self.owl_test_max_entry: # Quickie output possible to see example output only.
+                continue
+
             if entity['status'] != 'ignore': # pick only items that are not marked "ignore"
 
                 # For now accept only first parent as is_a parent
@@ -472,9 +574,13 @@ class Langual(object):
 
                 if entity['status'] == 'deprecated':
                     owl_format += '\t<owl:deprecated rdf:datatype="&xsd;boolean">true</owl:deprecated>\n'
+                    owl_format += '\t<obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>\n' #ready for release
+
+                if entity['status'] == 'draft': # Anything marked as 'draft' status is written as 'requires discussion'
+                    owl_format += '\t<obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000428"/>\n'
 
                 if self.term_import(entity, 'comment'):
-                    owl_format += '\t<rdfs:comment xml:lang="en">%s</rdfs:comment>\n' % entity['comment']['value']
+                    owl_format += '\t<rdfs:comment xml:lang="en">LanguaL curator\'s note: %s</rdfs:comment>\n' % entity['comment']['value']
 
                 if 'replaced_by' in entity: #AnnotationAssertion(<obo:IAO_0100001> <obo:CL_0007015> <obo:CLO_0000018>)
                     replacement = '&obo;' + self.database['index'][entity['replaced_by']]['ontology_id']
@@ -496,7 +602,7 @@ class Langual(object):
                             owl_format += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
 
 
-                tailings = ''
+                tailings = '' # This will hold axioms that have to follow outside <Class>...</Class>
                 '''
                 TAXONOMY handled as hasNarrowSynonym for or hasBroadSynonym, with annotations on that off to various taxonomy databases.
                 NEAR FUTURE: An ITIS taxonomy reference will allow corresponding NCBITaxon term import by way of EOL.org.
@@ -525,18 +631,31 @@ class Langual(object):
 
                         for database in entity['taxon'][taxon_rank_name]:
                             dbid = entity['taxon'][taxon_rank_name][database]['value']
+                            if database == 'NCBITaxon':
+                            
+                                owl_format += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
+                                
+                                #tailings += """
+                                #<owl:Axiom>
+                                #    <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
+                                #    <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
+                                #    <owl:annotatedTarget>%(dbid)s</owl:annotatedTarget>
+                                #    <taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%(rank)s" />
+                                #</owl:Axiom>
+                                #""" % {'ontology_id': ontology_id, 'rank':rank, 'database':database, 'dbid': dbid, 'latin_name': latin_name, 'synonymTag':synonymTag }
 
-                            # The rdf:resource="..." value requires an absolute URL, no namespace abbreviation.  Probably because string substition isn't allowed within values of tags or attributes of tags.
-                            tailings += """
-                            <owl:Axiom>
-                                <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
-                                <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
-                                <owl:annotatedTarget>%(latin_name)s</owl:annotatedTarget>
-                                <oboInOwl:hasDbXref>%(database)s</oboInOwl:hasDbXref> 
-                                <taxon:_taxonomic_rank>%(rank)s</taxon:_taxonomic_rank>
-                                <rdf:value rdf:datatype="&xsd;string">%(dbid)s</rdf:value>
-                            </owl:Axiom>
-                            """ % {'ontology_id': ontology_id, 'rank':rank, 'database':database, 'dbid': dbid, 'latin_name': latin_name, 'synonymTag':synonymTag }
+
+                            else:
+
+                                tailings += """
+                                <owl:Axiom>
+                                    <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
+                                    <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
+                                    <owl:annotatedTarget>%(latin_name)s</owl:annotatedTarget>
+                                    <oboInOwl:hasDbXref>%(database)s:%(dbid)s</oboInOwl:hasDbXref> 
+                                    <taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%(rank)s" />
+                                </owl:Axiom>
+                                """ % {'ontology_id': ontology_id, 'rank':rank, 'database':database, 'dbid': dbid, 'latin_name': latin_name, 'synonymTag':synonymTag }
 
                 owl_format += '</owl:Class>'
                 owl_format += tailings
@@ -574,7 +693,7 @@ class Langual(object):
 
     def load_facet_details(self, entity, content):
         """
-        Enhance entity with LanguaL facet-specific attributes.
+        Enhance entity with LanguaL facet-specific attributes.  Facet letters D,I,L,O don't exist in LanguaL.
         """ 
 
         # Stats on count of members of each LanguaL facet, which is first letter of entity id.
@@ -654,11 +773,9 @@ class Langual(object):
 
     def getFoodSource(self, entity, content):
         """
-        FIRST: trust ITIS identifier.
-        IF NOT AVAILABLE, 
-            TRY to get a TAXONOMIC HIT VIA SYNONYMS
-        """
-        '''
+        FIRST: Lookup via ITIS identifier.
+        IF NOT AVAILABLE, TRY to get taxonomy via latin synonyms?
+        
         "taxon": {
             "family:Terapontidae": {
                 "ITIS": {
@@ -668,7 +785,7 @@ class Langual(object):
                     "value": "650201"
                 }
             },
-        '''
+        """
 
         taxonomyblob = content.find('AI').text
         if taxonomyblob:
@@ -699,158 +816,48 @@ class Langual(object):
                             if 'taxon' not in entity: entity['taxon'] = OrderedDict()
                             if taxon_name not in entity['taxon']: entity['taxon'][taxon_name] = OrderedDict()
                             
+                            """ PROBLEM:
+                            "FAO ASFIS XXX" triggers changed flag.  2 values below for database cross reference!
+                            <DESCRIPTOR>
+                            <FTC>B2112</FTC>
+                            <TERM lang="en UK">MOLLUSCS</TERM>
+                            <BT>B1433</BT>
+                            <SN></SN>
+                            <AI>&#60;SCIPHY&#62;Mollusca [ITIS 69458]
+                            &#60;SCIPHY&#62;Mollusca [FAO ASFIS MOF]
+                            &#60;SCIPHY&#62;Mollusca [FAO ASFIS MOL]</AI>
+                            """
                             self.set_attribute_diff(entity['taxon'][taxon_name], taxon_db, taxon_id)
+
+                            if entity['database_id'] > self.owl_test_max_entry: # Quickie output possible to see example output only.
+                                continue
+
+                            if taxon_db == 'ITIS' or taxon_db == 'INDEX FUNGORUM':
+                                # See if we should do a lookup
+                                if 'NCBITaxon' in entity['taxon'][taxon_name]: # Already done!
+                                    pass
+
+                                else:
+                                    #Add to taxonomy bulk job.
+                                    self.ITIS_lookup_queue.append((entity, taxon_name, taxon_id))
+                                    
 
                         except Exception as e:
 
                             print "TAXON CREATION PROBLEM:", line, taxonomyobj, str(e)
                         
-              
-                # Match to reference databases that encyclopedia of life knows
-                #for db in ['ITIS','INDEX FUNGORUM','FISHBASE'] 
-                # OTHERS: 'GRIN', 'PLANTS', MANSFELD, NETTOX, EuroFIR-NETTOX, DPNL]: 
-
-                #else:
-                #   self.has_taxonomy += 1
-                #   entity['taxonomy'] = []
-                #   if 'ITIS' in taxObj: 
-                #       self.has_ITIS += 1 #print "TAXONOMY ITIS: ", taxObj['ITIS']
-                #       entity['taxonomy'].append(taxObj['ITIS'])
-
         else:
             self.no_taxonomy += 1
-            #self.output += '       ' + str(entity['is_a'].keys()[0]) + '-' + entity['database_id'] + ':' + str(entity['label'])  + '\n'
 
 
-
-    def getTaxonomy(self, lines_of_text):
-        """ 
-        Objective is to find THE MOST DETAILED instance of ITIS code - the one 
-        associated with "SCINAM" which comes after "SCIFAM" is mentioned (which 
-        may have its own ITIS code).  Use this to lookup NCBI_Taxon entry.
-
-        If there is no ITIS code, then we may have to fallover to looking up 
-        SCINAM text, or synonym text, directly in ITIS OR EOL portal.
-
-        Taxonomy roles in LanguaL VS NCBI (NCBITaxon#_taxonomic_rank , relation: ncbitaxon#has_rank)
-        LanguaL code                    NCBI_Taxon_
-                                        superkingdom
-                       Kingdom          kingdom 
-                       Subkingdom       subkingdom
-                       Infrakingdom
-                       Superdivision    superphylum     * division/phylum merged (Botany division = plant)
-        SCIDIV         Division         phylum          * division -> phylum in NCBI 
-                       Subdivision      subphylum
-                                        
-        SCIPHY         Phylum           
-        SCISUBPHY      Subphylum        subphylum
-        SCISUPCLASS                     superclass 
-        SCICLASS       Class            class
-                                        subclass
-        SCIINFCLASS                     infraclass
-                       Superorder       superorder
-        SCIORD         Order            order
-        SCISUBORD                       suborder
-        SCIINFORD                       infraorder
-                                        parvorder
-        SCISUPFAM                       superfamily
-        SCIFAM         Family           family
-        SCISUBFAM                       subfamily
-        SCITRI                          tribe   
-                                        subtribe            
-        SCIGEN         Genus            genus
-                                        subgenus
-        SCINAM         Species          species
-        SCISYN                          species     * synonym!?!
-                                        subspecies
-                                        varietas
-                                        forma
-    PROBLEM CASES
-        SCISUNFAM  typo of SCISUBFAM                                
-    NCBI Also has:
-
-                                        species_group
-                                        species_subgroup
-
-    NOTE EOL: http://eol.org/pages/582002/names/synonyms synonyms categorized by preferred, misspelling, authority,  etc. and relate to scientific names.
-
-        Example LanguaL record
-        <DESCRIPTOR>
-            <FTC>B1249</FTC>
-            <TERM lang="en UK">PAPAYA</TERM>
-            <BT>B1024</BT>
-            <SN></SN>
-            <AI>&#60;SCIFAM&#62;Caricaceae [ITIS 22322]
-            &#60;SCINAM&#62;Carica papaya L. [ITIS 22324]
-            &#60;SCINAM&#62;Carica papaya L. [GRIN 9147]
-            &#60;SCINAM&#62;Carica papaya L. [PLANTS CAPA23]
-            &#60;SCINAM&#62;Carica papaya L. [EuroFIR-NETTOX 2007 73]
-            &#60;SCINAM&#62;Carica papaya L. [DPNL 2003 8382]
-            &#60;MANSFELD&#62;23437</AI>
-            <SYNONYMS>
-                <SYNONYM>carica papaya</SYNONYM>
-                <SYNONYM>hawaiian papaya</SYNONYM>
-                <SYNONYM>lechoza</SYNONYM>
-                <SYNONYM>melon tree</SYNONYM>
-                <SYNONYM>pawpaw</SYNONYM>
-            </SYNONYMS>
-            <RELATEDTERMS>
-            </RELATEDTERMS>
-            <CLASSIFICATION>False</CLASSIFICATION>
-            <ACTIVE>True</ACTIVE>
-            <DATEUPDATED>2011-10-07</DATEUPDATED>
-            <DATECREATED>2000-01-01</DATECREATED>
-            <UPDATECOMMENT></UPDATECOMMENT>
-            <SINGLE>False</SINGLE>
-
-        # <SINGLE> appears to be an inconsequential tag.
-        # ISSUE: Some "lines" in lines_of_text might not be separated by a carriage return, e.g.
-            
-            <SCINAM>Hapalochlaena maculosa (Hoyle, 1883) [ITIS 556175]<.... > 
-
-        
-        PROBLEM CASE - ITIS code is NOT following SCINAME in brackets:
-            <SCIFAM>Apiaceae
-            <SCINAM>Apium graveolens var. rapaceum (Miller) Gaudin
-            <ITIS>530941
-            <GRIN>3704
-            <MANSFELD>1236
-
-            <DESCRIPTOR>
-                <FTC>B1729</FTC>
-                <TERM lang="en UK">CELERIAC</TERM>
-                <BT>B1018</BT>
-                <SN></SN>
-                <AI>&#60;SCIFAM&#62;Apiaceae
-                &#60;SCINAM&#62;Apium graveolens var. rapaceum (Miller) Gaudin
-                &#60;ITIS&#62;530941
-                &#60;GRIN&#62;3704
-                &#60;MANSFELD&#62;1236</AI>
-                <SYNONYMS>
-                    <SYNONYM>apium graveolens rapaceum</SYNONYM>
-                    <SYNONYM>celery root</SYNONYM>
-                </SYNONYMS>
-        
-        PROBLEM CASE - solanum dulcamara
-        <SYNONYMS>
-            <SYNONYM>solanum dulcamara</SYNONYM>
-        </SYNONYMS>
-            - no taxonomy but scientific name will return ITIS / EOL / NCBITaxon lookup.
-
-        """
-        pass
-
-
-    def getEOLData(self):
+    def getEOLNCBITaxonData(self, datasource):
         """
         Perform Lookup of NCBI_Taxon data directly from EOL.org via API and ITIS code.
 
-        eol.org/pages/328663
-
-        ITIS (903) SEARCH TO EOL ID/Batch of IDs:
+        ITIS (provider id 903) SEARCH TO EOL ID/Batch of IDs:
 
             http://eol.org/api/search_by_provider/1.0.json?batch=true&id=180722%2C160783&hierarchy_id=903
-
+            http://eol.org/api/search_by_provider/1.0.json?batch=false&id=172431&hierarchy_id=903&cache_ttl=
         Returns:
             [{"180722":[
                 {"eol_page_id":328663},
@@ -861,14 +868,32 @@ class Langual(object):
                 {"eol_page_link":"eol.org/pages/8897"}]
             }]
 
-        http://eol.org/api/docs/provider_hierarchies
 
-            596 : "Index Fungorum"
-            903 : "ITIS" SEARCH TO EOL ID/Batch of IDs:
-            1172 : "NCBI Taxonomy"
+        Example: 
+            http://eol.org/api/pages/1.0.json?batch=true&id=328663&subjects=overview&common_names=true&synonyms=true&taxonomy=true&cache_ttl=&language=en
 
-        http://eol.org/api/pages/1.0.json?batch=true&id=328663&subjects=overview&common_names=true&synonyms=true&taxonomy=true&cache_ttl=&language=en
 
+            Might not be one... hopefully returns:
+            [{"328663": {
+                "identifier": 328663,
+                "scientificName": "Sus scrofa Linnaeus, 1758",
+                "richness_score": 400.0,
+                "taxonConcepts": [{
+                    "identifier": 54413797,
+                    "scientificName": "Sus scrofa Linnaeus, 1758",
+                    "nameAccordingTo": "Integrated Taxonomic Information System (ITIS)",
+                    "canonicalForm": "Sus scrofa",
+                    "sourceIdentifier": "180722",
+                    "taxonRank": "Species"
+                }, ... {
+                    "identifier": 51377703,
+                    "scientificName": "Sus scrofa",
+                    "nameAccordingTo": "NCBI Taxonomy",
+                    "canonicalForm": "Sus scrofa",
+                    "sourceIdentifier": "9823",
+                    "taxonRank": "Species"
+                }, {
+            
         NOTE ALSO
 
             http://www.itis.gov/web_service.html
@@ -877,7 +902,137 @@ class Langual(object):
             http://www.itis.gov/ITISWebService/jsonservice/getHierarchyUpFromTSN?tsn=1378
 
         """
-        pass
+
+        provider_id = self.EOL_providers[datasource]
+        batch_itis_ids = []
+        batch_eol_ids = []
+        eol_itis_map = {}
+        itis_ncbitaxon_map = {}
+        #batches = array_split(self.ITIS_lookup_queue, 100)
+        #for batch in batches:
+        #   
+        #    for (id, taxon_name, taxon_id) in batch:
+        #        ids.append(id)
+
+        # Do ITIS code to EOL Page mapping.  Requests have to bet batched into groups of 100 ids or HTTP 413 request too long error results.
+        for (entity, taxon_name, itis_id) in self.ITIS_lookup_queue:
+            batch_itis_ids.append(itis_id)
+
+        while len(batch_itis_ids):
+            itis_ids = batch_itis_ids[0:100]
+            batch_itis_ids = batch_itis_ids[100:]
+            url = "http://eol.org/api/search_by_provider/1.0.json?batch=true&id=%s&hierarchy_id=%s" % (','.join(itis_ids), provider_id)
+            itis_data = self.get_jsonparsed_data(url)
+
+            for itis_obj in itis_data:
+                for itis_id in itis_obj:
+                    itis_fields = itis_obj[itis_id]
+                    # e.g. [{u'eol_page_id': 2374}, {u'eol_page_link': u'eol.org/pages/2374'}]
+                    eol_page_id = str(itis_fields[0]['eol_page_id'])
+                    eol_itis_map[eol_page_id] = itis_id
+                    batch_eol_ids.append(eol_page_id)
+
+
+        # Do EOL to NCBI mapping
+        while len(batch_eol_ids):
+            eol_ids = batch_eol_ids[0:100]
+            batch_eol_ids = batch_eol_ids[100:]
+            print eol_ids
+            url = "http://eol.org/api/pages/1.0.json?batch=true&id=%s&subjects=overview&taxonomy=true&cache_ttl=&language=en" % ','.join(eol_ids)
+            eol_data = self.get_jsonparsed_data(url) 
+
+            for page_obj in eol_data:
+                for eol_page_id in page_obj:
+                    itis_id = eol_itis_map[eol_page_id]
+                    for taxon_item in page_obj[eol_page_id]['taxonConcepts']:
+                        if taxon_item['nameAccordingTo'] == 'NCBI Taxonomy':
+                            itis_ncbitaxon_map[itis_id] = taxon_item['sourceIdentifier']
+
+
+        # For our queue, add NCBI entries
+        for (entity, taxon_name, itis_id) in self.ITIS_lookup_queue:
+            if itis_id in itis_ncbitaxon_map:
+                print "NCBITaxon lookup: ", itis_ncbitaxon_map[itis_id]
+                self.set_attribute_diff(entity['taxon'][taxon_name], 'NCBITaxon', itis_ncbitaxon_map[itis_id])
+            else:
+                # Signal not to try lookup again
+                entity['taxon'][taxon_name]['NCBITaxon'] = {
+                    "import": False,
+                    "changed": False,
+                    "locked": False,
+                    "value": None
+                }
+
+
+    def writeNCBITaxon_OntoFox_spec(self):
+
+        spec = ''
+        for database_id in self.database['index']:
+            entity = self.database['index'][database_id]
+            if 'taxon' in entity:
+                for taxon in entity['taxon']:
+                    if 'NCBITaxon' in entity['taxon'][taxon]:
+                        taxobj = entity['taxon'][taxon]['NCBITaxon']
+                        spec += 'http://purl.obolibrary.org/obo/NCBITaxon_%s # %s\n' % (taxobj['value'], taxon)
+            
+        spec = """
+[URI of the OWL(RDF/XML) output file]
+http://purl.obolibrary.org/obo/FOODON/imports/NCBITaxon_import.owl
+
+[Source ontology]
+NCBITaxon
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/NCBITaxon#_taxonomic_rank #taxonomic rank
+includeAllChildren
+
+""" + spec + """
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/NCBITaxon_2157
+subClassOf http://purl.obolibrary.org/obo/OBI_0100026 #OBI:organism
+http://purl.obolibrary.org/obo/NCBITaxon_2
+subClassOf http://purl.obolibrary.org/obo/OBI_0100026 #OBI:organism
+http://purl.obolibrary.org/obo/NCBITaxon_2759
+subClassOf http://purl.obolibrary.org/obo/OBI_0100026 #OBI:organism
+http://purl.obolibrary.org/obo/NCBITaxon_10239
+subClassOf http://purl.obolibrary.org/obo/OBI_0100026 #OBI:organism
+
+[Source term retrieval setting]
+includeComputedIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+#copyTo http://purl.obolibrary.org/obo/IAO_0000111
+http://www.geneontology.org/formats/oboInOwl#hasExactSynonym
+#mapTo http://purl.obolibrary.org/obo/IAO_0000118 #iao:alternative term
+http://purl.obolibrary.org/obo/ncbitaxon#common_name
+"""
+
+        with (codecs.open('./ontofox_ncbitaxon_spec.txt', 'w', 'utf-8')) as output_handle:
+            output_handle.write(spec)
+
+
+    def get_jsonparsed_data(self, url):
+        """
+        Receive the content of ``url``, parse it as JSON and return the object.
+
+        Parameters
+        ----------
+        url : str
+
+        Returns
+        -------
+        dict
+        """
+        try:
+            response = requests.get(url) #  + '&key=5662da7aff53b902e6f33c86ae5e00b5f394d1f2'
+
+        except Exception as e:
+            print "ERROR IN SENDING EOL.org request: ", str(e)
+
+        print response.status_code, response.headers['content-type']
+        return response.json()
 
 
     def report(self, file):
@@ -891,8 +1046,6 @@ class Langual(object):
         print " Items with taxonomy: ", self.has_taxonomy
         print "   Items having ITIS: ", self.has_ITIS
         print " Items without taxon: ", self.no_taxonomy
-        print "     parent_id-child_id : name : synonyms"   
-        # Getting: UnicodeEncodeError: 'ascii' codec can't encode character u'\xd7' in position 17332: ordinal not in range(128)
 
         print (self.output)
 
@@ -912,3 +1065,117 @@ if __name__ == '__main__':
     foodstruct.__main__('langual2014.xml')
 
 
+""" TAXONOMY NOTES
+Objective is to find THE MOST DETAILED instance of ITIS code - the one 
+associated with "SCINAM" which comes after "SCIFAM" is mentioned (which 
+may have its own ITIS code).  Use this to lookup NCBI_Taxon entry.
+
+If there is no ITIS code, then we may have to fallover to looking up 
+SCINAM text, or synonym text, directly in ITIS OR EOL portal.
+
+Taxonomy roles in LanguaL VS NCBI (NCBITaxon#_taxonomic_rank , relation: ncbitaxon#has_rank)
+LanguaL code                    NCBI_Taxon_
+                                superkingdom
+               Kingdom          kingdom 
+               Subkingdom       subkingdom
+               Infrakingdom
+               Superdivision    superphylum     * division/phylum merged (Botany division = plant)
+SCIDIV         Division         phylum          * division -> phylum in NCBI 
+               Subdivision      subphylum
+                                
+SCIPHY         Phylum           
+SCISUBPHY      Subphylum        subphylum
+SCISUPCLASS                     superclass 
+SCICLASS       Class            class
+                                subclass
+SCIINFCLASS                     infraclass
+               Superorder       superorder
+SCIORD         Order            order
+SCISUBORD                       suborder
+SCIINFORD                       infraorder
+                                parvorder
+SCISUPFAM                       superfamily
+SCIFAM         Family           family
+SCISUBFAM                       subfamily
+SCITRI                          tribe   
+                                subtribe            
+SCIGEN         Genus            genus
+                                subgenus
+SCINAM         Species          species
+SCISYN                          species     * synonym!?!
+                                subspecies
+                                varietas
+                                forma
+PROBLEM CASES
+SCISUNFAM  typo of SCISUBFAM                                
+NCBI Also has:
+
+                                species_group
+                                species_subgroup
+
+NOTE EOL: http://eol.org/pages/582002/names/synonyms synonyms categorized by preferred, misspelling, authority,  etc. and relate to scientific names.
+
+Example LanguaL record
+<DESCRIPTOR>
+    <FTC>B1249</FTC>
+    <TERM lang="en UK">PAPAYA</TERM>
+    <BT>B1024</BT>
+    <SN></SN>
+    <AI>&#60;SCIFAM&#62;Caricaceae [ITIS 22322]
+    &#60;SCINAM&#62;Carica papaya L. [ITIS 22324]
+    &#60;SCINAM&#62;Carica papaya L. [GRIN 9147]
+    &#60;SCINAM&#62;Carica papaya L. [PLANTS CAPA23]
+    &#60;SCINAM&#62;Carica papaya L. [EuroFIR-NETTOX 2007 73]
+    &#60;SCINAM&#62;Carica papaya L. [DPNL 2003 8382]
+    &#60;MANSFELD&#62;23437</AI>
+    <SYNONYMS>
+        <SYNONYM>carica papaya</SYNONYM>
+        <SYNONYM>hawaiian papaya</SYNONYM>
+        <SYNONYM>lechoza</SYNONYM>
+        <SYNONYM>melon tree</SYNONYM>
+        <SYNONYM>pawpaw</SYNONYM>
+    </SYNONYMS>
+    <RELATEDTERMS>
+    </RELATEDTERMS>
+    <CLASSIFICATION>False</CLASSIFICATION>
+    <ACTIVE>True</ACTIVE>
+    <DATEUPDATED>2011-10-07</DATEUPDATED>
+    <DATECREATED>2000-01-01</DATECREATED>
+    <UPDATECOMMENT></UPDATECOMMENT>
+    <SINGLE>False</SINGLE>
+
+# <SINGLE> appears to be an inconsequential tag.
+# ISSUE: Some "lines" in lines_of_text might not be separated by a carriage return, e.g.
+    
+    <SCINAM>Hapalochlaena maculosa (Hoyle, 1883) [ITIS 556175]<.... > 
+
+
+PROBLEM CASE - ITIS code is NOT following SCINAME in brackets:
+    <SCIFAM>Apiaceae
+    <SCINAM>Apium graveolens var. rapaceum (Miller) Gaudin
+    <ITIS>530941
+    <GRIN>3704
+    <MANSFELD>1236
+
+    <DESCRIPTOR>
+        <FTC>B1729</FTC>
+        <TERM lang="en UK">CELERIAC</TERM>
+        <BT>B1018</BT>
+        <SN></SN>
+        <AI>&#60;SCIFAM&#62;Apiaceae
+        &#60;SCINAM&#62;Apium graveolens var. rapaceum (Miller) Gaudin
+        &#60;ITIS&#62;530941
+        &#60;GRIN&#62;3704
+        &#60;MANSFELD&#62;1236</AI>
+        <SYNONYMS>
+            <SYNONYM>apium graveolens rapaceum</SYNONYM>
+            <SYNONYM>celery root</SYNONYM>
+        </SYNONYMS>
+
+PROBLEM CASE - solanum dulcamara
+<SYNONYMS>
+    <SYNONYM>solanum dulcamara</SYNONYM>
+</SYNONYMS>
+    - no taxonomy but scientific name will return ITIS / EOL / NCBITaxon lookup.
+
+"""
