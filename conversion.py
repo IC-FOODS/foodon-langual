@@ -78,15 +78,15 @@ class Langual(object):
         self.no_taxonomy = 0
         self.food_additive = 0
         # The time consuming part is writing the OWL file; can reduce this by skipping lots of entries
-        self.owl_test_max_entry =  'Z9999' # 'Z9999'
+        self.owl_test_max_entry =  'Z9999' # 'B1100' # 
         self.output = ''
         self.version = 0
-        # Lookup table to convert LanguaL to NCBI_Taxon codes; typos are: SCISUNFAM, SCITRI,
+        # Lookup table to convert LanguaL to NCBITaxon codes; typos are: SCISUNFAM, SCITRI,
         self.ranklookup = OrderedDict([('SCIDIV','phylum'), ('SCIPHY','phylum'), ('SCISUBPHY','subphylum'), ( 'SCISUPCLASS','superclass'), ( 'SCICLASS','class'), ( 'SCIINFCLASS','infraclass'), ( 'SCIORD','order'), ( 'SCISUBORD','suborder'), ( 'SCIINFORD','infraorder'), ( 'SCISUPFAM','superfamily'), ( 'SCIFAM','family'), ( 'SCISUBFAM','subfamily'), ( 'SCISUNFAM', 'subfamily'), ( 'SCITRI','tribe'), ( 'SCITRIBE','tribe'), ( 'SCIGEN','genus'), ( 'SCINAM','species'), ( 'SCISYN','species')])
         
         # See full list of www.eol.org data sources at http://eol.org/api/docs/provider_hierarchies; only using ITIS now.
         self.EOL_providers = OrderedDict([('ITIS',903), ('INDEX FUNGORUM',596), ('Fishbase 2004',143), ('NCBI Taxonomy',1172)])
-        self.ITIS_lookup_queue = []
+        self.NCBITaxon_lookup = {'ITIS':[],'INDEX FUNGORUM':[] }
 
         # Text mining regular expressions
         self.re_wikipedia_url = re.compile(r'http://en.wikipedia.org/wiki/(?P<reference>[^]]+)')
@@ -283,10 +283,9 @@ class Langual(object):
         #                db_name = self.database['index'][dbid]['label']['value']
         #                entity['is_a'][item]['value'] = db_name
                 
-        # Do bulk fetch of ITIS to NCBITaxon codes
-        self.getEOLNCBITaxonData('ITIS')
-        self.getEOLNCBITaxonData('INDEX FUNGORUM')
-        
+        # Do bulk fetch of ITIS and INDEX FUNGORUM to NCBITaxon codes
+        self.getEOLNCBITaxonData()
+
         print "Updating ", self.database_path
         with (open(self.database_path, 'w')) as output_handle:
             output_handle.write(json.dumps(self.database, sort_keys=False, indent=4, separators=(',', ': ')))
@@ -398,14 +397,16 @@ class Langual(object):
             # Intercepting International Numbering System for Food Additives (INS) references
             # These are documented in the Codex Alimentarius, http://www.fao.org/fao-who-codexalimentarius/codex-home/en/
             if synxml.text[0:4] == 'INS ': 
-                self.set_attribute_diff(entity['xrefs'], 'Codex:' + synxml.text, '')
+                entity['xrefs'].pop('Codex:'+synxml.text,None)
+                self.set_attribute_diff(entity['xrefs'], 'Codex:', synxml.text[4:])
                 continue
 
             # https://en.wikipedia.org/wiki/E_number
             # European Food Safety Authority issues these as a subset of Codex codes
             # http://www.food.gov.uk/science/additives/enumberlist#h_7
             if synxml.text[0:2] == 'E ':
-                self.set_attribute_diff(entity['xrefs'], 'Europe:' + synxml.text, '')
+                entity['xrefs'].pop('Europe:'+synxml.text,None)
+                self.set_attribute_diff(entity['xrefs'], 'Europe:', synxml.text[2:])
                 continue
 
             else:
@@ -533,10 +534,6 @@ class Langual(object):
 
         """
 
-        # xref entities: 
-        #   FAO ASFIS : http://www.fao.org/fishery/collection/asfis/en
-        # 
-
         for entityid in self.database['index']:
             entity = self.database['index'][entityid]
             
@@ -599,7 +596,10 @@ class Langual(object):
                 if 'xrefs' in entity:
                     for item in entity['xrefs']:
                         if self.term_import(entity['xrefs'], item):
-                            owl_format += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
+                            if item == 'EOL':
+                                owl_format += '\t<oboInOwl:hasDbXref>http://eol.org/pages/%s</oboInOwl:hasDbXref>\n' % entity['xrefs'][item]['value']
+                            else:
+                                owl_format += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
 
 
                 tailings = '' # This will hold axioms that have to follow outside <Class>...</Class>
@@ -626,36 +626,48 @@ class Langual(object):
                         #    print taxon_rank_name
                         latin_name = latin_name.replace('&','&amp;')
 
-                        synonymTag = 'hasNarrowSynonym' if rank == 'species' else 'hasBroadSynonym'
-                        owl_format += '\t<oboInOwl:%(synonymTag)s>%(latin_name)s</oboInOwl:%(synonymTag)s>\n' % {'synonymTag': synonymTag, 'latin_name': latin_name}
+                        if rank == 'species':
+                            synonymTag = 'hasNarrowSynonym' 
+                            rankTag = ''
+                        else:
+                            synonymTag = 'hasBroadSynonym'
+                            rankTag = '<taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%s" />' % rank
 
-                        for database in entity['taxon'][taxon_rank_name]:
-                            dbid = entity['taxon'][taxon_rank_name][database]['value']
-                            if database == 'NCBITaxon':
-                            
-                                owl_format += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
-                                
-                                #tailings += """
-                                #<owl:Axiom>
-                                #    <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
-                                #    <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
-                                #    <owl:annotatedTarget>%(dbid)s</owl:annotatedTarget>
-                                #    <taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%(rank)s" />
-                                #</owl:Axiom>
-                                #""" % {'ontology_id': ontology_id, 'rank':rank, 'database':database, 'dbid': dbid, 'latin_name': latin_name, 'synonymTag':synonymTag }
+                        # Let NCBITaxon reference replace all the others
+                        if 'NCBITaxon' in entity['taxon'][taxon_rank_name] and entity['taxon'][taxon_rank_name]['NCBITaxon']['import']==True:
+                            dbid = entity['taxon'][taxon_rank_name]['NCBITaxon']['value']
+                            # PROBABLY WANT TO CHANGE THIS INTO A TBOX RELATION - TO ENABLE INFERENCE OF COMPLEMENTARY RELATION
+                            owl_format += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
 
-
-                            else:
-
+                            if len(rankTag):
                                 tailings += """
-                                <owl:Axiom>
-                                    <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
-                                    <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
-                                    <owl:annotatedTarget>%(latin_name)s</owl:annotatedTarget>
-                                    <oboInOwl:hasDbXref>%(database)s:%(dbid)s</oboInOwl:hasDbXref> 
-                                    <taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%(rank)s" />
-                                </owl:Axiom>
-                                """ % {'ontology_id': ontology_id, 'rank':rank, 'database':database, 'dbid': dbid, 'latin_name': latin_name, 'synonymTag':synonymTag }
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
+        <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
+        <owl:annotatedTarget rdf:resource="&obo;NCBITaxon_%(dbid)s" />
+        %(rankTag)s
+    </owl:Axiom>'
+    """ % {'ontology_id': ontology_id, 'rankTag':rankTag, 'dbid': dbid, 'synonymTag':synonymTag }
+
+
+                        else:
+
+                            owl_format += '\t<oboInOwl:%(synonymTag)s>%(latin_name)s</oboInOwl:%(synonymTag)s>\n' % {'synonymTag': synonymTag, 'latin_name': latin_name}
+
+                            tailings += """
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
+        <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
+        <owl:annotatedTarget>%(latin_name)s</owl:annotatedTarget>
+        %(rankTag)s
+    """ % {'ontology_id': ontology_id, 'rankTag':rankTag, 'latin_name': latin_name, 'synonymTag':synonymTag }
+
+                            for database in entity['taxon'][taxon_rank_name]:
+                                if database != 'NCBITaxon':
+                                    dbid = entity['taxon'][taxon_rank_name][database]['value']
+                                    tailings += '     <oboInOwl:hasDbXref>%(database)s:%(dbid)s</oboInOwl:hasDbXref>\n' % {'database':database, 'dbid': dbid}
+
+                            tailings += '       </owl:Axiom>'
 
                 owl_format += '</owl:Class>'
                 owl_format += tailings
@@ -834,12 +846,12 @@ class Langual(object):
 
                             if taxon_db == 'ITIS' or taxon_db == 'INDEX FUNGORUM':
                                 # See if we should do a lookup
-                                if 'NCBITaxon' in entity['taxon'][taxon_name]: # Already done!
+                                if 1==0 and 'NCBITaxon' in entity['taxon'][taxon_name]: # Already done!
                                     pass
 
                                 else:
                                     #Add to taxonomy bulk job.
-                                    self.ITIS_lookup_queue.append((entity, taxon_name, taxon_id))
+                                    self.NCBITaxon_lookup[taxon_db].append((entity, taxon_name, taxon_id))
                                     
 
                         except Exception as e:
@@ -850,7 +862,7 @@ class Langual(object):
             self.no_taxonomy += 1
 
 
-    def getEOLNCBITaxonData(self, datasource):
+    def getEOLNCBITaxonData(self):
         """
         Perform Lookup of NCBI_Taxon data directly from EOL.org via API and ITIS code.
 
@@ -869,23 +881,15 @@ class Langual(object):
             }]
 
 
-        Example: 
+        EOL Page to possible NCBITaxon and other taxonomy data:
+
             http://eol.org/api/pages/1.0.json?batch=true&id=328663&subjects=overview&common_names=true&synonyms=true&taxonomy=true&cache_ttl=&language=en
 
-
-            Might not be one... hopefully returns:
             [{"328663": {
                 "identifier": 328663,
                 "scientificName": "Sus scrofa Linnaeus, 1758",
                 "richness_score": 400.0,
-                "taxonConcepts": [{
-                    "identifier": 54413797,
-                    "scientificName": "Sus scrofa Linnaeus, 1758",
-                    "nameAccordingTo": "Integrated Taxonomic Information System (ITIS)",
-                    "canonicalForm": "Sus scrofa",
-                    "sourceIdentifier": "180722",
-                    "taxonRank": "Species"
-                }, ... {
+                "taxonConcepts": [... {
                     "identifier": 51377703,
                     "scientificName": "Sus scrofa",
                     "nameAccordingTo": "NCBI Taxonomy",
@@ -896,40 +900,39 @@ class Langual(object):
             
         NOTE ALSO
 
+            FAO ASFIS : http://www.fao.org/fishery/collection/asfis/en
+
             http://www.itis.gov/web_service.html
             http://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=500059
-            http://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=202384&jsonp=itis_data
             http://www.itis.gov/ITISWebService/jsonservice/getHierarchyUpFromTSN?tsn=1378
 
         """
 
-        provider_id = self.EOL_providers[datasource]
-        batch_itis_ids = []
-        batch_eol_ids = []
-        eol_itis_map = {}
-        itis_ncbitaxon_map = {}
-        #batches = array_split(self.ITIS_lookup_queue, 100)
-        #for batch in batches:
-        #   
-        #    for (id, taxon_name, taxon_id) in batch:
-        #        ids.append(id)
+        for eol_provider in self.NCBITaxon_lookup:
+            eol_provider_id = self.EOL_providers[eol_provider]
+            eol_provider_map = {}
+            batch_provider_ids = []
+            batch_eol_ids = []
+            provider_ncbitaxon_map = {}
 
         # Do ITIS code to EOL Page mapping.  Requests have to bet batched into groups of 100 ids or HTTP 413 request too long error results.
-        for (entity, taxon_name, itis_id) in self.ITIS_lookup_queue:
-            batch_itis_ids.append(itis_id)
+        for (entity, taxon_name, provider_id) in self.NCBITaxon_lookup[eol_provider]:
+            batch_provider_ids.append(provider_id)
 
-        while len(batch_itis_ids):
-            itis_ids = batch_itis_ids[0:100]
-            batch_itis_ids = batch_itis_ids[100:]
-            url = "http://eol.org/api/search_by_provider/1.0.json?batch=true&id=%s&hierarchy_id=%s" % (','.join(itis_ids), provider_id)
-            itis_data = self.get_jsonparsed_data(url)
+        batch_provider_ids = sorted(set(batch_provider_ids))
 
-            for itis_obj in itis_data:
-                for itis_id in itis_obj:
-                    itis_fields = itis_obj[itis_id]
+        while len(batch_provider_ids):
+            provider_ids = batch_provider_ids[0:100]
+            batch_provider_ids = batch_provider_ids[100:]
+            url = "http://eol.org/api/search_by_provider/1.0.json?batch=true&id=%s&hierarchy_id=%s" % (','.join(provider_ids), eol_provider_id)
+            eol_data = self.get_jsonparsed_data(url)
+
+            for eol_obj in eol_data:
+                for provider_id in eol_obj:
+                    eol_fields = eol_obj[provider_id]
                     # e.g. [{u'eol_page_id': 2374}, {u'eol_page_link': u'eol.org/pages/2374'}]
-                    eol_page_id = str(itis_fields[0]['eol_page_id'])
-                    eol_itis_map[eol_page_id] = itis_id
+                    eol_page_id = str(eol_fields[0]['eol_page_id'])
+                    eol_provider_map[eol_page_id] = provider_id
                     batch_eol_ids.append(eol_page_id)
 
 
@@ -937,31 +940,50 @@ class Langual(object):
         while len(batch_eol_ids):
             eol_ids = batch_eol_ids[0:100]
             batch_eol_ids = batch_eol_ids[100:]
-            print eol_ids
             url = "http://eol.org/api/pages/1.0.json?batch=true&id=%s&subjects=overview&taxonomy=true&cache_ttl=&language=en" % ','.join(eol_ids)
             eol_data = self.get_jsonparsed_data(url) 
 
             for page_obj in eol_data:
                 for eol_page_id in page_obj:
-                    itis_id = eol_itis_map[eol_page_id]
+                    provider_id = eol_provider_map[eol_page_id]
                     for taxon_item in page_obj[eol_page_id]['taxonConcepts']:
                         if taxon_item['nameAccordingTo'] == 'NCBI Taxonomy':
-                            itis_ncbitaxon_map[itis_id] = taxon_item['sourceIdentifier']
+                            # track taxon rank as well as identifier so we can spot mismatches
+                            # ISSUE: VERIFY: are EOL ranks different from NCBITaxon's ?
+                            if 'taxonRank' in taxon_item:
+                                rank = taxon_item['taxonRank'].lower()
+                            else:
+                                rank = ''
+                            provider_ncbitaxon_map[provider_id] = (eol_page_id, taxon_item['sourceIdentifier'], rank )
 
+        # ADD EOL page hasDbXref cross reference for valid provider lookup.
 
         # For our queue, add NCBI entries
-        for (entity, taxon_name, itis_id) in self.ITIS_lookup_queue:
-            if itis_id in itis_ncbitaxon_map:
-                print "NCBITaxon lookup: ", itis_ncbitaxon_map[itis_id]
-                self.set_attribute_diff(entity['taxon'][taxon_name], 'NCBITaxon', itis_ncbitaxon_map[itis_id])
-            else:
-                # Signal not to try lookup again
-                entity['taxon'][taxon_name]['NCBITaxon'] = {
-                    "import": False,
-                    "changed": False,
-                    "locked": False,
-                    "value": None
-                }
+        for eol_provider in self.NCBITaxon_lookup:
+            for (entity, taxon_name, provider_id) in self.NCBITaxon_lookup[eol_provider]: # provider_id is 'ITIS' etc.
+                if provider_id in provider_ncbitaxon_map:
+                    (eol_page_id, taxon_id, taxon_rank) = provider_ncbitaxon_map[provider_id]
+                    # If NCBI record's rank is different from leading part of taxon name, e.g. "species:pollus pollus"
+                    # Then drop entity['taxon'][NCBITaxon] record (if any)
+                    # AND drop entity['taxon'][eol_provider]
+                    if taxon_rank == '' or taxon_name.split(':',1)[0] == taxon_rank:
+                        print "NCBITaxon lookup: ", taxon_id
+                        # IF NOT LOCKED???
+                        self.set_attribute_diff(entity['taxon'][taxon_name], 'NCBITaxon', taxon_id )
+                        # PROBLEM: EOL link will get set by upper and lower bound taxonomy set.
+                        self.set_attribute_diff(entity['xrefs'], 'EOL', eol_page_id )
+                    else:
+                        entity['taxon'][taxon_name]['NCBITaxon']['import'] = False
+                        entity['taxon'][taxon_name][eol_provider]['import'] = False
+
+                else:
+                    # Signal not to try lookup again
+                    entity['taxon'][taxon_name]['NCBITaxon'] = {
+                        "import": False,
+                        "changed": False,
+                        "locked": False,
+                        "value": None
+                    }
 
 
     def writeNCBITaxon_OntoFox_spec(self):
@@ -1066,12 +1088,6 @@ if __name__ == '__main__':
 
 
 """ TAXONOMY NOTES
-Objective is to find THE MOST DETAILED instance of ITIS code - the one 
-associated with "SCINAM" which comes after "SCIFAM" is mentioned (which 
-may have its own ITIS code).  Use this to lookup NCBI_Taxon entry.
-
-If there is no ITIS code, then we may have to fallover to looking up 
-SCINAM text, or synonym text, directly in ITIS OR EOL portal.
 
 Taxonomy roles in LanguaL VS NCBI (NCBITaxon#_taxonomic_rank , relation: ncbitaxon#has_rank)
 LanguaL code                    NCBI_Taxon_

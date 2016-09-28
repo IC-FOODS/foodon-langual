@@ -32,7 +32,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_6547 # family:Mytilidae Rafinesque, 181
 http://purl.obolibrary.org/obo/NCBITaxon_40256 # species:Modiolus modiolus (Linnaeus, 1758)
 http://purl.obolibrary.org/obo/NCBITaxon_4210 # family:Compositae (Asteraceae)
 http://purl.obolibrary.org/obo/NCBITaxon_4233 # species:Helianthus tuberosus L.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_53873 # species:Dipteryx odorata (Aublet) Willd.
 http://purl.obolibrary.org/obo/NCBITaxon_7996 # family:Ictaluridae Gill, 1861
 http://purl.obolibrary.org/obo/NCBITaxon_8224 # family:Scombridae
@@ -113,7 +113,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_8020 # family:Salmonidae
 http://purl.obolibrary.org/obo/NCBITaxon_8020 # species:Oncorhynchus masou (Brevoort, 1856)
 http://purl.obolibrary.org/obo/NCBITaxon_8015 # family:Salmonidae
 http://purl.obolibrary.org/obo/NCBITaxon_8022 # species:Oncorhynchus mykiss (Walbaum, 1792)
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3914 # species:Vigna angularis (Willd.) Ohwi & Ohashi
 http://purl.obolibrary.org/obo/NCBITaxon_8224 # family:Scombridae
 http://purl.obolibrary.org/obo/NCBITaxon_8228 # species:Euthynnus alletteratus (Rafinesque, 1810)
@@ -370,7 +370,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_4530 # species:Oryza sativa L.
 http://purl.obolibrary.org/obo/NCBITaxon_9979 # family:Leporidae Fischer, 1817
 http://purl.obolibrary.org/obo/NCBITaxon_29132 # family:Castoridae Hemprich, 1820
 http://purl.obolibrary.org/obo/NCBITaxon_10184 # genus:Castor Linnaeus, 1758
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_1174713 # genus:Acacia P. Mill.
 http://purl.obolibrary.org/obo/NCBITaxon_9895 # family:Bovidae Gray, 1821
 http://purl.obolibrary.org/obo/NCBITaxon_9925 # species:Capra hircus Linnaeus, 1758
@@ -381,7 +381,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_8036 # species:Salvelinus alpinus (Linn
 http://purl.obolibrary.org/obo/NCBITaxon_3931 # family:Myrtaceae
 http://purl.obolibrary.org/obo/NCBITaxon_120290 # species:Psidium guajava L.
 http://purl.obolibrary.org/obo/NCBITaxon_6752 # infraorder:Brachyura Latreille, 1802
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3818 # species:Arachis hypogaea L.
 http://purl.obolibrary.org/obo/NCBITaxon_23513 # family:Rutaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Citrus sinensis (L.) Osbeck
@@ -408,7 +408,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_8180 # family:Centrarchidae
 http://purl.obolibrary.org/obo/NCBITaxon_109273 # species:Ambloplites rupestris (Rafinesque, 1817)
 http://purl.obolibrary.org/obo/NCBITaxon_3615 # family:Polygonaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3620 # genus:Rheum L.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3906 # species:Vicia faba L.
 http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Brassica oleracea var. gongylodes L.
@@ -526,7 +526,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_4558 # species:Sorghum bicolor (L.) Moe
 http://purl.obolibrary.org/obo/NCBITaxon_9265 # family:Didelphidae Gray, 1821
 http://purl.obolibrary.org/obo/NCBITaxon_4328 # family:Proteaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4329 # genus:Macadamia F. Muell.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3847 # species:Glycine max (L.) Merr.
 http://purl.obolibrary.org/obo/NCBITaxon_16714 # family:Juglandaceae
 http://purl.obolibrary.org/obo/NCBITaxon_91214 # species:Juglans cinerea L.
@@ -575,7 +575,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_4056 # family:Apocynaceae Adans., nom. 
 http://purl.obolibrary.org/obo/NCBITaxon_403101 # species:Carissa macrocarpa (Ecklon) A. DC.
 http://purl.obolibrary.org/obo/NCBITaxon_4613 # family:Bromeliaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4615 # species:Ananas comosus (L.) Merr.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3859 # species:Lathyrus odoratus L.
 http://purl.obolibrary.org/obo/NCBITaxon_3745 # family:Rosaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Malus coronaria (L.) P. Mill.
@@ -679,7 +679,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_4639 # species:Ensete ventricosum (Welw
 http://purl.obolibrary.org/obo/NCBITaxon_8782 # species:Aves
 http://purl.obolibrary.org/obo/NCBITaxon_8015 # family:Salmonidae
 http://purl.obolibrary.org/obo/NCBITaxon_504567 # subfamily:Coregoninae
-http://purl.obolibrary.org/obo/NCBITaxon_36066 # species:Cantharellus cibarius Fr., 1821
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Cantharellus cibarius Fr., 1821
 http://purl.obolibrary.org/obo/NCBITaxon_8224 # family:Scombridae
 http://purl.obolibrary.org/obo/NCBITaxon_13676 # species:Scomber japonicus Houttuyn, 1782
 http://purl.obolibrary.org/obo/NCBITaxon_8224 # family:Scombridae
@@ -741,14 +741,14 @@ http://purl.obolibrary.org/obo/NCBITaxon_8224 # family:Scombridae
 http://purl.obolibrary.org/obo/NCBITaxon_13323 # species:Acanthocybium solandri (Cuvier in Cuvier and Valenciennes, 1832)
 http://purl.obolibrary.org/obo/NCBITaxon_3683 # family:Passifloraceae
 http://purl.obolibrary.org/obo/NCBITaxon_78168 # species:Passiflora edulis Sims
-http://purl.obolibrary.org/obo/NCBITaxon_5353 # species:Lentinula edodes (Berk.) Pegler, 1976
-http://purl.obolibrary.org/obo/NCBITaxon_36659 # species:Volvariella volvacea (Bull.) Singer, 1951
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Lentinula edodes (Berk.) Pegler, 1976
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Volvariella volvacea (Bull.) Singer, 1951
 http://purl.obolibrary.org/obo/NCBITaxon_8045 # family:Gadidae Rafinesque, 1810
 http://purl.obolibrary.org/obo/NCBITaxon_8057 # species:Merlangius Geoffroy, 1767
 http://purl.obolibrary.org/obo/NCBITaxon_3615 # family:Polygonaceae
 http://purl.obolibrary.org/obo/NCBITaxon_41241 # species:Rumex acetosa L.
 http://purl.obolibrary.org/obo/NCBITaxon_6608 # family:Sepiidae Leach, 1817
-http://purl.obolibrary.org/obo/NCBITaxon_28992 # species:Pleurotus cystidiosus O.K. Mill., 1969
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Pleurotus cystidiosus O.K. Mill., 1969
 http://purl.obolibrary.org/obo/NCBITaxon_6757 # family:Portunidae Rafinesque, 1815
 http://purl.obolibrary.org/obo/NCBITaxon_6763 # species:Callinectes sapidus M. J. Rathbun, 1896
 http://purl.obolibrary.org/obo/NCBITaxon_3931 # family:Myrtaceae
@@ -759,7 +759,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_260142 # species:Syzygium cumini (L.) S
 http://purl.obolibrary.org/obo/NCBITaxon_3931 # family:Myrtaceae
 http://purl.obolibrary.org/obo/NCBITaxon_119951 # species:Eugenia uniflora L.
 http://purl.obolibrary.org/obo/NCBITaxon_3745 # family:Rosaceae
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3906 # species:Vicia faba L.
 http://purl.obolibrary.org/obo/NCBITaxon_3623 # family:Actinidiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3625 # species:Actinidia chinensis Planchon
@@ -798,13 +798,13 @@ http://purl.obolibrary.org/obo/NCBITaxon_3629 # family:Malvaceae
 http://purl.obolibrary.org/obo/NCBITaxon_183260 # species:Hibiscus sabdariffa L.
 http://purl.obolibrary.org/obo/NCBITaxon_3737 # family:Sapotaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3741 # species:Manilkara zapota (L.) van Royen
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_58860 # species:Tamarindus indica L.
 http://purl.obolibrary.org/obo/NCBITaxon_4294 # family:Aquifoliaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4298 # species:Ilex aquifolium L.
 http://purl.obolibrary.org/obo/NCBITaxon_4004 # family:Linaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4006 # species:Linum usitatissimum L.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_87088 # species:Vigna umbellata (Thunb.) Ohwi & H. Ohashi
 http://purl.obolibrary.org/obo/NCBITaxon_3997 # family:Simmondsiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3999 # species:Simmondsia chinensis (Link) Schneid.
@@ -837,7 +837,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_21571 # family:Boraginaceae
 http://purl.obolibrary.org/obo/NCBITaxon_13363 # species:Borago officinalis L.
 http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_71365 # species:Sisymbrium altissimum L.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_109171 # species:Pachyrhizus erosus (L.) Urban
 http://purl.obolibrary.org/obo/NCBITaxon_4210 # family:Asteraceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Chrysanthemum coronarium L.
@@ -1128,7 +1128,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_7805 # family:Carcharhinidae Jordan and
 http://purl.obolibrary.org/obo/NCBITaxon_27766 # family:Coryphaenidae
 http://purl.obolibrary.org/obo/NCBITaxon_34814 # species:Coryphaena hippurus Linnaeus, 1758
 http://purl.obolibrary.org/obo/NCBITaxon_27766 # family:Coryphaenidae
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Vigna unguiculata ssp. cylindrica (L.) Verdc.
 http://purl.obolibrary.org/obo/NCBITaxon_7953 # family:Cyprinidae
 http://purl.obolibrary.org/obo/NCBITaxon_7953 # family:Cyprinidae
@@ -1264,11 +1264,11 @@ http://purl.obolibrary.org/obo/NCBITaxon_37334 # species:Citrus maxima (Burm. f.
 http://purl.obolibrary.org/obo/NCBITaxon_3593 # family:Cactaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3931 # family:Myrtaceae
 http://purl.obolibrary.org/obo/NCBITaxon_334483 # species:Syzygium jambos (L.) Alston
-http://purl.obolibrary.org/obo/NCBITaxon_39407 # species:Morchella conica Pers 1801
-http://purl.obolibrary.org/obo/NCBITaxon_71694 # species:Coprinopsis atramentaria (Bull.) Redhead, Vilgalys & Moncalvo 2001
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Morchella conica Pers 1801
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Coprinopsis atramentaria (Bull.) Redhead, Vilgalys & Moncalvo 2001
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Agaricus campestris L., 1753
-http://purl.obolibrary.org/obo/NCBITaxon_44609 # species:Verpa bohemica (Krombh.) J.Schröt. (1893)
-http://purl.obolibrary.org/obo/NCBITaxon_44622 # species:Gyromitra montana Harmaja, 1973
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Verpa bohemica (Krombh.) J.Schröt. (1893)
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Gyromitra montana Harmaja, 1973
 http://purl.obolibrary.org/obo/NCBITaxon_4345 # family:Ericaceae
 http://purl.obolibrary.org/obo/NCBITaxon_69266 # species:Vaccinium corymbosum L.
 http://purl.obolibrary.org/obo/NCBITaxon_None # family:Chenopodiaceae
@@ -1298,7 +1298,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_3745 # family:Rosaceae
 http://purl.obolibrary.org/obo/NCBITaxon_133204 # species:Prunus virginiana L.
 http://purl.obolibrary.org/obo/NCBITaxon_4210 # family:Asteraceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Matricaria recutita L.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_155124 # species:Aspalathus linearis (Burman f.) R. Dahlgren
 http://purl.obolibrary.org/obo/NCBITaxon_None # family:Chenopodiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Chenopodium ambrosioides L.
@@ -1314,9 +1314,9 @@ http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3711 # species:Brassica rapa L.
 http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3712 # species:Brassica oleracea L.
-http://purl.obolibrary.org/obo/NCBITaxon_71933 # species:Amanita rubescens Pers., 1797
-http://purl.obolibrary.org/obo/NCBITaxon_152937 # species:Lactarius helvus (Fr.) Fr., 1838
-http://purl.obolibrary.org/obo/NCBITaxon_181775 # species:Psilocybe semilanceata (Fr.) P. Kumm., 1871
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Amanita rubescens Pers., 1797
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Lactarius helvus (Fr.) Fr., 1838
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Psilocybe semilanceata (Fr.) P. Kumm., 1871
 http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Brassica chinensis L.
 http://purl.obolibrary.org/obo/NCBITaxon_7953 # family:Cyprinidae
@@ -1367,7 +1367,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_6447 # phylum:Mollusca
 http://purl.obolibrary.org/obo/NCBITaxon_6544 # class:Bivalvia Linnaeus, 1758
 http://purl.obolibrary.org/obo/NCBITaxon_7586 # species:Echinodermata Klein, 1734
 http://purl.obolibrary.org/obo/NCBITaxon_6605 # class:Cephalopoda Cuvier, 1797
-http://purl.obolibrary.org/obo/NCBITaxon_201217 # species:Leucoagaricus leucothites (Vittad.) Wasser, 1977
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Leucoagaricus leucothites (Vittad.) Wasser, 1977
 http://purl.obolibrary.org/obo/NCBITaxon_8799 # family:Struthionidae
 http://purl.obolibrary.org/obo/NCBITaxon_8801 # species:Struthio camelus Linnaeus, 1758
 http://purl.obolibrary.org/obo/NCBITaxon_8917 # family:Scolopacidae
@@ -1554,7 +1554,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_7953 # family:Cyprinidae
 http://purl.obolibrary.org/obo/NCBITaxon_13095 # species:Hypophthalmichthys molitrix (Valenciennes in Cuvier and Valenciennes, 1844)
 http://purl.obolibrary.org/obo/NCBITaxon_30850 # family:Lutjanidae
 http://purl.obolibrary.org/obo/NCBITaxon_264213 # species:Lutjanus sanguineus (Cuvier in Cuvier and Valenciennes, 1828)
-http://purl.obolibrary.org/obo/NCBITaxon_5384 # species:Suillus luteus (L.) Roussel, 1806
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Suillus luteus (L.) Roussel, 1806
 http://purl.obolibrary.org/obo/NCBITaxon_282294 # family:Mesodesmatidae Gray, 1839
 http://purl.obolibrary.org/obo/NCBITaxon_8065 # family:Batrachoididae
 http://purl.obolibrary.org/obo/NCBITaxon_179984 # order:Scorpaeniformes
@@ -1647,9 +1647,9 @@ http://purl.obolibrary.org/obo/NCBITaxon_96776 # family:Trachichthyidae
 http://purl.obolibrary.org/obo/NCBITaxon_662062 # species:Paratrachichthys trailli (Hutton, 1875)
 http://purl.obolibrary.org/obo/NCBITaxon_96776 # family:Trachichthyidae
 http://purl.obolibrary.org/obo/NCBITaxon_96778 # species:Hoplostethus atlanticus Collett, 1889
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_47083 # species:Melilotus officinalis (L.) Lam.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_57577 # species:Trifolium pratense L.
 http://purl.obolibrary.org/obo/NCBITaxon_8008 # family:Esocidae
 http://purl.obolibrary.org/obo/NCBITaxon_184451 # species:Esox niger Lesueur, 1818
@@ -1666,7 +1666,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_6739 # family:Lithodidae Samouelle, 181
 http://purl.obolibrary.org/obo/NCBITaxon_174392 # species:Lithodes aequispinus J. E. Benedict, 1895
 http://purl.obolibrary.org/obo/NCBITaxon_78060 # family:Parmeliaceae Zenker, 1827
 http://purl.obolibrary.org/obo/NCBITaxon_78064 # species:Cetraria islandica (L.) Ach.
-http://purl.obolibrary.org/obo/NCBITaxon_78064 # species:Cetraria islandica (L.) Ach., 1803
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Cetraria islandica (L.) Ach., 1803
 http://purl.obolibrary.org/obo/NCBITaxon_4011 # family:Anacardiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_169191 # species:Schinus terebinthifolius Raddi
 http://purl.obolibrary.org/obo/NCBITaxon_None # family:Aloeaceae
@@ -1690,7 +1690,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_8189 # family:Mugilidae
 http://purl.obolibrary.org/obo/NCBITaxon_426484 # species:Mugil liza Valenciennes in Cuvier and Valenciennes, 1836
 http://purl.obolibrary.org/obo/NCBITaxon_3977 # family:Euphorbiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_260718 # species:Phyllanthus acidus (L.) Skeels
-http://purl.obolibrary.org/obo/NCBITaxon_5315 # species:Ganoderma lucidum (Curtis) P. Karst., 1881
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Ganoderma lucidum (Curtis) P. Karst., 1881
 http://purl.obolibrary.org/obo/NCBITaxon_76917 # family:Cheilodactylidae
 http://purl.obolibrary.org/obo/NCBITaxon_206137 # family:Pinguipedidae
 http://purl.obolibrary.org/obo/NCBITaxon_458597 # species:Pinguipes Cuvier in Cuvier and Valenciennes, 1829
@@ -1780,14 +1780,14 @@ http://purl.obolibrary.org/obo/NCBITaxon_4037 # family:Apiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_48106 # species:Centella asiatica (L.) Urban
 http://purl.obolibrary.org/obo/NCBITaxon_43707 # family:Meliaceae
 http://purl.obolibrary.org/obo/NCBITaxon_124943 # species:Azadirachta indica Adr. Juss.
-http://purl.obolibrary.org/obo/NCBITaxon_33161 # species:Gyromitra esculenta (Pers.) Fr.
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Gyromitra esculenta (Pers.) Fr.
 http://purl.obolibrary.org/obo/NCBITaxon_3499 # family:Urticaceae
 http://purl.obolibrary.org/obo/NCBITaxon_83906 # species:Boehmeria nivea (L.) Gaud.
 http://purl.obolibrary.org/obo/NCBITaxon_None # family:Bombacaceae
 http://purl.obolibrary.org/obo/NCBITaxon_66656 # species:Durio zibethinus Murray
 http://purl.obolibrary.org/obo/NCBITaxon_4210 # family:Asteraceae
 http://purl.obolibrary.org/obo/NCBITaxon_13427 # species:Cichorium intybus L.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_16739 # family:Piperaceae
 http://purl.obolibrary.org/obo/NCBITaxon_6566 # family:Pectinidae Rafinesque, 1815
 http://purl.obolibrary.org/obo/NCBITaxon_31199 # species:Argopecten irradians (Lamarck, 1819)
@@ -1854,7 +1854,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_173849 # species:Paspalum scrobiculatum
 http://purl.obolibrary.org/obo/NCBITaxon_4479 # family:Poaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3745 # family:Rosaceae
 http://purl.obolibrary.org/obo/NCBITaxon_140311 # species:Prunus cerasus L.
-http://purl.obolibrary.org/obo/NCBITaxon_38945 # species:Flammulina velutipes (Curtis) Singer, 1951
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Flammulina velutipes (Curtis) Singer, 1951
 http://purl.obolibrary.org/obo/NCBITaxon_4479 # family:Poaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4538 # species:Oryza glaberrima Steudel
 http://purl.obolibrary.org/obo/NCBITaxon_4033 # family:Oxalidaceae
@@ -1865,7 +1865,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_281464 # species:Plecoglossus altivelis
 http://purl.obolibrary.org/obo/NCBITaxon_4011 # family:Anacardiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_289767 # species:Semecarpus anacardium L. f.
 http://purl.obolibrary.org/obo/NCBITaxon_3745 # family:Rosaceae
-http://purl.obolibrary.org/obo/NCBITaxon_64659 # species:Lepista nuda (Bull.) Cooke, 1871
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Lepista nuda (Bull.) Cooke, 1871
 http://purl.obolibrary.org/obo/NCBITaxon_4410 # family:Nymphaeaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4414 # species:Euryale ferox Salisb.
 http://purl.obolibrary.org/obo/NCBITaxon_7839 # family:Triakidae Gray, 1851
@@ -2113,12 +2113,12 @@ http://purl.obolibrary.org/obo/NCBITaxon_23513 # family:Rutaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3745 # family:Rosaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4037 # family:Apiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Petroselinum crispum (P. Mill.) Nyman ex A.W. Hill
-http://purl.obolibrary.org/obo/NCBITaxon_654435 # species:Armillaria mellea (Vahl) P. Kumm., 1871
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Armillaria mellea (Vahl) P. Kumm., 1871
 http://purl.obolibrary.org/obo/NCBITaxon_3745 # family:Rosaceae
 http://purl.obolibrary.org/obo/NCBITaxon_88123 # species:Prunus salicina Lindley
-http://purl.obolibrary.org/obo/NCBITaxon_121046 # species:Leccinum aurantiacum (Bull.) Gray 1821
-http://purl.obolibrary.org/obo/NCBITaxon_121051 # species:Leccinum scabrum var. scabrum (Bull.) Gray 1821
-http://purl.obolibrary.org/obo/NCBITaxon_55514 # species:Lactarius deliciosus (L.) Gray, 1821
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Leccinum aurantiacum (Bull.) Gray 1821
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Leccinum scabrum var. scabrum (Bull.) Gray 1821
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Lactarius deliciosus (L.) Gray, 1821
 http://purl.obolibrary.org/obo/NCBITaxon_9835 # family:Camelidae Gray, 1821
 http://purl.obolibrary.org/obo/NCBITaxon_9844 # species:Lama glama (Linnaeus, 1758)
 http://purl.obolibrary.org/obo/NCBITaxon_3745 # family:Rosaceae
@@ -2151,7 +2151,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_4014 # family:Burseraceae
 http://purl.obolibrary.org/obo/NCBITaxon_246365 # species:Dacryodes edulis (G. Don) H. J. Lam
 http://purl.obolibrary.org/obo/NCBITaxon_4014 # family:Burseraceae
 http://purl.obolibrary.org/obo/NCBITaxon_173691 # genus:Dacryodes Vahl
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_162743 # species:Dialium guineense Willd.
 http://purl.obolibrary.org/obo/NCBITaxon_23513 # family:Rutaceae
 http://purl.obolibrary.org/obo/NCBITaxon_85437 # species:Fortunella margarita (Lour.) Swingle
@@ -2327,9 +2327,9 @@ http://purl.obolibrary.org/obo/NCBITaxon_477288 # species:Bassanago bulbiceps Wh
 http://purl.obolibrary.org/obo/NCBITaxon_3931 # family:Myrtaceae
 http://purl.obolibrary.org/obo/NCBITaxon_119950 # genus:Eugenia L.
 http://purl.obolibrary.org/obo/NCBITaxon_31212 # family:Littorinidae Gray, 1840
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # suborder:Parkia filicoidea Welw. ex Oliver
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_53868 # genus:Dialium L.
 http://purl.obolibrary.org/obo/NCBITaxon_4305 # family:Celastraceae
 http://purl.obolibrary.org/obo/NCBITaxon_4319 # genus:Salacia L.
@@ -2343,7 +2343,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_8224 # family:Scombridae
 http://purl.obolibrary.org/obo/NCBITaxon_218798 # species:Scomberomorus commerson (Lacepède, 1800)
 http://purl.obolibrary.org/obo/NCBITaxon_223796 # family:Epigonidae
 http://purl.obolibrary.org/obo/NCBITaxon_270551 # genus:Epigonus Rafinesque, 1810
-http://purl.obolibrary.org/obo/NCBITaxon_5341 # species:Agaricus bisporus (J.E. Lange) Imbach, 1946
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Agaricus bisporus (J.E. Lange) Imbach, 1946
 http://purl.obolibrary.org/obo/NCBITaxon_22140 # family:Annonaceae
 http://purl.obolibrary.org/obo/NCBITaxon_301703 # species:Annona glabra L.
 http://purl.obolibrary.org/obo/NCBITaxon_None # family:Chenopodiaceae
@@ -2439,7 +2439,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_8045 # family:Gadidae Rafinesque, 1810
 http://purl.obolibrary.org/obo/NCBITaxon_80723 # species:Trisopterus esmarkii (Nilsson, 1855)
 http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3712 # species:Brassica oleracea L.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3860 # species:Lathyrus sativus L.
 http://purl.obolibrary.org/obo/NCBITaxon_9726 # family:Delphinidae Gray, 1821
 http://purl.obolibrary.org/obo/NCBITaxon_9740 # family:Phocoenidae Gray, 1825
@@ -2508,7 +2508,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_3440 # family:Ranunculaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3449 # species:Caltha palustris L.
 http://purl.obolibrary.org/obo/NCBITaxon_4210 # family:Asteraceae
 http://purl.obolibrary.org/obo/NCBITaxon_50207 # species:Sonchus oleraceus L.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_115715 # species:Vigna subterranea (L.) Verdc.
 http://purl.obolibrary.org/obo/NCBITaxon_3581 # family:Portulacaceae
 http://purl.obolibrary.org/obo/NCBITaxon_46146 # species:Claytonia perfoliata Donn ex Willd.
@@ -2562,7 +2562,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_6566 # family:Pectinidae Rafinesque, 18
 http://purl.obolibrary.org/obo/NCBITaxon_6579 # species:Pecten maximus (Linnaeus, 1758)
 http://purl.obolibrary.org/obo/NCBITaxon_8930 # family:Columbidae
 http://purl.obolibrary.org/obo/NCBITaxon_111974 # species:Columbina passerina (Linnaeus, 1758)
-http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3888 # species:Pisum sativum L.
 http://purl.obolibrary.org/obo/NCBITaxon_136690 # family:Galatheidae Samouelle, 1819
 http://purl.obolibrary.org/obo/NCBITaxon_4668 # family:Amaryllidaceae
@@ -2981,11 +2981,11 @@ http://purl.obolibrary.org/obo/NCBITaxon_22666 # species:Trapa natans L.
 http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_1204434 # species:Brassica ruvo L. H. Bailey
 http://purl.obolibrary.org/obo/NCBITaxon_4679 # species:Allium cepa L.
-http://purl.obolibrary.org/obo/NCBITaxon_29893 # species:Auricularia polytricha (Mont.) Sacc., 1885
-http://purl.obolibrary.org/obo/NCBITaxon_29892 # species:Auricularia auricula-judae (Bull.) Quél., 1886
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Auricularia polytricha (Mont.) Sacc., 1885
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Auricularia auricula-judae (Bull.) Quél., 1886
 http://purl.obolibrary.org/obo/NCBITaxon_3934 # family:Onagraceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Epilobium angustifolium ssp. angustifolium L.
-http://purl.obolibrary.org/obo/NCBITaxon_5627 # species:Grifola frondosa (Dicks.) Gray, 1821
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Grifola frondosa (Dicks.) Gray, 1821
 http://purl.obolibrary.org/obo/NCBITaxon_4037 # family:Apiaceae
 http://purl.obolibrary.org/obo/NCBITaxon_117781 # species:Apium graveolens var. dulce (P. Mill.) DC.
 http://purl.obolibrary.org/obo/NCBITaxon_4581 # family:Poaceae
@@ -3006,8 +3006,8 @@ http://purl.obolibrary.org/obo/NCBITaxon_3635 # species:Gossypium hirsutum L.
 http://purl.obolibrary.org/obo/NCBITaxon_4070 # family:Solanaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4345 # family:Ericaceae
 http://purl.obolibrary.org/obo/NCBITaxon_472369 # species:Vaccinium angustifolium Ait.
-http://purl.obolibrary.org/obo/NCBITaxon_5323 # species:Pleurotus eryngii (DC.) Quél., 1872
-http://purl.obolibrary.org/obo/NCBITaxon_234819 # species:Hypsizygus tessulatus (Bull.) Singer
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Pleurotus eryngii (DC.) Quél., 1872
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Hypsizygus tessulatus (Bull.) Singer
 http://purl.obolibrary.org/obo/NCBITaxon_4070 # family:Solanaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Lycopersicon esculentum var. esculentum P. Mill.
 http://purl.obolibrary.org/obo/NCBITaxon_4081 # species:Solanum lycopersicum L.
@@ -3018,16 +3018,16 @@ http://purl.obolibrary.org/obo/NCBITaxon_8045 # family:Gadidae Rafinesque, 1810
 http://purl.obolibrary.org/obo/NCBITaxon_185735 # species:Arctogadus glacialis (Peters, 1872)
 http://purl.obolibrary.org/obo/NCBITaxon_2822 # family:Rhodymeniaceae
 http://purl.obolibrary.org/obo/NCBITaxon_2821 # species:Palmaria
-http://purl.obolibrary.org/obo/NCBITaxon_42249 # species:Tuber magnatum Picco, 1788
-http://purl.obolibrary.org/obo/NCBITaxon_39416 # species:Tuber melanosporum Vittad., 1831
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Tuber magnatum Picco, 1788
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Tuber melanosporum Vittad., 1831
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Tuber sinense X.L. Mao 2000
-http://purl.obolibrary.org/obo/NCBITaxon_59557 # species:Tuber aestivum Vittad., 1831
-http://purl.obolibrary.org/obo/NCBITaxon_40487 # species:Pleurotus ostreatus (Jacq.) P. Kumm., 1871
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Tuber aestivum Vittad., 1831
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Pleurotus ostreatus (Jacq.) P. Kumm., 1871
 http://purl.obolibrary.org/obo/NCBITaxon_4932 # family:Saccharomycetaceae G. Winter, 1881
 http://purl.obolibrary.org/obo/NCBITaxon_4932 # species:Saccharomyces cerevisiae Hansen, 1883
 http://purl.obolibrary.org/obo/NCBITaxon_571644 # family:Saccharomycetaceae G. Winter, 1881
 http://purl.obolibrary.org/obo/NCBITaxon_571644 # species:Saccharomyces carlsbergensis Hansen, 1908
-http://purl.obolibrary.org/obo/NCBITaxon_571427 # species:Saccharomyces pastorianus Reess ex E.C. Hansen, 1904
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Saccharomyces pastorianus Reess ex E.C. Hansen, 1904
 http://purl.obolibrary.org/obo/NCBITaxon_8496 # family:Alligatoridae
 http://purl.obolibrary.org/obo/NCBITaxon_8496 # species:Alligator mississippiensis (Daudin, 1801)
 http://purl.obolibrary.org/obo/NCBITaxon_38654 # family:Alligatoridae
@@ -3698,30 +3698,30 @@ http://purl.obolibrary.org/obo/NCBITaxon_9005 # family:Phasianidae
 http://purl.obolibrary.org/obo/NCBITaxon_9101 # species:Meleagris ocellata Cuvier, 1820
 http://purl.obolibrary.org/obo/NCBITaxon_None # family:Aloeaceae
 http://purl.obolibrary.org/obo/NCBITaxon_117798 # species:Aloe ferox Miller
-http://purl.obolibrary.org/obo/NCBITaxon_64657 # species:Tremella fuciformis Berk., 1856
-http://purl.obolibrary.org/obo/NCBITaxon_64608 # species:Agrocybe cylindracea (DC.) Maire, 1938
-http://purl.obolibrary.org/obo/NCBITaxon_98346 # species:Pleurotus floridanus Singer, 1946
-http://purl.obolibrary.org/obo/NCBITaxon_61267 # species:Pholiota nameko (T. Itô) S. Ito & S. Imai, 1933
-http://purl.obolibrary.org/obo/NCBITaxon_91752 # species:Hericium erinaceus (Bull.) Pers., 1797
-http://purl.obolibrary.org/obo/NCBITaxon_5343 # species:Agaricus bitorquis (Quél.) Sacc., 1887
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Tremella fuciformis Berk., 1856
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Agrocybe cylindracea (DC.) Maire, 1938
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Pleurotus floridanus Singer, 1946
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Pholiota nameko (T. Itô) S. Ito & S. Imai, 1933
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Hericium erinaceus (Bull.) Pers., 1797
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Agaricus bitorquis (Quél.) Sacc., 1887
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Pleurotus sajor-caju (Fr.) Singer, 1951
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Phallus duplicatus Bosc, 1811
-http://purl.obolibrary.org/obo/NCBITaxon_937743 # species:Xerula radicata (Relhan) Dörfelt, 1975
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Xerula radicata (Relhan) Dörfelt, 1975
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Panellus serotinus (Pers.) Kühner, 1950
-http://purl.obolibrary.org/obo/NCBITaxon_56187 # species:Coprinus comatus (O.F. Müll.) Pers., 1797
-http://purl.obolibrary.org/obo/NCBITaxon_100756 # species:Hericium coralloides (Scop.) Pers., 1794
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Coprinus comatus (O.F. Müll.) Pers., 1797
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Hericium coralloides (Scop.) Pers., 1794
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Tremella mesenterica Retz., 1769
-http://purl.obolibrary.org/obo/NCBITaxon_139825 # species:Sparassis crispa (Wulfen) Fr., 1821
-http://purl.obolibrary.org/obo/NCBITaxon_71891 # species:Hypsizygus ulmarius (Bull.) Redhead, 1984
-http://purl.obolibrary.org/obo/NCBITaxon_5365 # species:Lentinus tigrinus (Bull.) Fr., 1825
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Sparassis crispa (Wulfen) Fr., 1821
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Hypsizygus ulmarius (Bull.) Redhead, 1984
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Lentinus tigrinus (Bull.) Fr., 1825
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Calocybe gambosa (Fr.) Singer, 1951
 http://purl.obolibrary.org/obo/NCBITaxon_4014 # family:Burseraceae
 http://purl.obolibrary.org/obo/NCBITaxon_613112 # species:Boswellia serrata Roxb. ex Colebr.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_72402 # species:Senna alexandrina P. Mill.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_346985 # species:Senna obtusifolia (L.) Irwin & Barneby
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_362788 # species:Senna tora (L.) Roxb.
 http://purl.obolibrary.org/obo/NCBITaxon_4210 # family:Asteraceae
 http://purl.obolibrary.org/obo/NCBITaxon_53749 # species:Echinacea pallida (Nutt.) Nutt.
@@ -3811,12 +3811,12 @@ http://purl.obolibrary.org/obo/NCBITaxon_3503 # family:Fagaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4144 # family:Oleaceae
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Jasminum officinale L.
-http://purl.obolibrary.org/obo/NCBITaxon_75324 # species:Cortinarius caperatus (Pers.) Fr., 1838
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Cortinarius caperatus (Pers.) Fr., 1838
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_109170 # genus:Pachyrhizus L.C. Rich. ex DC.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_205481 # species:Pachyrhizus tuberosus (Lam.) Sprengel
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_205478 # species:Pachyrhizus ahipa (Wedd.) L. Parodi
 http://purl.obolibrary.org/obo/NCBITaxon_3700 # family:Brassicaceae
 http://purl.obolibrary.org/obo/NCBITaxon_90675 # species:Camelina sativa (L.) Crantz
@@ -4008,7 +4008,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_9850 # family:Cervidae Goldfuss, 1820
 http://purl.obolibrary.org/obo/NCBITaxon_9860 # species:Cervus elaphus Linnaeus, 1758
 http://purl.obolibrary.org/obo/NCBITaxon_23672 # family:Sapindaceae
 http://purl.obolibrary.org/obo/NCBITaxon_83375 # species:Aesculus turbinata Blume
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3908 # species:Vicia sativa L.
 http://purl.obolibrary.org/obo/NCBITaxon_9895 # family:Bovidae Gray, 1821
 http://purl.obolibrary.org/obo/NCBITaxon_27592 # subfamily:Bovinae Gray, 1821
@@ -4082,7 +4082,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_371864 # species:Melanitta fusca (Linna
 http://purl.obolibrary.org/obo/NCBITaxon_30950 # family:Umbridae
 http://purl.obolibrary.org/obo/NCBITaxon_30950 # family:Umbridae
 http://purl.obolibrary.org/obo/NCBITaxon_75939 # species:Dallia pectoralis Bean, 1880
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_57576 # species:Hedysarum alpinum L.
 http://purl.obolibrary.org/obo/NCBITaxon_6647 # family:Octopodidae D'Orbigny, 1839-1842
 http://purl.obolibrary.org/obo/NCBITaxon_267067 # species:Enteroctopus dofleini (Wülker, 1910)
@@ -4100,7 +4100,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_30459 # family:Strigidae
 http://purl.obolibrary.org/obo/NCBITaxon_56268 # species:Bubo virginianus (Gmelin, 1788)
 http://purl.obolibrary.org/obo/NCBITaxon_3593 # family:Cactaceae
 http://purl.obolibrary.org/obo/NCBITaxon_307728 # species:Opuntia polyacantha Haw.
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_458363 # species:Pediomelum esculentum (Pursh) Rydb.
 http://purl.obolibrary.org/obo/NCBITaxon_3615 # family:Polygonaceae
 http://purl.obolibrary.org/obo/NCBITaxon_3615 # family:Polygonaceae
@@ -4154,7 +4154,7 @@ http://purl.obolibrary.org/obo/NCBITaxon_4050 # family:Araliaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4054 # species:Panax ginseng C.A. Mey.
 http://purl.obolibrary.org/obo/NCBITaxon_4050 # family:Araliaceae
 http://purl.obolibrary.org/obo/NCBITaxon_44685 # species:Panax japonicus (T. Nees) C.A. Mey.
-http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_4014 # family:Burseraceae
 http://purl.obolibrary.org/obo/NCBITaxon_300208 # species:Canarium album (Lour.) Rausch.
 http://purl.obolibrary.org/obo/NCBITaxon_233880 # family:Phyllanthaceae
@@ -4162,27 +4162,27 @@ http://purl.obolibrary.org/obo/NCBITaxon_296036 # species:Phyllanthus emblica L.
 http://purl.obolibrary.org/obo/NCBITaxon_34531 # family:Sepiolidae Leach, 1817
 http://purl.obolibrary.org/obo/NCBITaxon_70193 # species:Sepiola atlantica D'Orbigny, 1839-1842
 http://purl.obolibrary.org/obo/NCBITaxon_34531 # family:Sepiolidae Leach, 1817
-http://purl.obolibrary.org/obo/NCBITaxon_234819 # species:Hypsizygus tessulatus (Bull.) Singer
-http://purl.obolibrary.org/obo/NCBITaxon_47721 # species:Lyophyllum shimeji (Kawam.) Hongo
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Hypsizygus tessulatus (Bull.) Singer
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Lyophyllum shimeji (Kawam.) Hongo
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Agaricus arvensis Schaeff., 1774
-http://purl.obolibrary.org/obo/NCBITaxon_139090 # species:Albatrellus ovinus (Schaeff.) Kotl. & Pouzar 1957
-http://purl.obolibrary.org/obo/NCBITaxon_67695 # species:Amanita caesarea (Scop.) Pers. 1801
-http://purl.obolibrary.org/obo/NCBITaxon_57192 # species:Boletus pinophilus Pilát & Dermek 1973
-http://purl.obolibrary.org/obo/NCBITaxon_1190703 # species:Boletus reticulatus Schaeff. 1774
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Albatrellus ovinus (Schaeff.) Kotl. & Pouzar 1957
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Amanita caesarea (Scop.) Pers. 1801
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Boletus pinophilus Pilát & Dermek 1973
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Boletus reticulatus Schaeff. 1774
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Cantharellus pallens Pilát 1959
-http://purl.obolibrary.org/obo/NCBITaxon_94199 # species:Craterellus cornucopioides (L.) Pers. 1825
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Craterellus cornucopioides (L.) Pers. 1825
 http://purl.obolibrary.org/obo/NCBITaxon_None # species:Craterellus lutescens (Fr.) Fr. 1838
-http://purl.obolibrary.org/obo/NCBITaxon_57200 # species:Craterellus tubaeformis (Fr.) Quél. 1888
-http://purl.obolibrary.org/obo/NCBITaxon_3803 # family:Fabaceae
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Craterellus tubaeformis (Fr.) Quél. 1888
+http://purl.obolibrary.org/obo/NCBITaxon_None # family:Fabaceae
 http://purl.obolibrary.org/obo/NCBITaxon_480971 # species:Caryocar brasiliense Cambess.
-http://purl.obolibrary.org/obo/NCBITaxon_91752 # species:Hericium erinaceus (Bull.) Pers. 1797
-http://purl.obolibrary.org/obo/NCBITaxon_68759 # species:Hydnum repandum L. 1753
-http://purl.obolibrary.org/obo/NCBITaxon_139363 # species:Hydnum rufescens Pers. 1800
-http://purl.obolibrary.org/obo/NCBITaxon_56183 # species:Macrolepiota procera (Scop.) Singer 1948
-http://purl.obolibrary.org/obo/NCBITaxon_39407 # species:Morchella esculenta (L.) Pers 1801
-http://purl.obolibrary.org/obo/NCBITaxon_98342 # species:Pleurotus citrinopileatus Singer 1942
-http://purl.obolibrary.org/obo/NCBITaxon_34470 # species:Pleurotus djamor (Rumph. ex Fr.) Boedijn 1959
-http://purl.obolibrary.org/obo/NCBITaxon_139825 # species:Sparassis crispa (Wulfen) Fr. 1821
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Hericium erinaceus (Bull.) Pers. 1797
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Hydnum repandum L. 1753
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Hydnum rufescens Pers. 1800
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Macrolepiota procera (Scop.) Singer 1948
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Morchella esculenta (L.) Pers 1801
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Pleurotus citrinopileatus Singer 1942
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Pleurotus djamor (Rumph. ex Fr.) Boedijn 1959
+http://purl.obolibrary.org/obo/NCBITaxon_None # species:Sparassis crispa (Wulfen) Fr. 1821
 http://purl.obolibrary.org/obo/NCBITaxon_8793 # family:Rheidae
 http://purl.obolibrary.org/obo/NCBITaxon_8797 # species:Rhea americana (Linnaeus, 1758)
 http://purl.obolibrary.org/obo/NCBITaxon_8793 # family:Rheidae
