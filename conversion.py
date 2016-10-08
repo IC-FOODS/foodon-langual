@@ -492,6 +492,22 @@ class Langual(object):
                 </owl:AnnotationProperty>
 
 
+
+                <!-- http://purl.obolibrary.org/obo/RO_0000052 -->
+
+                <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000052">
+                    <rdfs:label xml:lang="en">inheres in</rdfs:label> 
+                </owl:ObjectProperty>  
+
+                <!-- http://purl.obolibrary.org/obo/RO_0000053 -->
+
+                <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000053">
+                    <owl:inverseOf rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
+                    <rdfs:label xml:lang="en">is bearer of</rdfs:label>
+                </owl:ObjectProperty>
+    
+
+
                 <owl:NamedIndividual rdf:about="&obo;IAO_0000428">
                     <rdfs:label xml:lang="en">requires discussion</rdfs:label>
                     <obo:IAO_0000115 xml:lang="en">A term that is metadata complete, has been reviewed, and problems have been identified that require discussion before release. Such a term requires editor note(s) to identify the outstanding issues.</obo:IAO_0000115>
@@ -533,6 +549,7 @@ class Langual(object):
                 </owl:Class>
 
         """
+        genid = 1 # counter for anonymous node ids.
 
         for entityid in self.database['index']:
             entity = self.database['index'][entityid]
@@ -633,14 +650,39 @@ class Langual(object):
                             synonymTag = 'hasBroadSynonym'
                             rankTag = '<taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%s" />' % rank
 
-                        # Let NCBITaxon reference replace all the others
+                        # If an NCBITaxon reference exists, let it replace all the others
                         if 'NCBITaxon' in entity['taxon'][taxon_rank_name] and entity['taxon'][taxon_rank_name]['NCBITaxon']['import']==True:
                             dbid = entity['taxon'][taxon_rank_name]['NCBITaxon']['value']
-                            # PROBABLY WANT TO CHANGE THIS INTO A TBOX RELATION - TO ENABLE INFERENCE OF COMPLEMENTARY RELATION
-                            owl_format += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
-
-                            if len(rankTag):
+                            
+                            if synonymTag == 'hasNarrowSynonym':
+                                # Here we say the food entity inheres in a taxonomic entity
+                                owl_format += '\t<rdfs:subClassOf rdf:nodeID="genid%s"/>\n' % genid
+                                # ... rdf:nodeID="genid%(genid)s">   rdf:about="%(ontology_id)s">
                                 tailings += """
+                                    <rdf:Description rdf:nodeID="genid%(genid)s">
+                                        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+                                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
+                                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%(dbid)s"/>
+                                    </rdf:Description>
+
+                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_%(dbid)s">
+                                        <rdfs:subClassOf rdf:nodeID="genid%(genid2)s"/>
+                                    </rdf:Description>
+
+                                    <rdf:Description rdf:nodeID="genid%(genid2)s">
+                                        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+                                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
+                                        <owl:someValuesFrom rdf:resource="%(ontology_id)s"/>
+                                    </rdf:Description>
+
+                                    """ % {'genid': genid, 'dbid': dbid, 'genid2': (genid+1), 'ontology_id': ontology_id}
+                                genid += 2
+
+                            else:
+                                owl_format += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
+
+                                if len(rankTag):
+                                    tailings += """
     <owl:Axiom>
         <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
         <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
@@ -846,7 +888,7 @@ class Langual(object):
 
                             if taxon_db == 'ITIS' or taxon_db == 'INDEX FUNGORUM':
                                 # See if we should do a lookup
-                                if 1==0 and 'NCBITaxon' in entity['taxon'][taxon_name]: # Already done!
+                                if 'NCBITaxon' in entity['taxon'][taxon_name]: # Already done!
                                     pass
 
                                 else:
