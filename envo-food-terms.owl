@@ -118,14 +118,14 @@
 
     <!-- http://purl.obolibrary.org/obo/BFO_0000051 -->
 
-    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/BFO_0000051"/>
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/BFO_0000051">
         <rdfs:label xml:lang="en">has part</rdfs:label> 
    </owl:ObjectProperty>
 
 
     <!-- http://purl.obolibrary.org/obo/RO_0000052 -->
 
-    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000052"/>
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000052">
         <rdfs:label xml:lang="en">inheres in</rdfs:label> 
    </owl:ObjectProperty>  
     
