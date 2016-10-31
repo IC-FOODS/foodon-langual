@@ -1,11 +1,11 @@
-This project maintains an OWL ontology file conversion for the Langual.org XML thesaurus
-Food Source facet data.  The plan is to enable Langual's thesaurus file to be updated over time,
+This project maintains an OWL ontology file conversion for the LanguaL.org XML thesaurus
+Food Source facet data.  The plan is to enable LanguaL(tm)'s thesaurus file to be updated over time,
 and the owl file to be updated as needed.  
 
 ##To view
 
 Briefly, the main file to look at is LANGUAL_import.owl (in Protege or another OWL ontology editor); 
-it will import the envo-food-terms.owl and NCBITaxon_import.owl files too.  Use Stanford's free [Protege](http://protege.stanford.edu) ontology editor to load the main file, and browse the Langual hierarchy under the "Classes" tab.
+it should import the envo-food-terms.owl and NCBITaxon_import.owl files too (At least the NCBITaxon_import.owl file needs to be downloaded too).  Use Stanford's free [Protege](http://protege.stanford.edu) ontology editor to load the main file, and browse the Langual hierarchy under the "Classes" tab. 
 
 ##To regenerate the files
 
