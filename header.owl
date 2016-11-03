@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+
+    <!DOCTYPE rdf:RDF [
+        <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+        <!ENTITY obo "http://purl.obolibrary.org/obo/" >
+        <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+        <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+        <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+        <!ENTITY oboInOwl "http://www.geneontology.org/formats/oboInOwl#" >  
+        <!ENTITY taxon "http://purl.obolibrary.org/obo/NCBITaxon#" >     
+    ]>
+
+    <rdf:RDF xmlns="http://purl.obolibrary.org/obo/FOODON/imports/LANGUAL_import.owl#"
+        xml:base="http://purl.obolibrary.org/obo/FOODON/imports/LANGUAL_import.owl"
+        xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns:obo="http://purl.obolibrary.org/obo/"
+        xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+        xmlns:owl="http://www.w3.org/2002/07/owl#"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:taxon="http://purl.obolibrary.org/obo/NCBITaxon#"
+        xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        >
+
+        <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/FOODON/imports/LANGUAL_import.owl">
+            <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/NCBITaxon_import.owl"/>
+            <owl:imports rdf:resource="http://purl.obolibrary.org/obo/envo-food-terms.owl"/>
+
+            <dc:contributor xml:lang="en">Damion Dooley</dc:contributor>
+        </owl:Ontology>
+
+        <owl:AnnotationProperty rdf:about="&rdfs;label">
+            <rdfs:label xml:lang="en">label</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&obo;IAO_0000115">
+            <rdfs:label xml:lang="en">definition</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&obo;IAO_0000412">
+            <rdfs:label xml:lang="en">imported from</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&obo;IAO_0000114">
+            <rdfs:label xml:lang="en">has curation status</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&obo;IAO_0000119">
+            <rdfs:label xml:lang="en">definition source</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&oboInOwl;hasDbXref">
+            <rdfs:label xml:lang="en">database cross reference</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&oboInOwl;hasSynonym">
+            <rdfs:label xml:lang="en">has synonym</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&oboInOwl;hasBroadSynonym">
+            <rdfs:label xml:lang="en">has broad synonym</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&oboInOwl;hasNarrowSynonym">
+            <rdfs:label xml:lang="en">has narrow synonym</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&taxon;_taxonomic_rank">
+            <rdfs:label xml:lang="en">taxanomic rank</rdfs:label>
+        </owl:AnnotationProperty>
+        <owl:AnnotationProperty rdf:about="&rdf;value">
+            <rdfs:label xml:lang="en">has value</rdfs:label>
+        </owl:AnnotationProperty>
+
+        <owl:AnnotationProperty rdf:about="&obo;IAO_0000114">
+            <rdfs:label xml:lang="en">has curation status</rdfs:label>
+        </owl:AnnotationProperty>
+
+
+        <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000087">
+            <rdfs:label xml:lang="en">has role</rdfs:label>
+        </owl:ObjectProperty>
+
+
+        <owl:NamedIndividual rdf:about="&obo;IAO_0000428">
+            <rdfs:label xml:lang="en">requires discussion</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">A term that is metadata complete, has been reviewed, and problems have been identified that require discussion before release. Such a term requires editor note(s) to identify the outstanding issues.</obo:IAO_0000115>
+        </owl:NamedIndividual>
+
+        <owl:NamedIndividual rdf:about="&obo;IAO_0000120">
+            <rdfs:label xml:lang="en">metadata complete</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">Class has all its metadata, but is either not guaranteed to be in its final location in the asserted IS_A hierarchy or refers to another class that is not complete.</obo:IAO_0000115>
+        </owl:NamedIndividual>
+        
+        <owl:NamedIndividual rdf:about="&obo;IAO_0000121">
+            <rdfs:label xml:lang="en">organizational term</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">term created to ease viewing/sort terms for development purpose, and will not be included in a release</obo:IAO_0000115>
+        </owl:NamedIndividual>
+        
+        <owl:NamedIndividual rdf:about="&obo;IAO_0000122">
+            <rdfs:label xml:lang="en">ready for release</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">Class has undergone final review, is ready for use, and will be included in the next release. Any class lacking &quot;ready_for_release&quot; should be considered likely to change place in hierarchy, have its definition refined, or be obsoleted in the next release.  Those classes deemed &quot;ready_for_release&quot; will also derived from a chain of ancestor classes that are also &quot;ready_for_release.&quot;</obo:IAO_0000115>
+        </owl:NamedIndividual>
+        
+        <owl:NamedIndividual rdf:about="&obo;IAO_0000123">
+            <rdfs:label xml:lang="en">metadata incomplete</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">Class is being worked on; however, the metadata (including definition) are not complete or sufficiently clear to the branch editors.</obo:IAO_0000115>
+        </owl:NamedIndividual>
+        
+        <owl:NamedIndividual rdf:about="&obo;IAO_0000124">
+            <rdfs:label xml:lang="en">uncurated</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">Nothing done yet beyond assigning a unique class ID and proposing a preferred term.</obo:IAO_0000115>
+        </owl:NamedIndividual>
+        
+        <owl:NamedIndividual rdf:about="&obo;IAO_0000125">
+            <rdfs:label xml:lang="en">pending final vetting</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">All definitions, placement in the asserted IS_A hierarchy and required minimal metadata are complete. The class is awaiting a final review by someone other than the term editor.</obo:IAO_0000115>
+        </owl:NamedIndividual>
+        
+
+        <owl:Class rdf:about="&obo;OBI_0100026">
+            <rdfs:label xml:lang="en">organism</rdfs:label>
+        </owl:Class>
+
+
+
+        <!-- http://purl.obolibrary.org/obo/CHEBI_33290 -->
+
+        <owl:Class rdf:about="&obo;CHEBI_33290">
+            <rdfs:subClassOf rdf:resource="&obo;CHEBI_52211"/>
+            <obo:IAO_0000115 xml:lang="en">Any material that can be ingested by an organism.</obo:IAO_0000115>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">food</rdfs:label>
+        </owl:Class>
+                
+
+        <!-- http://purl.obolibrary.org/obo/CHEBI_50906 -->
+
+        <owl:Class rdf:about="&obo;CHEBI_50906">
+            <obo:IAO_0000115 xml:lang="en">A role is particular behaviour which a material entity may exhibit.</obo:IAO_0000115>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">role</rdfs:label>
+        </owl:Class>
+
+        <!-- http://purl.obolibrary.org/obo/CHEBI_24432 -->
+
+        <owl:Class rdf:about="&obo;CHEBI_24432">
+            <rdfs:subClassOf rdf:resource="&obo;CHEBI_50906"/>
+            <obo:IAO_0000115 xml:lang="en">A role played by the molecular entity or part thereof within a biological context.</obo:IAO_0000115>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">biological role</rdfs:label>
+        </owl:Class>
+        <!-- http://purl.obolibrary.org/obo/CHEBI_52211 -->
+
+        <owl:Class rdf:about="&obo;CHEBI_52211">
+            <rdfs:subClassOf rdf:resource="&obo;CHEBI_24432"/>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">physiological role</rdfs:label>
+        </owl:Class>
+
+        <owl:Class rdf:about="&obo;CHEBI_78295">
+            <rdfs:subClassOf rdf:resource="&obo;CHEBI_52211"/>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">food component</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">Any substance that is distributed in foodstuffs. It includes materials derived from plants or animals, such as vitamins or minerals, as well as environmental contaminants.</obo:IAO_0000115>
+        </owl:Class>
+
+        <owl:Class rdf:about="&obo;CHEBI_64047">
+            <rdfs:subClassOf rdf:resource="&obo;CHEBI_78295"/>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">food additive</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">Any substance which is added to food to preserve or enhance its flavour and/or appearance.
+            </obo:IAO_0000115>
+        </owl:Class>
+
+
+
+        <owl:Class rdf:about="&obo;CHEBI_33284">
+            <rdfs:subClassOf rdf:resource="&obo;CHEBI_78295"/>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">nutrient</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">A nutrient is a chemical element needed by all life forms.</obo:IAO_0000115>
+        </owl:Class>
+
+
+
+        <owl:Class rdf:about="&obo;CHEBI_33229">
+            <rdfs:subClassOf rdf:resource="&obo;CHEBI_78295"/>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">vitamin</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">An organic substance that is distributed in foodstuffs, is distinct from the main organic components of food (protein, carbohydrate and fat) and is needed for the normal nutrition of the organism in question. The term "vitamines" (from vita + amines) was coined in 1912 by Casimir Funk, who believed that these compounds were amines.</obo:IAO_0000115>
+        </owl:Class>
+
+
+
+        <owl:Class rdf:about="&obo;CHEBI_78299">
+            <rdfs:subClassOf rdf:resource="&obo;CHEBI_78295"/>
+            <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+            <rdfs:label xml:lang="en">environmental food contaminant</rdfs:label>
+            <obo:IAO_0000115 xml:lang="en">Any unwanted chemical in food. The term includes agrochemicals and industrial chemicals that may contaminate foodstuffs during their production, transportation or storage.
+            </obo:IAO_0000115>
+        </owl:Class>
+

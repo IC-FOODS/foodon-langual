@@ -194,7 +194,13 @@ class Langual(object):
                 if scope_note and 'DO NOT USE for new indexing' in scope_note:
                     entity['status'] = 'deprecated'
 
-            # Pre-existing entity status controls whether item revisions are considered.  We skip doing updates on archaic items.
+                # Current strategy for handling the NOT KNOWN and OTHER codes is to mark them depreciated
+                # We can add logical equivalency to more generic NOT KNOWN and OTHER selections later...
+                oldLabel = child.find('TERM').text
+                if oldLabel[-10:] == ' NOT KNOWN' or oldLabel[-6:] == ' OTHER':
+                    entity['status'] = 'deprecated'
+
+            # Pre-existing entity status controls whether item revisions are considered.  We skip doing updates on "ignore" items, but depreciated items are still included.
             if entity['status'] == 'ignore': 
                 continue
 
@@ -208,7 +214,7 @@ class Langual(object):
             
             self.ontology_index[ontology_id] = entity['database_id']
 
-            # NOTE: This assumes ENGLISH; will have to redesign for multi-lingual.
+            # NOTE: LanguaL main file definitions are in english. multi-lingual import add-on is possibility later.
             label = self.load_attribute(entity, child, 'TERM', 'label', 'en')
             comment = child.find('SN').text
             if comment and len(comment) > 0: # not sure why this isn't getting filtered out below.
@@ -420,135 +426,9 @@ class Langual(object):
         Generate LANGUAL_import.owl ontology file.
 
         """
+        with (open('./header.owl', 'r')) as input_handle:
+            owl_output = input_handle.read()
 
-        owl_format = """<?xml version="1.0"?>
-
-            <!DOCTYPE rdf:RDF [
-                <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-                <!ENTITY obo "http://purl.obolibrary.org/obo/" >
-                <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
-                <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
-                <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-                <!ENTITY oboInOwl "http://www.geneontology.org/formats/oboInOwl#" >  
-                <!ENTITY taxon "http://purl.obolibrary.org/obo/NCBITaxon#" >     
-            ]>
-
-            <rdf:RDF xmlns="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl#"
-                xml:base="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl"
-                xmlns:xml="http://www.w3.org/XML/1998/namespace"
-                xmlns:obo="http://purl.obolibrary.org/obo/"
-                xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-                xmlns:owl="http://www.w3.org/2002/07/owl#"
-                xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                xmlns:taxon="http://purl.obolibrary.org/obo/NCBITaxon#"
-                xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
-                xmlns:dc="http://purl.org/dc/elements/1.1/"
-                >
-
-                <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/GENEPIO/imports/LANGUAL_import.owl">
-                    <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/NCBITaxon_import.owl"/>
-                    <owl:imports rdf:resource="http://purl.obolibrary.org/obo/envo-food-terms.owl"/>
-
-                    <dc:contributor xml:lang="en">Damion Dooley</dc:contributor>
-                </owl:Ontology>
-
-                <owl:AnnotationProperty rdf:about="&rdfs;label">
-                    <rdfs:label xml:lang="en">label</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&obo;IAO_0000115">
-                    <rdfs:label xml:lang="en">definition</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&obo;IAO_0000412">
-                    <rdfs:label xml:lang="en">imported from</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&obo;IAO_0000114">
-                    <rdfs:label xml:lang="en">has curation status</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&obo;IAO_0000119">
-                    <rdfs:label xml:lang="en">definition source</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&oboInOwl;hasDbXref">
-                    <rdfs:label xml:lang="en">database cross reference</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&oboInOwl;hasSynonym">
-                    <rdfs:label xml:lang="en">has synonym</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&oboInOwl;hasBroadSynonym">
-                    <rdfs:label xml:lang="en">has broad synonym</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&oboInOwl;hasNarrowSynonym">
-                    <rdfs:label xml:lang="en">has narrow synonym</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&taxon;_taxonomic_rank">
-                    <rdfs:label xml:lang="en">taxanomic rank</rdfs:label>
-                </owl:AnnotationProperty>
-                <owl:AnnotationProperty rdf:about="&rdf;value">
-                    <rdfs:label xml:lang="en">has value</rdfs:label>
-                </owl:AnnotationProperty>
-
-                <owl:AnnotationProperty rdf:about="&obo;IAO_0000114">
-                    <rdfs:label xml:lang="en">has curation status</rdfs:label>
-                </owl:AnnotationProperty>
-
-
-
-                <!-- http://purl.obolibrary.org/obo/RO_0000052 -->
-
-                <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000052">
-                    <rdfs:label xml:lang="en">inheres in</rdfs:label> 
-                </owl:ObjectProperty>  
-
-                <!-- http://purl.obolibrary.org/obo/RO_0000053 -->
-
-                <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000053">
-                    <owl:inverseOf rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
-                    <rdfs:label xml:lang="en">is bearer of</rdfs:label>
-                </owl:ObjectProperty>
-    
-
-
-                <owl:NamedIndividual rdf:about="&obo;IAO_0000428">
-                    <rdfs:label xml:lang="en">requires discussion</rdfs:label>
-                    <obo:IAO_0000115 xml:lang="en">A term that is metadata complete, has been reviewed, and problems have been identified that require discussion before release. Such a term requires editor note(s) to identify the outstanding issues.</obo:IAO_0000115>
-                </owl:NamedIndividual>
-
-                <owl:NamedIndividual rdf:about="&obo;IAO_0000120">
-                    <rdfs:label xml:lang="en">metadata complete</rdfs:label>
-                    <obo:IAO_0000115 xml:lang="en">Class has all its metadata, but is either not guaranteed to be in its final location in the asserted IS_A hierarchy or refers to another class that is not complete.</obo:IAO_0000115>
-                </owl:NamedIndividual>
-                
-                <owl:NamedIndividual rdf:about="&obo;IAO_0000121">
-                    <rdfs:label xml:lang="en">organizational term</rdfs:label>
-                    <obo:IAO_0000115 xml:lang="en">term created to ease viewing/sort terms for development purpose, and will not be included in a release</obo:IAO_0000115>
-                </owl:NamedIndividual>
-                
-                <owl:NamedIndividual rdf:about="&obo;IAO_0000122">
-                    <rdfs:label xml:lang="en">ready for release</rdfs:label>
-                    <obo:IAO_0000115 xml:lang="en">Class has undergone final review, is ready for use, and will be included in the next release. Any class lacking &quot;ready_for_release&quot; should be considered likely to change place in hierarchy, have its definition refined, or be obsoleted in the next release.  Those classes deemed &quot;ready_for_release&quot; will also derived from a chain of ancestor classes that are also &quot;ready_for_release.&quot;</obo:IAO_0000115>
-                </owl:NamedIndividual>
-                
-                <owl:NamedIndividual rdf:about="&obo;IAO_0000123">
-                    <rdfs:label xml:lang="en">metadata incomplete</rdfs:label>
-                    <obo:IAO_0000115 xml:lang="en">Class is being worked on; however, the metadata (including definition) are not complete or sufficiently clear to the branch editors.</obo:IAO_0000115>
-                </owl:NamedIndividual>
-                
-                <owl:NamedIndividual rdf:about="&obo;IAO_0000124">
-                    <rdfs:label xml:lang="en">uncurated</rdfs:label>
-                    <obo:IAO_0000115 xml:lang="en">Nothing done yet beyond assigning a unique class ID and proposing a preferred term.</obo:IAO_0000115>
-                </owl:NamedIndividual>
-                
-                <owl:NamedIndividual rdf:about="&obo;IAO_0000125">
-                    <rdfs:label xml:lang="en">pending final vetting</rdfs:label>
-                    <obo:IAO_0000115 xml:lang="en">All definitions, placement in the asserted IS_A hierarchy and required minimal metadata are complete. The class is awaiting a final review by someone other than the term editor.</obo:IAO_0000115>
-                </owl:NamedIndividual>
-                
-
-                <owl:Class rdf:about="&obo;OBI_0100026">
-                    <rdfs:label xml:lang="en">organism</rdfs:label>
-                </owl:Class>
-
-        """
         genid = 1 # counter for anonymous node ids.
 
         for entityid in self.database['index']:
@@ -562,49 +442,51 @@ class Langual(object):
                 # For now accept only first parent as is_a parent
                 label = entity['label']['value'].replace('>','&gt;').replace('<','&lt;').lower()
                 ontology_id = '&obo;' + entity['ontology_id']
-                owl_format += '\n\n<owl:Class rdf:about="%s">\n' % ontology_id
-                owl_format += '\t<rdfs:label %(language)s>%(label)s</rdfs:label>\n' % { 
+
+                # BEGIN <owl:Class> 
+                owl_class_footer = '' # This will hold axioms that have to follow outside <owl:Class>...</owl:Class>
+
+                owl_output += '\n\n<owl:Class rdf:about="%s">\n' % ontology_id
+                owl_output += '\t<rdfs:label %(language)s>%(label)s</rdfs:label>\n' % { 
                     'label': label, 
                     'language': self.get_language_tag_owl(entity['label']) 
                 }
+                # LANGUAL IMPORT ANNOTATION
+                owl_output += "\t<obo:IAO_0000412>http://langual.org</obo:IAO_0000412>\n"
 
                 for item in entity['is_a']:
                     # If parent isn't imported (even as an obsolete item), don't make an is_a for it.
-                    # is_a entries can be ABOUT non LanguaL ids.
+                    # (is_a entries can be ABOUT non LanguaL ids).
                     if self.term_import(entity['is_a'], item): 
-                        parent_id = '&obo;' + item
-                        owl_format += '\t<rdfs:subClassOf rdf:resource="%s"/>\n' % parent_id
-                        
-
-                # All terms imported from LanguaL
-                owl_format += "\t<obo:IAO_0000412>http://langual.org</obo:IAO_0000412>\n"
+                        owl_output += '\t<rdfs:subClassOf rdf:resource="&obo;%s"/>\n' % item
 
                 if self.term_import(entity, 'definition'):
                     definition = entity['definition']['value']  #.replace('"',r'\"').replace('\n',r'\n')
-                    owl_format += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition.replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;')
+                    owl_output += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition.replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;')
               
                 if self.term_import(entity, 'definition_source'):
-                    owl_format += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']['value']
+                    owl_output += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']['value']
 
+                # CURATION STATUS
                 if entity['status'] == 'deprecated':
-                    owl_format += '\t<owl:deprecated rdf:datatype="&xsd;boolean">true</owl:deprecated>\n'
-                    owl_format += '\t<obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>\n' #ready for release
-
-                if entity['status'] == 'draft': # Anything marked as 'draft' status is written as 'requires discussion'
-                    owl_format += '\t<obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000428"/>\n'
+                    owl_output += '\t<owl:deprecated rdf:datatype="&xsd;boolean">true</owl:deprecated>\n'
+                    # ready for release
+                    owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000122"/>\n' 
+                elif entity['status'] == 'draft': # Anything marked as 'draft' status is written as 'requires discussion'
+                    owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000428"/>\n'
 
                 if self.term_import(entity, 'comment'):
-                    owl_format += '\t<rdfs:comment xml:lang="en">LanguaL curator\'s note: %s</rdfs:comment>\n' % entity['comment']['value']
+                    owl_output += '\t<rdfs:comment xml:lang="en">LanguaL curator\'s note: %s</rdfs:comment>\n' % entity['comment']['value']
 
                 if 'replaced_by' in entity: #AnnotationAssertion(<obo:IAO_0100001> <obo:CL_0007015> <obo:CLO_0000018>)
                     replacement = '&obo;' + self.database['index'][entity['replaced_by']]['ontology_id']
-                    owl_format += '\t<obo:IAO_0100001 rdf:resource="%s"/>\n' % replacement
+                    owl_output += '\t<obo:IAO_0100001 rdf:resource="%s"/>\n' % replacement
 
                 if 'synonyms' in entity:
                     for item in entity['synonyms']:
                         if self.term_import(entity['synonyms'], item):
                             
-                            owl_format += '\t<oboInOwl:has%(scope)sSynonym %(language)s>%(phrase)s</oboInOwl:has%(scope)sSynonym>\n' % {
+                            owl_output += '\t<oboInOwl:has%(scope)sSynonym %(language)s>%(phrase)s</oboInOwl:has%(scope)sSynonym>\n' % {
                                 'scope': entity['synonyms'][item]['value'].title(), # Exact / Narrow / Broad 
                                 'language': self.get_language_tag_owl(entity['synonyms'][item]),
                                 'phrase': item.lower() 
@@ -614,26 +496,9 @@ class Langual(object):
                     for item in entity['xrefs']:
                         if self.term_import(entity['xrefs'], item):
                             if item == 'EOL':
-                                owl_format += '\t<oboInOwl:hasDbXref>http://eol.org/pages/%s</oboInOwl:hasDbXref>\n' % entity['xrefs'][item]['value']
+                                owl_output += '\t<oboInOwl:hasDbXref>http://eol.org/pages/%s</oboInOwl:hasDbXref>\n' % entity['xrefs'][item]['value']
                             else:
-                                owl_format += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
-
-
-                tailings = '' # This will hold axioms that have to follow outside <Class>...</Class>
-                '''
-                TAXONOMY handled as hasNarrowSynonym for or hasBroadSynonym, with annotations on that off to various taxonomy databases.
-                NEAR FUTURE: An ITIS taxonomy reference will allow corresponding NCBITaxon term import by way of EOL.org.
-                Anything without a latin name remains a hasDbXref
-                "taxon": {
-                    "family:Terapontidae": {
-                        "ITIS": {
-                            "import": true,
-                            "changed": true,
-                            "locked": false,
-                            "value": "650201"
-                        }
-                    },
-                '''
+                                owl_output += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
 
                 if 'taxon' in entity:
                     for taxon_rank_name in entity['taxon']:
@@ -651,75 +516,121 @@ class Langual(object):
                             rankTag = '<taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%s" />' % rank
 
                         # If an NCBITaxon reference exists, let it replace all the others
-                        if 'NCBITaxon' in entity['taxon'][taxon_rank_name] and entity['taxon'][taxon_rank_name]['NCBITaxon']['import']==True:
+                        if 'NCBITaxon' in entity['taxon'][taxon_rank_name] and entity['taxon'][taxon_rank_name]['NCBITaxon']['import'] == True:
                             dbid = entity['taxon'][taxon_rank_name]['NCBITaxon']['value']
                             
                             if synonymTag == 'hasNarrowSynonym':
-                                # Here we say the food entity inheres in a taxonomic entity
-                                owl_format += '\t<rdfs:subClassOf rdf:nodeID="genid%s"/>\n' % genid
-                                # ... rdf:nodeID="genid%(genid)s">   rdf:about="%(ontology_id)s">
-                                tailings += """
-                                    <rdf:Description rdf:nodeID="genid%(genid)s">
-                                        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
-                                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
-                                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%(dbid)s"/>
-                                    </rdf:Description>
-
-                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_%(dbid)s">
-                                        <rdfs:subClassOf rdf:nodeID="genid%(genid2)s"/>
-                                    </rdf:Description>
-
-                                    <rdf:Description rdf:nodeID="genid%(genid2)s">
-                                        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
-                                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
-                                        <owl:someValuesFrom rdf:resource="%(ontology_id)s"/>
-                                    </rdf:Description>
-
-                                    """ % {'genid': genid, 'dbid': dbid, 'genid2': (genid+1), 'ontology_id': ontology_id}
-                                genid += 2
+                                owl_output += self.item_food_role(dbid)
 
                             else:
-                                owl_format += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
+                                # FUTURE: CHANGE THIS TO SOME OTHER RELATION?
+                                # Exact or (usually) BroadSynonym:
+                                owl_output += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
 
+                                # Adds NCBITaxon rank annotation to above:
                                 if len(rankTag):
-                                    tailings += """
-    <owl:Axiom>
-        <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
-        <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
-        <owl:annotatedTarget rdf:resource="&obo;NCBITaxon_%(dbid)s" />
-        %(rankTag)s
-    </owl:Axiom>'
-    """ % {'ontology_id': ontology_id, 'rankTag':rankTag, 'dbid': dbid, 'synonymTag':synonymTag }
-
+                                    owl_class_footer += self.item_taxonomy_annotation(ontology_id, synonymTag, dbid, rankTag)
 
                         else:
 
-                            owl_format += '\t<oboInOwl:%(synonymTag)s>%(latin_name)s</oboInOwl:%(synonymTag)s>\n' % {'synonymTag': synonymTag, 'latin_name': latin_name}
+                            owl_output += '\t<oboInOwl:%(synonymTag)s>%(latin_name)s</oboInOwl:%(synonymTag)s>\n' % {'synonymTag': synonymTag, 'latin_name': latin_name}
 
-                            tailings += """
-    <owl:Axiom>
-        <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
-        <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
-        <owl:annotatedTarget>%(latin_name)s</owl:annotatedTarget>
-        %(rankTag)s
-    """ % {'ontology_id': ontology_id, 'rankTag':rankTag, 'latin_name': latin_name, 'synonymTag':synonymTag }
+                            axiom_content = rankTag
 
                             for database in entity['taxon'][taxon_rank_name]:
                                 if database != 'NCBITaxon':
-                                    dbid = entity['taxon'][taxon_rank_name][database]['value']
-                                    tailings += '     <oboInOwl:hasDbXref>%(database)s:%(dbid)s</oboInOwl:hasDbXref>\n' % {'database':database, 'dbid': dbid}
+                                    axiom_content += '     <oboInOwl:hasDbXref>%(database)s:%(dbid)s</oboInOwl:hasDbXref>\n' % {'database':database, 'dbid': entity['taxon'][taxon_rank_name][database]['value']}
 
-                            tailings += '       </owl:Axiom>'
+                            owl_class_footer += self.item_synonym_text_annotation(ontology_id, synonymTag, latin_name, axiom_content)
+                            
 
-                owl_format += '</owl:Class>'
-                owl_format += tailings
+                owl_output += '</owl:Class>' + owl_class_footer
 
-        owl_format += '</rdf:RDF>'
+        owl_output += '</rdf:RDF>'
 
         print "Saving ", self.ontology_path + '.owl'
 
         with (codecs.open(self.ontology_path + '.owl', 'w', 'utf-8')) as output_handle:
-            output_handle.write(owl_format)
+            output_handle.write(owl_output)
+
+    '''
+    def item_inheres_in(self, ):
+
+        # Making [food source item] 'inheres in' some [NCBITaxon item]
+        # Making [NCBITaxon item] 'is bearer of' some [food source item]
+
+
+        # Here we say the food entity inheres in a taxonomic entity
+        owl_output += '\t<rdfs:subClassOf rdf:nodeID="genid%s"/>\n' % genid
+        # ... rdf:nodeID="genid%(genid)s">   rdf:about="%(ontology_id)s">
+        
+        owl_class_footer += """
+            <rdf:Description rdf:nodeID="genid%(genid)s">
+                <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%(dbid)s"/>
+            </rdf:Description>
+
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_%(dbid)s">
+                <rdfs:subClassOf rdf:nodeID="genid%(genid2)s"/>
+            </rdf:Description>
+
+            <rdf:Description rdf:nodeID="genid%(genid2)s">
+                <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
+                <owl:someValuesFrom rdf:resource="%(ontology_id)s"/>
+            </rdf:Description>
+
+            """ % {'genid': genid, 'dbid': dbid, 'genid2': (genid+1), 'ontology_id': ontology_id}
+        genid += 2
+    '''
+
+    def item_food_role(self, NCBITaxon_id):
+        """
+        Food source items all have an equivalency: [NCBITaxon item] and 'has role' some food (CHEBI_33290)
+        """
+        return '''
+            <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf>
+                        <rdf:List>
+                            <rdf:first rdf:resource="&obo;NCBITaxon_%s"/>
+                            <rdf:rest>
+                                <rdf:List>
+                                    <rdf:first>
+                                        <owl:Restriction>
+                                            <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                                            <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_33290"/>
+                                        </owl:Restriction>
+                                    </rdf:first>
+                                </rdf:List>
+                            </rdf:rest>             
+                        </rdf:List>
+                    </owl:intersectionOf>
+                </owl:Class>
+            </owl:equivalentClass> 
+        ''' % NCBITaxon_id
+
+
+    def item_taxonomy_annotation(self, ontology_id, synonymTag, dbid, content):
+        return """
+        <owl:Axiom>
+            <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
+            <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
+            <owl:annotatedTarget rdf:resource="&obo;NCBITaxon_%(dbid)s" />
+            %(content)s
+        </owl:Axiom>'
+        """ % {'ontology_id': ontology_id, 'synonymTag':synonymTag, 'dbid': dbid, 'content':content }
+
+    def item_synonym_text_annotation(self, ontology_id, synonymTag, text, content):
+        return """
+        <owl:Axiom>
+            <owl:annotatedSource rdf:resource="%(ontology_id)s"/>
+            <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
+            <owl:annotatedTarget>%(text)s</owl:annotatedTarget>
+            %(content)s
+        </owl:Axiom>
+        """ % {'ontology_id': ontology_id, 'synonymTag': synonymTag, 'text': text, 'content':content}
 
 
     def term_import(self, entity, term):
@@ -1072,7 +983,7 @@ http://www.geneontology.org/formats/oboInOwl#hasExactSynonym
 #mapTo http://purl.obolibrary.org/obo/IAO_0000118 #iao:alternative term
 http://purl.obolibrary.org/obo/ncbitaxon#common_name
 """
-
+    
         with (codecs.open('./ontofox_ncbitaxon_spec.txt', 'w', 'utf-8')) as output_handle:
             output_handle.write(spec)
 
