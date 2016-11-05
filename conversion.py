@@ -553,41 +553,11 @@ class Langual(object):
         with (codecs.open(self.ontology_path + '.owl', 'w', 'utf-8')) as output_handle:
             output_handle.write(owl_output)
 
-    '''
-    def item_inheres_in(self, ):
-
-        # Making [food source item] 'inheres in' some [NCBITaxon item]
-        # Making [NCBITaxon item] 'is bearer of' some [food source item]
-
-
-        # Here we say the food entity inheres in a taxonomic entity
-        owl_output += '\t<rdfs:subClassOf rdf:nodeID="genid%s"/>\n' % genid
-        # ... rdf:nodeID="genid%(genid)s">   rdf:about="%(ontology_id)s">
-        
-        owl_class_footer += """
-            <rdf:Description rdf:nodeID="genid%(genid)s">
-                <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%(dbid)s"/>
-            </rdf:Description>
-
-            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_%(dbid)s">
-                <rdfs:subClassOf rdf:nodeID="genid%(genid2)s"/>
-            </rdf:Description>
-
-            <rdf:Description rdf:nodeID="genid%(genid2)s">
-                <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
-                <owl:someValuesFrom rdf:resource="%(ontology_id)s"/>
-            </rdf:Description>
-
-            """ % {'genid': genid, 'dbid': dbid, 'genid2': (genid+1), 'ontology_id': ontology_id}
-        genid += 2
-    '''
 
     def item_food_role(self, NCBITaxon_id):
         """
-        Food source items all have an equivalency: [NCBITaxon item] and 'has role' some food (CHEBI_33290)
+        Food source items matched to an ITIS taxon id all have an equivalency: 
+            [NCBITaxon item] and 'has role' some food (CHEBI_33290)
         """
         return '''
             <owl:equivalentClass>
