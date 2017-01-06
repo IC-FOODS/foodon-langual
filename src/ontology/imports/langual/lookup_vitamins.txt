@@ -1,0 +1,46 @@
+id	label	URI
+B3762	BIOTIN	http://purl.obolibrary.org/obo/CHEBI_15956
+B3770	D-BIOTIN	
+B3760	FOLIC ACID	http://purl.obolibrary.org/obo/CHEBI_27470
+B3771	PTEROYLMONOGLUTAMIC ACID	
+B3757	NIACIN	http://purl.obolibrary.org/obo/CHEBI_15940
+B3773	NICOTINAMIDE	http://purl.obolibrary.org/obo/CHEBI_17154
+B3772	NICOTINIC ACID	http://purl.obolibrary.org/obo/CHEBI_15940
+B3758	PANTOTHENIC ACID	http://purl.obolibrary.org/obo/CHEBI_7916
+B3776	DEXPANTOTHENOL	
+B3774	D-PANTOTHENATE, CALCIUM	http://purl.obolibrary.org/obo/CHEBI_31345
+B3775	D-PANTOTHENATE, SODIUM	
+B3750	VITAMIN A	http://purl.obolibrary.org/obo/CHEBI_12777
+B3015	BETA-CAROTENE	http://purl.obolibrary.org/obo/CHEBI_17579
+B3765	RETINOL	http://purl.obolibrary.org/obo/CHEBI_50211
+B3766	RETINYL ACETATE	http://purl.obolibrary.org/obo/CHEBI_32095
+B3767	RETINYL PALMITATE	http://purl.obolibrary.org/obo/CHEBI_15040
+B3755	VITAMIN B1	http://purl.obolibrary.org/obo/CHEBI_26948
+B3777	THIAMIN HYDROCHLORIDE	http://purl.obolibrary.org/obo/CHEBI_49105
+B3778	THIAMIN MONONITRATE	
+B3761	VITAMIN B12	
+B3779	CYANOCOBALAMIN	http://purl.obolibrary.org/obo/CHEBI_17439
+B3780	HYDROXOCOBALAMIN	http://purl.obolibrary.org/obo/CHEBI_27786
+B3756	VITAMIN B2	http://purl.obolibrary.org/obo/CHEBI_17015
+B3233	RIBOFLAVIN	http://purl.obolibrary.org/obo/CHEBI_17015
+B3234	RIBOFLAVIN-5'-PHOSPHATE	
+B3759	VITAMIN B6	http://purl.obolibrary.org/obo/CHEBI_27306
+B3782	PYRIDOXINE 5'-PHOSPHATE	http://purl.obolibrary.org/obo/CHEBI_28803
+B3781	PYRIDOXINE HYDROCHLORIDE	http://purl.obolibrary.org/obo/CHEBI_30961
+B3763	VITAMIN C	http://purl.obolibrary.org/obo/CHEBI_21241
+B3005	ASCORBIC ACID	http://purl.obolibrary.org/obo/CHEBI_22652
+B3029	CALCIUM ASCORBATE	
+B3006	L-ASCORBYL PALMITATE	
+B3783	POTASSIUM ASCORBATE	
+B3244	SODIUM ASCORBATE	http://purl.obolibrary.org/obo/CHEBI_113451
+B3752	VITAMIN D	http://purl.obolibrary.org/obo/CHEBI_27300
+B3768	CHOLECALCIFEROL	http://purl.obolibrary.org/obo/CHEBI_28940
+B3769	ERGOCALCIFEROL	http://purl.obolibrary.org/obo/CHEBI_28934
+B3753	VITAMIN E	http://purl.obolibrary.org/obo/CHEBI_33234
+B2986	ALPHA-TOCOPHEROL	http://purl.obolibrary.org/obo/CHEBI_22470
+B3784	D-ALPHA-TOCOPHEROL	http://purl.obolibrary.org/obo/CHEBI_33234
+B3785	D-ALPHA-TOCOPHERYL ACETATE	http://purl.obolibrary.org/obo/CHEBI_32321
+B3787	D-ALPHA-TOCOPHERYL SUCCINATE	
+B3786	DL-ALPHA-TOCOPHERYL ACETATE	
+B3754	VITAMIN K	http://purl.obolibrary.org/obo/CHEBI_28384
+B3788	PHYLLOQUINONE	http://purl.obolibrary.org/obo/CHEBI_18067

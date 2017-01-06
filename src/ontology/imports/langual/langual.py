@@ -6,6 +6,10 @@
 conversion.py
 Author: Damion Dooley
 
+TO RUN: this needs "requests" module.
+Running from CONDA environment:
+source activate _test
+
 This script uses the LanguaL.org food description thesaurus (published yearly in XML) 
 to provide a differential update of a database.json data file.  From this the LANGUAL_import.owl
 file is regenerated, and can then be imported into FOODON food ontology.  
@@ -64,7 +68,7 @@ class Langual(object):
 
         # READ THIS FROM database.json
         self.database_path = './database.json'
-        self.ontology_path = './LANGUAL_import'
+        self.ontology_path = '../langual_import'
         self.database = { #empty case.
             'index': OrderedDict(), 
             'version': 0 
@@ -223,49 +227,7 @@ class Langual(object):
             # LanguaL has some tagged text imbedded within other XML text.
             AI = child.find('AI').text
             if AI is not None:
-                # LanguaL encoded html -> markdown italics
-                AI = AI.replace('$i$','*').replace('$/i$','*').replace('$br/$','\n').replace('$br /$','\n')
-
-                # FIRST CONVERT Wikipedia references, e.g. [http://en.wikipedia.org/wiki/Roselle_(plant)] references to IAO_0000119 'definition_source'
-                wikipedia_ref = re.search(self.re_wikipedia_url, AI)
-                if wikipedia_ref:
-                    self.set_attribute_diff(entity, 'definition_source', 'WIKIPEDIA:' + wikipedia_ref.group('reference'))
-                    #entity['definition_source'] = 'WIKIPEDIA:' + wikipedia_ref.group('reference')
-                    AI = re.sub(self.re_wikipedia_url, '', AI)
-                    AI = AI.replace('[]','').replace('()', '')
-
-                # SOME DUPLICATE ENTRIES EXIST
-                duplicate = re.search(self.re_duplicate_entry, AI)
-                # E.g "<AI>Duplicate entry of *CHILEAN CROAKER [B1814]*.""
-                if duplicate:
-                    entity['replaced_by'] = duplicate.group('id')
-                    AI = re.sub(self.re_duplicate_entry, '', AI)
-
-                # "\nEurope: E 230.\nCodex: INS 230." ... are extra references already covered by <SYNONYM> so drop them here
-                AI = re.sub(self.re_europe, '', AI)
-                AI = re.sub(self.re_codex, '', AI)
-
-                # Get term definition text
-                if len(AI) > 0:
-                    if AI[0] == '<':
-                        definition = self.load_attribute(entity, AI, '<DICTION>')
-
-                        # above definition_source appears never to conflict.
-                        source = self.load_attribute(entity, AI, '<SOURCE>') 
-                        if source is not None and source != '':
-                            self.set_attribute_diff(entity, 'definition_source', source, 'en')
-
-                        self.load_attribute(entity['xrefs'], AI, '<ITIS>', 'ITIS')
-                        self.load_attribute(entity['xrefs'], AI, '<GRIN>', 'GRIN')
-                        self.load_attribute(entity['xrefs'], AI, '<MANSFELD>', 'MANSFELD')
-
-                    # If no codes, e.g. for "broiler chicken", <AI> will contain only text definition rather than <DICTION>
-                    else: 
-                        definition = self.load_attribute(entity, child, 'AI')
-
-                    if definition is not None: # can be "None"
-                        # Now clear out the taxonomic entries found within the definition text, and store it
-                        self.set_attribute_diff(entity, 'definition', self.re_taxonomy.sub('', definition), 'en')
+                self.processEntityAI(child, entity, AI)
 
             # Don't do any more work for depreciated items
             if entity['status'] == 'deprecated': 
@@ -303,6 +265,53 @@ class Langual(object):
 
         print "Generating ", self.ontology_path + '.owl'
         self.save_ontology_owl()
+
+
+    def processEntityAI(self, child, entity, AI):
+        # LanguaL encoded html -> markdown italics
+        AI = AI.replace('$i$','*').replace('$/i$','*').replace('$br/$','\n').replace('$br /$','\n')
+
+        # FIRST CONVERT Wikipedia references, e.g. [http://en.wikipedia.org/wiki/Roselle_(plant)] references to IAO_0000119 'definition_source'
+        wikipedia_ref = re.search(self.re_wikipedia_url, AI)
+        if wikipedia_ref:
+            self.set_attribute_diff(entity, 'definition_source', 'WIKIPEDIA:' + wikipedia_ref.group('reference'))
+            #entity['definition_source'] = 'WIKIPEDIA:' + wikipedia_ref.group('reference')
+            AI = re.sub(self.re_wikipedia_url, '', AI)
+            AI = AI.replace('[]','').replace('()', '')
+
+        # SOME DUPLICATE ENTRIES EXIST
+        duplicate = re.search(self.re_duplicate_entry, AI)
+        # E.g "<AI>Duplicate entry of *CHILEAN CROAKER [B1814]*.""
+        if duplicate:
+            entity['replaced_by'] = duplicate.group('id')
+            AI = re.sub(self.re_duplicate_entry, '', AI)
+
+        # "\nEurope: E 230.\nCodex: INS 230." ... are extra references already covered by <SYNONYM> so drop them here
+        AI = re.sub(self.re_europe, '', AI)
+        AI = re.sub(self.re_codex, '', AI)
+
+        # Get term definition text
+        if len(AI) > 0:
+            if AI[0] == '<':
+                definition = self.load_attribute(entity, AI, '<DICTION>')
+
+                # above definition_source appears never to conflict.
+                source = self.load_attribute(entity, AI, '<SOURCE>') 
+                if source is not None and source != '':
+                    self.set_attribute_diff(entity, 'definition_source', source, 'en')
+
+                self.load_attribute(entity['xrefs'], AI, '<ITIS>', 'ITIS')
+                self.load_attribute(entity['xrefs'], AI, '<GRIN>', 'GRIN')
+                self.load_attribute(entity['xrefs'], AI, '<MANSFELD>', 'MANSFELD')
+
+            # If no codes, e.g. for "broiler chicken", <AI> will contain only text definition rather than <DICTION>
+            else: 
+                definition = self.load_attribute(entity, child, 'AI')
+
+            if definition is not None: # can be "None"
+                # Now clear out the taxonomic entries found within the definition text, and store it
+                self.set_attribute_diff(entity, 'definition', self.re_taxonomy.sub('', definition), 'en')
+
 
 
     # Customized for each ontology import source database.
@@ -423,7 +432,7 @@ class Langual(object):
 
     def save_ontology_owl(self):
         """
-        Generate LANGUAL_import.owl ontology file.
+        Generate langual_import.owl ontology file.
 
         """
         with (open('./header.owl', 'r')) as input_handle:
@@ -456,9 +465,10 @@ class Langual(object):
 
                 for item in entity['is_a']:
                     # If parent isn't imported (even as an obsolete item), don't make an is_a for it.
-                    # (is_a entries can be ABOUT non LanguaL ids).
+                    # (is_a entries can reference non-FoodOn ids).
                     if self.term_import(entity['is_a'], item): 
-                        owl_output += '\t<rdfs:subClassOf rdf:resource="&obo;%s"/>\n' % item
+                        obo = '' if item[0:7] == 'http://' else '&obo;'
+                        owl_output += '\t<rdfs:subClassOf rdf:resource="%s%s"/>\n' % (obo, item)
 
                 if self.term_import(entity, 'definition'):
                     definition = entity['definition']['value']  #.replace('"',r'\"').replace('\n',r'\n')
@@ -513,7 +523,7 @@ class Langual(object):
                             rankTag = ''
                         else:
                             synonymTag = 'hasBroadSynonym'
-                            rankTag = '<taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%s" />' % rank
+                            rankTag = '<taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%s" />\n' % rank
 
                         # If an NCBITaxon reference exists, let it replace all the others
                         if 'NCBITaxon' in entity['taxon'][taxon_rank_name] and entity['taxon'][taxon_rank_name]['NCBITaxon']['import'] == True:
@@ -922,7 +932,7 @@ class Langual(object):
             
         spec = """
 [URI of the OWL(RDF/XML) output file]
-http://purl.obolibrary.org/obo/FOODON/imports/NCBITaxon_import.owl
+http://purl.obolibrary.org/obo/FOODON/imports/ncbitaxon_import.owl
 
 [Source ontology]
 NCBITaxon
@@ -954,7 +964,7 @@ http://www.geneontology.org/formats/oboInOwl#hasExactSynonym
 http://purl.obolibrary.org/obo/ncbitaxon#common_name
 """
     
-        with (codecs.open('./ontofox_ncbitaxon_spec.txt', 'w', 'utf-8')) as output_handle:
+        with (codecs.open('../ncbitaxon_ontofox.txt', 'w', 'utf-8')) as output_handle:
             output_handle.write(spec)
 
 

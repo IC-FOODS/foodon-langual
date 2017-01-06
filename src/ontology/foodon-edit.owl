@@ -1,58 +1,104 @@
 <?xml version="1.0"?>
-
-<!DOCTYPE rdf:RDF [
-    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-    <!ENTITY obo "http://purl.obolibrary.org/obo/" >
-    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
-    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
-    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-    <!ENTITY oboInOwl "http://www.geneontology.org/formats/oboInOwl#" >  
-    <!ENTITY taxon "http://purl.obolibrary.org/obo/NCBITaxon#" >     
-]>
-
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/foodon.owl#"
-    xml:base="http://purl.obolibrary.org/obo/foodon.owl"
-    xmlns:xml="http://www.w3.org/XML/1998/namespace"
-    xmlns:obo="http://purl.obolibrary.org/obo/"
-    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    xmlns:owl="http://www.w3.org/2002/07/owl#"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:taxon="http://purl.obolibrary.org/obo/NCBITaxon#"
-    xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    >
-
-    <owl:Ontology rdf:about="&obo;foodon.owl">
-        <owl:imports rdf:resource="&obo;FOODON/imports/metadata_import.owl"/>
-
-        <owl:imports rdf:resource="&obo;FOODON/imports/langual_import.owl"/>
-        <owl:imports rdf:resource="&obo;FOODON/imports/ncbitaxon_import.owl"/>
-        <owl:imports rdf:resource="&obo;FOODON/imports/envo_import.owl"/>
-
-        <owl:imports rdf:resource="&obo;FOODON/imports/obi_import.owl"/>
-        <owl:imports rdf:resource="&obo;FOODON/imports/chebi_import.owl"/>
-        <owl:imports rdf:resource="&obo;FOODON/imports/uberon_import.owl"/>
-        <owl:imports rdf:resource="&obo;FOODON/imports/eo_import.owl"/>
-        <owl:imports rdf:resource="&obo;FOODON/imports/efo_import.owl"/>
-
-        <dc:contributor xml:lang="en">Damion Dooley</dc:contributor>
+     xml:base="http://purl.obolibrary.org/obo/foodon.owl"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:taxon="http://purl.obolibrary.org/obo/NCBITaxon#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:efo="http://www.ebi.ac.uk/efo/">
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/foodon.owl">
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/uberon_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/efo_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/obi_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/envo_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/langual_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/chebi_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/ncbitaxon_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/metadata_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/eo_import.owl"/>
         <dc:contributor xml:lang="en">Chris Mungall</dc:contributor>
+        <dc:contributor xml:lang="en">Damion Dooley</dc:contributor>
+        <dc:contributor xml:lang="en">William Hsiao</dc:contributor>
         <dc:contributor xml:lang="en">Pier Buttigieg</dc:contributor>
         <dc:contributor xml:lang="en">Robert Hohendorf</dc:contributor>
-        <dc:contributor xml:lang="en">William Hsiao</dc:contributor>
-
     </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_0001560 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/FOODON_0001560">
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
+        <rdfs:label xml:lang="en">has ingredient</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
 
 
     <!-- http://purl.obolibrary.org/obo/FOODON_00000000 -->
 
-    <owl:Class rdf:about="&obo;FOODON_00000000">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FOODON_00000000">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <rdfs:label xml:lang="en">foodon</rdfs:label>
     </owl:Class>
+    
 
 
+    <!-- http://purl.obolibrary.org/obo/FOODON_03400000 -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/FOODON_03400000">
+        <rdfs:subClassOf rdf:resource="http://www.geneontology.org/formats/oboInOwl#ObsoleteClass"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_03411656 -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/FOODON_03411656">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/FOODON_0001560"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FOODON_03411655"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/FOODON_0001560"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FOODON_03413206"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </rdf:Description>
 </rdf:RDF>
 
+
+
+<!-- Generated by the OWL API (version 4.2.5.20160517-0735) https://github.com/owlcs/owlapi -->
 
