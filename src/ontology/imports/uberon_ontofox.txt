@@ -1,11 +1,45 @@
 [URI of the OWL(RDF/XML) output file]
-http://purl.obolibrary.org/obo/foodon/imports/uberon_import.owl
+http://purl.obolibrary.org/obo/FOODON/imports/uberon_import.owl
 
 [Source ontology]
 UBERON
 
 [Low level source term URIs]
 http://purl.obolibrary.org/obo/UBERON_0000978 # leg
+http://purl.obolibrary.org/obo/UBERON_0001474 # bone element
+
+
+# NOTE: LANGUAL IMPORT OVERWRITES THIS FILE.  MODIFY TEMPLATE IN /langual/ FOLDER 
+# AND REDO LANGUAL IMPORT TO REVISE THIS FILE SO THAT make COMMAND WORKS.
+
+http://purl.obolibrary.org/obo/UBERON_0005052 # GIZZARD
+http://purl.obolibrary.org/obo/UBERON_0007379 # WHOLE EGG IN SHELL
+http://purl.obolibrary.org/obo/UBERON_0002371 # BONE MARROW
+http://purl.obolibrary.org/obo/UBERON_0002107 # LIVER
+http://purl.obolibrary.org/obo/UBERON_0000178 # BLOOD
+http://purl.obolibrary.org/obo/UBERON_0002048 # LUNG
+http://purl.obolibrary.org/obo/UBERON_0001723 # TONGUE
+http://purl.obolibrary.org/obo/UBERON_0002106 # SPLEEN
+http://purl.obolibrary.org/obo/UBERON_0002097 # SKIN, ANIMAL
+http://purl.obolibrary.org/obo/UBERON_0002113 # KIDNEY
+http://purl.obolibrary.org/obo/UBERON_0000955 # BRAIN
+http://purl.obolibrary.org/obo/UBERON_0000948 # HEART (ANIMAL)
+http://purl.obolibrary.org/obo/UBERON_0001264 # PANCREAS
+http://purl.obolibrary.org/obo/UBERON_0000945 # STOMACH
+http://purl.obolibrary.org/obo/UBERON_0000160 # INTESTINE
+http://purl.obolibrary.org/obo/UBERON_0007378 # EGG YOLK
+http://purl.obolibrary.org/obo/UBERON_0000022 # FEATHER
+http://purl.obolibrary.org/obo/UBERON_0007366 # RUMINANT STOMACH
+http://purl.obolibrary.org/obo/UBERON_0001913 # MILK
+http://purl.obolibrary.org/obo/UBERON_0008944 # EGG WHITE, ALBUMEN
+http://purl.obolibrary.org/obo/UBERON_0000022 # ORGAN MEAT, OTHER SYSTEMS
+http://purl.obolibrary.org/obo/UBERON_0000970 # EYE
+http://purl.obolibrary.org/obo/UBERON_0002370 # THYMUS
+http://purl.obolibrary.org/obo/UBERON_0005079 # EGG SHELL
+http://purl.obolibrary.org/obo/UBERON_0008897 # FIN
+http://purl.obolibrary.org/obo/UBERON_0006860 # AIR BLADDER
+http://purl.obolibrary.org/obo/UBERON_0001690 # EAR
+
 
 [Top level source term URIs and target direct superclass URIs]
 

@@ -126,8 +126,12 @@ class Langual(object):
             self.database['version'] +=1
             # self.version = self.database['version']
 
-        # Uncomment this to update database to latest CHEBI etc ids for LanguaL entities in lookup.txt file.
+        # Uncomment this to update database to latest CHEBI etc ids 
+        # for LanguaL entities based on lookup.txt file.
+        #
+        #
         self.updateDatabaseOntologyIds('./lookup.txt')
+
 
         #file_handle = codecs.open(file, "r", "iso-8859-1")
         tree = ET.parse(file) # Incoming raw XML database file
@@ -212,8 +216,8 @@ class Langual(object):
                 continue
 
             # Enable any database item to be looked up by its FOODON assigned ontology id (which could be a CHEBI_xxxxx or other id too.)
-
-            if 'ontology_id' in entity:
+            # A cleared out ontology id gets reassigned 
+            if 'ontology_id' in entity and len(entity['ontology_id']) > 0: 
                 ontology_id = entity['ontology_id']
             else:
                 ontology_id = self.get_ontology_id(database_id)
@@ -265,26 +269,32 @@ class Langual(object):
         self.report(file)
 
         self.writeNCBITaxon_OntoFox_spec()
+        self.writeOntoFox_specs()
 
         print "Generating ", self.ontology_path + '.owl'
         self.save_ontology_owl()
 
 
-    def updateDatabaseOntologyIds(self, filename)
+    def updateDatabaseOntologyIds(self, filename):
         # Replace selected LanguaL ontology ids with their CHEBI/UBERON etc equivalents.
         # If LanguaL id for a given database entity exists in lookup table, replaces it with ontology_id
         # The ontology ids get copied out to an OntoFox import specification file for the given ontology.
         lookup = {}
-        with (open(filename, 'r')) as input_handle:
+        with (codecs.open(filename, 'r', 'utf-8')) as input_handle:
             for line in input_handle:
-                if len(line) > 0 and line[0] != '#':
+                if len(line) > 5 and line[0] != '#':
                     (id, label, uri) = line.split('\t')
-                    lookup[id] = uri
+                    uri = uri.strip()
+                    if len(uri) > 0: lookup[id] = uri 
 
         for database_id in self.database['index']:
             entity = self.database['index'][database_id]
-                if entity['database_id'] in lookup:
-                    entity['ontology_id'] = lookup[entity['database_id']]
+            
+            if entity['database_id'] in lookup:
+                entity['ontology_id'] = lookup[entity['database_id']]
+                print ("replacing " + entity['database_id'] + ' with ' + lookup[entity['database_id']] )
+
+            # ISSUE: THIS LEAVES BROKEN EXISTING IS_A REFERENCES from CHILDREN.
 
 
     def processEntityAI(self, child, entity, AI):
@@ -455,7 +465,8 @@ class Langual(object):
         Generate langual_import.owl ontology file.
 
         """
-        with (open('./header_langual.owl', 'r')) as input_handle:
+        # DON'T CALL THIS header_langual.owl - the Makefile make reads in subdirectories and will try to parse this, and fail.
+        with (open('./template_langual_import_header.txt', 'r')) as input_handle:
             owl_output = input_handle.read()
 
         genid = 1 # counter for anonymous node ids.
@@ -492,7 +503,7 @@ class Langual(object):
 
                 if self.term_import(entity, 'definition'):
                     definition = entity['definition']['value']  #.replace('"',r'\"').replace('\n',r'\n')
-                    owl_output += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition.replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;')
+                    owl_output += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition.replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;').replace(u'\u0092','"').replace(u'\u0091','"') # angled unicode single quotes  <U+0091>, <U+0092> 
               
                 if self.term_import(entity, 'definition_source'):
                     owl_output += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']['value']
@@ -506,7 +517,7 @@ class Langual(object):
                     owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000428"/>\n'
 
                 if self.term_import(entity, 'comment'):
-                    owl_output += '\t<rdfs:comment xml:lang="en">LanguaL curator\'s note: %s</rdfs:comment>\n' % entity['comment']['value']
+                    owl_output += '\t<rdfs:comment xml:lang="en">LanguaL curation note: %s</rdfs:comment>\n' % entity['comment']['value']
 
                 if 'replaced_by' in entity: #AnnotationAssertion(<obo:IAO_0100001> <obo:CL_0007015> <obo:CLO_0000018>)
                     replacement = '&obo;' + self.database['index'][entity['replaced_by']]['ontology_id']
@@ -543,7 +554,7 @@ class Langual(object):
                             rankTag = ''
                         else:
                             synonymTag = 'hasBroadSynonym'
-                            rankTag = '<taxon:_taxonomic_rank rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_%s" />\n' % rank
+                            rankTag = '<taxon:_taxonomic_rank rdf:resource="&obo;NCBITaxon_%s" />\n' % rank
 
                         # If an NCBITaxon reference exists, let it replace all the others
                         if 'NCBITaxon' in entity['taxon'][taxon_rank_name] and entity['taxon'][taxon_rank_name]['NCBITaxon']['import'] == True:
@@ -599,8 +610,8 @@ class Langual(object):
                                 <rdf:List>
                                     <rdf:first>
                                         <owl:Restriction>
-                                            <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
-                                            <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_33290"/>
+                                            <owl:onProperty rdf:resource="&obo;RO_0000087"/>
+                                            <owl:someValuesFrom rdf:resource="&obo;CHEBI_33290"/>
                                         </owl:Restriction>
                                     </rdf:first>
                                 </rdf:List>
@@ -619,7 +630,7 @@ class Langual(object):
             <owl:annotatedProperty rdf:resource="&oboInOwl;%(synonymTag)s"/>
             <owl:annotatedTarget rdf:resource="&obo;NCBITaxon_%(dbid)s" />
             %(content)s
-        </owl:Axiom>'
+        </owl:Axiom>
         """ % {'ontology_id': ontology_id, 'synonymTag':synonymTag, 'dbid': dbid, 'content':content }
 
     def item_synonym_text_annotation(self, ontology_id, synonymTag, text, content):
@@ -950,14 +961,16 @@ class Langual(object):
                         taxobj = entity['taxon'][taxon]['NCBITaxon']
                         spec += 'http://purl.obolibrary.org/obo/NCBITaxon_%s # %s\n' % (taxobj['value'], taxon)
         
-        with (open('./ncbitaxon_ontofox.txt', 'r', 'utf-8')) as handle:
+        with open('./template_ncbitaxon_ontofox.txt', 'r') as handle:
             ontofoxSpec = handle.read()
 
             index = ontofoxSpec.find('[Top level source term URIs')
             spec = ontofoxSpec[:index] + spec + '\n\n' + ontofoxSpec[index:]
       
-            with (codecs.open('../ncbitaxon_ontofox.txt', 'w', 'utf-8')) as output_handle:
-                output_handle.write(spec)
+            with (codecs.open('../ncbitaxon_ontofox.txt', 'r', 'utf-8')) as read_handle:
+                if read_handle.read() != spec:
+                    with (codecs.open('../ncbitaxon_ontofox.txt', 'w', 'utf-8')) as output_handle:
+                        output_handle.write(spec)
 
 
     def writeOntoFox_specs(self):
@@ -965,7 +978,7 @@ class Langual(object):
         # ontofoxSpec is a key-value bag containing one OntoFox command string for each ontology.
 
         ontofoxSpec = {'chebi':'','uberon':''}
-        ontofoxSpecKeys = spec.keys()
+        ontofoxSpecKeys = ontofoxSpec.keys()
 
         # For each entity in database, check its ontology_id to see if it references an entity 
         # that needs to be imported.
@@ -976,17 +989,22 @@ class Langual(object):
                 for ontology in ontofoxSpecKeys:
                     if ontology_id[0:len(ontology)] == ontology:
                         # Assumes only one label for comment
-                        spec['ontology'] += 'http://purl.obolibrary.org/obo/%s # %s\n' % (ontology_id, entity['label']['value'])
+                        ontofoxSpec[ontology] += 'http://purl.obolibrary.org/obo/%s # %s\n' % (entity['ontology_id'], entity['label']['value'])
         
-        for ontology in spec:
-        with (open('template_' + ontology + '_ontofox.txt', 'r', 'utf-8')) as handle:
-            ontofoxSpec = handle.read()
+        for ontology in ontofoxSpecKeys:
+            if len(ontofoxSpec[ontology]) > 0:
+                output_file = '../' + ontology + '_ontofox.txt'
+                print ("Generating " + output_file)
+                with open('template_' + ontology + '_ontofox.txt', 'r') as handle:
+                    ontofoxTemplate = handle.read()
 
-            index = ontofoxSpec.find('[Top level source term URIs')
-            spec = ontofoxSpec[:index] + spec + '\n\n' + ontofoxSpec[index:]
-      
-            with (codecs.open('../' + ontology + '_ontofox.txt', 'w', 'utf-8')) as output_handle:
-                output_handle.write(spec)
+                    index = ontofoxTemplate.find('[Top level source term URIs')
+                    content = ontofoxTemplate[:index] + ontofoxSpec[ontology] + '\n\n' + ontofoxTemplate[index:]
+              
+                    with (codecs.open(output_file, 'r', 'utf-8')) as read_handle:
+                        if read_handle.read() != content:
+                            with (codecs.open(output_file, 'w', 'utf-8')) as output_handle:
+                                output_handle.write(content)
 
 
     def get_jsonparsed_data(self, url):

@@ -28,7 +28,7 @@
      xmlns:dc="http://purl.org/dc/elements/1.1/"
      xmlns:efo="http://www.ebi.ac.uk/efo/">
     <owl:Ontology rdf:about="&obo;foodon.owl">
-        <owl:versionIRI rdf:resource="&obo;foodon/releases/2017-01-04/foodon.owl"/>
+        <owl:versionIRI rdf:resource="&obo;foodon/releases/2017-01-07/foodon.owl"/>
         <owl:imports rdf:resource="&obo;FOODON/imports/uberon_import.owl"/>
         <owl:imports rdf:resource="&obo;FOODON/imports/efo_import.owl"/>
         <owl:imports rdf:resource="&obo;FOODON/imports/obi_import.owl"/>
@@ -50,6 +50,26 @@
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_0001560 -->
+
+    <owl:ObjectProperty rdf:about="&obo;FOODON_0001560">
+        <rdfs:subPropertyOf rdf:resource="&obo;BFO_0000051"/>
+        <rdfs:label xml:lang="en">has ingredient</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
     // Classes
     //
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -64,6 +84,84 @@
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
         <rdfs:label xml:lang="en">foodon</rdfs:label>
     </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_03400000 -->
+
+    <rdf:Description rdf:about="&obo;FOODON_03400000">
+        <rdfs:subClassOf rdf:resource="&oboInOwl;ObsoleteClass"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_03411656 -->
+
+    <rdf:Description rdf:about="&obo;FOODON_03411656">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&obo;FOODON_0001560"/>
+                        <owl:someValuesFrom rdf:resource="&obo;FOODON_03411655"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&obo;FOODON_0001560"/>
+                        <owl:someValuesFrom rdf:resource="&obo;FOODON_03413206"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_03420109 -->
+
+    <rdf:Description rdf:about="&obo;FOODON_03420109">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&obo;FOODON_0001560"/>
+                        <owl:someValuesFrom rdf:resource="&obo;FOODON_03420204"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&obo;FOODON_0001560"/>
+                        <owl:someValuesFrom rdf:resource="&obo;FOODON_03420273"/>
+                    </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_03420204 -->
+
+    <owl:Class rdf:about="&obo;FOODON_03420204"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_03420273 -->
+
+    <owl:Class rdf:about="&obo;FOODON_03420273"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0000978 -->
+
+    <rdf:Description rdf:about="&obo;UBERON_0000978">
+        <rdfs:subClassOf rdf:resource="&obo;FOODON_03420127"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0001474 -->
+
+    <rdf:Description rdf:about="&obo;UBERON_0001474">
+        <rdfs:subClassOf rdf:resource="&obo;FOODON_03420122"/>
+    </rdf:Description>
 </rdf:RDF>
 
 
