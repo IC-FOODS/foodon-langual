@@ -126,6 +126,9 @@ class Langual(object):
             self.database['version'] +=1
             # self.version = self.database['version']
 
+        # Uncomment this to update database to latest CHEBI etc ids for LanguaL entities in lookup.txt file.
+        self.updateDatabaseOntologyIds('./lookup.txt')
+
         #file_handle = codecs.open(file, "r", "iso-8859-1")
         tree = ET.parse(file) # Incoming raw XML database file
         root = tree.getroot()
@@ -265,6 +268,23 @@ class Langual(object):
 
         print "Generating ", self.ontology_path + '.owl'
         self.save_ontology_owl()
+
+
+    def updateDatabaseOntologyIds(self, filename)
+        # Replace selected LanguaL ontology ids with their CHEBI/UBERON etc equivalents.
+        # If LanguaL id for a given database entity exists in lookup table, replaces it with ontology_id
+        # The ontology ids get copied out to an OntoFox import specification file for the given ontology.
+        lookup = {}
+        with (open(filename, 'r')) as input_handle:
+            for line in input_handle:
+                if len(line) > 0 and line[0] != '#':
+                    (id, label, uri) = line.split('\t')
+                    lookup[id] = uri
+
+        for database_id in self.database['index']:
+            entity = self.database['index'][database_id]
+                if entity['database_id'] in lookup:
+                    entity['ontology_id'] = lookup[entity['database_id']]
 
 
     def processEntityAI(self, child, entity, AI):
@@ -435,7 +455,7 @@ class Langual(object):
         Generate langual_import.owl ontology file.
 
         """
-        with (open('./header.owl', 'r')) as input_handle:
+        with (open('./header_langual.owl', 'r')) as input_handle:
             owl_output = input_handle.read()
 
         genid = 1 # counter for anonymous node ids.
@@ -929,43 +949,44 @@ class Langual(object):
                     if 'NCBITaxon' in entity['taxon'][taxon]:
                         taxobj = entity['taxon'][taxon]['NCBITaxon']
                         spec += 'http://purl.obolibrary.org/obo/NCBITaxon_%s # %s\n' % (taxobj['value'], taxon)
-            
-        spec = """
-[URI of the OWL(RDF/XML) output file]
-http://purl.obolibrary.org/obo/FOODON/imports/ncbitaxon_import.owl
+        
+        with (open('./ncbitaxon_ontofox.txt', 'r', 'utf-8')) as handle:
+            ontofoxSpec = handle.read()
 
-[Source ontology]
-NCBITaxon
+            index = ontofoxSpec.find('[Top level source term URIs')
+            spec = ontofoxSpec[:index] + spec + '\n\n' + ontofoxSpec[index:]
+      
+            with (codecs.open('../ncbitaxon_ontofox.txt', 'w', 'utf-8')) as output_handle:
+                output_handle.write(spec)
 
-[Low level source term URIs]
-http://purl.obolibrary.org/obo/NCBITaxon#_taxonomic_rank #taxonomic rank
-includeAllChildren
 
-""" + spec + """
+    def writeOntoFox_specs(self):
+        # Create the OntoFox import specification files, one for each ontology listed below.
+        # ontofoxSpec is a key-value bag containing one OntoFox command string for each ontology.
 
-[Top level source term URIs and target direct superclass URIs]
-http://purl.obolibrary.org/obo/NCBITaxon_2157
-subClassOf http://purl.obolibrary.org/obo/OBI_0100026 #OBI:organism
-http://purl.obolibrary.org/obo/NCBITaxon_2
-subClassOf http://purl.obolibrary.org/obo/OBI_0100026 #OBI:organism
-http://purl.obolibrary.org/obo/NCBITaxon_2759
-subClassOf http://purl.obolibrary.org/obo/OBI_0100026 #OBI:organism
-http://purl.obolibrary.org/obo/NCBITaxon_10239
-subClassOf http://purl.obolibrary.org/obo/OBI_0100026 #OBI:organism
+        ontofoxSpec = {'chebi':'','uberon':''}
+        ontofoxSpecKeys = spec.keys()
 
-[Source term retrieval setting]
-includeComputedIntermediates
+        # For each entity in database, check its ontology_id to see if it references an entity 
+        # that needs to be imported.
+        for database_id in self.database['index']:
+            entity = self.database['index'][database_id]
+            if 'ontology_id' in entity:
+                ontology_id = entity['ontology_id'].lower()
+                for ontology in ontofoxSpecKeys:
+                    if ontology_id[0:len(ontology)] == ontology:
+                        # Assumes only one label for comment
+                        spec['ontology'] += 'http://purl.obolibrary.org/obo/%s # %s\n' % (ontology_id, entity['label']['value'])
+        
+        for ontology in spec:
+        with (open('template_' + ontology + '_ontofox.txt', 'r', 'utf-8')) as handle:
+            ontofoxSpec = handle.read()
 
-[Source annotation URIs]
-http://www.w3.org/2000/01/rdf-schema#label
-#copyTo http://purl.obolibrary.org/obo/IAO_0000111
-http://www.geneontology.org/formats/oboInOwl#hasExactSynonym
-#mapTo http://purl.obolibrary.org/obo/IAO_0000118 #iao:alternative term
-http://purl.obolibrary.org/obo/ncbitaxon#common_name
-"""
-    
-        with (codecs.open('../ncbitaxon_ontofox.txt', 'w', 'utf-8')) as output_handle:
-            output_handle.write(spec)
+            index = ontofoxSpec.find('[Top level source term URIs')
+            spec = ontofoxSpec[:index] + spec + '\n\n' + ontofoxSpec[index:]
+      
+            with (codecs.open('../' + ontology + '_ontofox.txt', 'w', 'utf-8')) as output_handle:
+                output_handle.write(spec)
 
 
     def get_jsonparsed_data(self, url):
@@ -996,11 +1017,11 @@ http://purl.obolibrary.org/obo/ncbitaxon#common_name
         print "Facet item counts"
         print self.counts               
         print
-        print "Food source (facet B) stats"
-        print " Food additive items: ", self.food_additive
-        print " Items with taxonomy: ", self.has_taxonomy
-        print "   Items having ITIS: ", self.has_ITIS
-        print " Items without taxon: ", self.no_taxonomy
+        #print "Food source (facet B) stats"
+        #print " Food additive items: ", self.food_additive
+        #print " Items with taxonomy: ", self.has_taxonomy
+        #print "   Items having ITIS: ", self.has_ITIS
+        #print " Items without taxon: ", self.no_taxonomy
 
         print (self.output)
 

@@ -8,7 +8,7 @@ CHEBI
 
 http://purl.obolibrary.org/obo/CHEBI_33290 # food
 # http://purl.obolibrary.org/obo/CHEBI_50906 # role
-http://purl.obolibrary.org/obo/CHEBI_24432 # 	biological role
+http://purl.obolibrary.org/obo/CHEBI_24432 #    biological role
 http://purl.obolibrary.org/obo/CHEBI_52211 #   physiological role
 http://purl.obolibrary.org/obo/CHEBI_78295 # food component
 http://purl.obolibrary.org/obo/CHEBI_64047 # food additive
@@ -16,6 +16,8 @@ http://purl.obolibrary.org/obo/CHEBI_33284 # nutrient
 http://purl.obolibrary.org/obo/CHEBI_33229 # vitamin
 http://purl.obolibrary.org/obo/CHEBI_78299 # environmental food contaminant
 
+# NOTE: LANGUAL IMPORT OVERWRITES THIS FILE.  MODIFY TEMPLATE IN /langual/ FOLDER 
+# AND REDO LANGUAL IMPORT TO REVISE THIS FILE SO THAT make COMMAND WORKS.
 
 [Top level source term URIs and target direct superclass URIs]
 http://purl.obolibrary.org/obo/CHEBI_50906 # role 
