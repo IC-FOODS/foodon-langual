@@ -32,7 +32,6 @@ http://purl.obolibrary.org/obo/UBERON_0000022 # FEATHER
 http://purl.obolibrary.org/obo/UBERON_0007366 # RUMINANT STOMACH
 http://purl.obolibrary.org/obo/UBERON_0001913 # MILK
 http://purl.obolibrary.org/obo/UBERON_0008944 # EGG WHITE, ALBUMEN
-http://purl.obolibrary.org/obo/UBERON_0000022 # ORGAN MEAT, OTHER SYSTEMS
 http://purl.obolibrary.org/obo/UBERON_0000970 # EYE
 http://purl.obolibrary.org/obo/UBERON_0002370 # THYMUS
 http://purl.obolibrary.org/obo/UBERON_0005079 # EGG SHELL

@@ -205,10 +205,10 @@ class Langual(object):
                 if scope_note and 'DO NOT USE for new indexing' in scope_note:
                     entity['status'] = 'deprecated'
 
-                # Current strategy for handling the NOT KNOWN and OTHER codes is to mark them depreciated
+                # Current strategy for handling the NOT KNOWN, NOT APPLICABLE and OTHER codes is to mark them depreciated
                 # We can add logical equivalency to more generic NOT KNOWN and OTHER selections later...
                 oldLabel = child.find('TERM').text
-                if oldLabel[-10:] == ' NOT KNOWN' or oldLabel[-8:] == ' UNKNOWN' or oldLabel[-6:] == ' OTHER':
+                if oldLabel[-10:] == ' NOT KNOWN' or oldLabel[-8:] == ' UNKNOWN' or oldLabel[-6:] == ' OTHER' or oldLabel[-15:] == ' NOT APPLICABLE':
                     entity['status'] = 'deprecated'
 
             # Pre-existing entity status controls whether item revisions are considered.  We skip doing updates on "ignore" items, but depreciated items are still included.

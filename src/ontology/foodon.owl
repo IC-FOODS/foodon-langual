@@ -116,39 +116,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/FOODON_03420109 -->
-
-    <rdf:Description rdf:about="&obo;FOODON_03420109">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="&obo;FOODON_0001560"/>
-                        <owl:someValuesFrom rdf:resource="&obo;FOODON_03420204"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="&obo;FOODON_0001560"/>
-                        <owl:someValuesFrom rdf:resource="&obo;FOODON_03420273"/>
-                    </owl:Restriction>
-                </owl:unionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-    </rdf:Description>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/FOODON_03420204 -->
-
-    <owl:Class rdf:about="&obo;FOODON_03420204"/>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/FOODON_03420273 -->
-
-    <owl:Class rdf:about="&obo;FOODON_03420273"/>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/UBERON_0000978 -->
 
     <rdf:Description rdf:about="&obo;UBERON_0000978">
