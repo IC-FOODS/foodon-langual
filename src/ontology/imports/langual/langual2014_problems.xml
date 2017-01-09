@@ -274,3 +274,51 @@ OCCASIONALLY:
  So add carriage return for all
  	]&#60;
 entries...
+
+*****************
+EXTRA SPACE
+<FTC>B3484</FTC>
+<TERM lang="en UK">GARDEN PEA</TERM>
+<BT>B1001</BT>
+<SN></SN>
+<AI>&#60;SCIFAM&#62;Fabaceae [ITIS 500059 ]
+
+
+<FTC>B4528</FTC>
+<TERM lang="en UK">MARROWFAT PEA</TERM>
+<BT>B1001</BT>
+<SN></SN>
+<AI>&#60;SCIFAM&#62;Fabaceae [ITIS 500059]
+
+
+<FTC>B4555</FTC>
+<TERM lang="en UK">SPICY KNIGHT MUSHROOM</TERM>
+<BT>B1467</BT>
+<SN></SN>
+<AI>&#60;SCINAM&#62; [INDEX FUNGORUM ]
+
+<FTC>B2205</FTC>
+<TERM lang="en UK">COLORADO LANGOSTINO</TERM>
+<BT>B2486</BT>
+<SN></SN>
+<AI>&#60;SCIFAM&#62;Galatheidae Samouelle, 1819 [ITIS 97964]
+&#60;SCINAM&#62;Pleuroncodes monodon (H. Milne Edwards 1837) [FAO ASFIS PQG]
+&#60;SCINAM&#62;Pleuroncodes monodon [2010 FDA Seafood List]
+&#60;SCINAM&#62;Pleuroncodes monodon (H. Milne Edwards, 1837) [WoRMS AphiaID: 392682 ]</AI>
+
+******************
+EMPTY
+
+<FTC>B1665</FTC>
+<TERM lang="en UK">CARDAMOM</TERM>
+<BT>B1179</BT>
+<SN></SN>
+<AI>&#60;SCIFAM&#62;Zingiberaceae [ITIS 42392]
+&#60;SCINAM&#62;Elettaria cardamomum (L.) Maton [ITIS ]
+
+<FTC>B2601</FTC>
+<TERM lang="en UK">GREATER GALANGAL</TERM>
+<BT>B2971</BT>
+<SN></SN>
+<AI>&#60;SCIFAM&#62;Zingiberaceae [ITIS 42392]
+&#60;SCINAM&#62;Alpinia galanga (L.) Sw. [ITIS ]

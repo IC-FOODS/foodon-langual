@@ -5,6 +5,7 @@
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:patterns="http://www.co-ode.org/patterns#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:taxon="http://purl.obolibrary.org/obo/NCBITaxon#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -13,8 +14,8 @@
      xmlns:efo="http://www.ebi.ac.uk/efo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/foodon.owl">
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/uberon_import.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/efo_import.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/obi_import.owl"/>
+        <owl:imports rdf:resource="http://www.ebi.ac.uk/ancestro"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/envo_import.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/langual_import.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/FOODON/imports/chebi_import.owl"/>
@@ -111,6 +112,29 @@
 
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/UBERON_0001474">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FOODON_03420122"/>
+    </rdf:Description>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/FOODON_03520231">
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/FOODON_03520521</rdfs:seeAlso>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/FOODON_03520521">
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/FOODON_03520231</rdfs:seeAlso>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0003">
+        <rdfs:comment xml:lang="en">Damion Dooley&apos;s note: Country exists to associate food items and recipes with particular geopolitical areas.  This hierarchy is repurposed from the Ancestry Ontology (https://www.ebi.ac.uk/ols/ontologies/ancestro).</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0004">
+        <rdfs:comment xml:lang="en">Damion Dooley&apos;s note: Ancestral group exists to associate food items and recipes with particular cultures and/or geographic areas.  This hierarchy is repurposed from the Ancestry Ontology (https://www.ebi.ac.uk/ols/ontologies/ancestro).</rdfs:comment>
     </rdf:Description>
 </rdf:RDF>
 
