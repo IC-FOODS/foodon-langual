@@ -34,7 +34,7 @@ $(ONT).owl: $(SRC)
 
 # ALL OWL imports: chebi efo envo eo gazetteer ncbitaxon obi ro uberon langual
 # ALL OntoFox imports: chebi efo envo eo gazetteer ncbitaxon obi ro 
-IMPORTS = chebi efo eo ncbitaxon obi ro uberon
+IMPORTS = chebi eo ncbitaxon obi ro uberon gaz
 IMPORTS_OWL = $(patsubst %, imports/%_import.owl,$(IMPORTS))
 
 # Make this target to regenerate ALL

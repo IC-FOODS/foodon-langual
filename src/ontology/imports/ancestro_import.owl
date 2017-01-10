@@ -113,23 +113,6 @@
     
 
 
-    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0329 -->
-
-    <owl:ObjectProperty rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0329">
-        <owl:inverseOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0330"/>
-        <rdfs:label xml:lang="en">hasDemonym</rdfs:label>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0330 -->
-
-    <owl:ObjectProperty rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0330">
-        <rdfs:label xml:lang="en">isDemonymOf</rdfs:label>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://www.ebi.ac.uk/ancestro/ancestro_0285 -->
 
     <owl:ObjectProperty rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0285">
@@ -163,6 +146,23 @@
     
 
 
+    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0329 -->
+
+    <owl:ObjectProperty rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0329">
+        <owl:inverseOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0330"/>
+        <rdfs:label xml:lang="en">hasDemonym</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0330 -->
+
+    <owl:ObjectProperty rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0330">
+        <rdfs:label xml:lang="en">isDemonymOf</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -174,66 +174,9 @@
     
 
 
-    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0324 -->
+    <!-- http://purl.obolibrary.org/obo/FOODON_03520010 -->
 
-    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0324">
-        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0302"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ashkenazi Jew</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0325 -->
-
-    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0325">
-        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0003"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0001025"/>
-                <owl:allValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0051"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Christmas Island</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0326 -->
-
-    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0326">
-        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0003"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0001025"/>
-                <owl:allValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0051"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cocos (Keeling) Islands</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0327 -->
-
-    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0327">
-        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0003"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0001025"/>
-                <owl:allValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0053"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Northern Mariana Islands</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0328 -->
-
-    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0328">
-        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0004"/>
-        <rdfs:label xml:lang="en">Carribean</rdfs:label>
-    </owl:Class>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FOODON_03520010"/>
     
 
 
@@ -249,7 +192,7 @@
     <!-- http://www.ebi.ac.uk/ancestro/ancestro_0002 -->
 
     <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0002">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FOODON_03520010"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
@@ -276,7 +219,7 @@
     <!-- http://www.ebi.ac.uk/ancestro/ancestro_0003 -->
 
     <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0003">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FOODON_03520010"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0285"/>
@@ -1587,6 +1530,17 @@
     <owl:Axiom>
         <owl:annotatedSource rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0068"/>
         <owl:annotatedProperty rdf:resource="http://www.w3.org/2000/01/rdf-schema#subClassOf"/>
+        <owl:annotatedTarget>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0001025"/>
+                <owl:allValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0035"/>
+            </owl:Restriction>
+        </owl:annotatedTarget>
+        <patterns:createdBy rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://e-lico.eu/populous#OPPL_pattern</patterns:createdBy>
+    </owl:Axiom>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0068"/>
+        <owl:annotatedProperty rdf:resource="http://www.w3.org/2000/01/rdf-schema#subClassOf"/>
         <owl:annotatedTarget rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0003"/>
         <patterns:createdBy rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://e-lico.eu/populous#OPPL_pattern</patterns:createdBy>
     </owl:Axiom>
@@ -1597,17 +1551,6 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0285"/>
                 <owl:someValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0011"/>
-            </owl:Restriction>
-        </owl:annotatedTarget>
-        <patterns:createdBy rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://e-lico.eu/populous#OPPL_pattern</patterns:createdBy>
-    </owl:Axiom>
-    <owl:Axiom>
-        <owl:annotatedSource rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0068"/>
-        <owl:annotatedProperty rdf:resource="http://www.w3.org/2000/01/rdf-schema#subClassOf"/>
-        <owl:annotatedTarget>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0001025"/>
-                <owl:allValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0035"/>
             </owl:Restriction>
         </owl:annotatedTarget>
         <patterns:createdBy rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://e-lico.eu/populous#OPPL_pattern</patterns:createdBy>
@@ -10958,6 +10901,69 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:label xml:lang="en">Dutch founder</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0324 -->
+
+    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0324">
+        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0302"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ashkenazi Jew</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0325 -->
+
+    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0325">
+        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0003"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0001025"/>
+                <owl:allValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0051"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Christmas Island</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0326 -->
+
+    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0326">
+        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0003"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0001025"/>
+                <owl:allValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0051"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cocos (Keeling) Islands</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0327 -->
+
+    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0327">
+        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0003"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0001025"/>
+                <owl:allValuesFrom rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0053"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Northern Mariana Islands</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ebi.ac.uk/ancestro/ancestro_0328 -->
+
+    <owl:Class rdf:about="http://www.ebi.ac.uk/ancestro/ancestro_0328">
+        <rdfs:subClassOf rdf:resource="http://www.ebi.ac.uk/ancestro/ancestro_0004"/>
+        <rdfs:label xml:lang="en">Carribean</rdfs:label>
     </owl:Class>
     
 

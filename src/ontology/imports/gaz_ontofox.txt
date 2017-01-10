@@ -1,0 +1,123 @@
+[URI of the OWL(RDF/XML) output file]
+http://purl.obolibrary.org/obo/FOODON/imports/gaz_import.owl
+
+[Source ontology]
+GAZETTEER
+
+[Low level source term URIs]
+
+
+# NOTE: LANGUAL IMPORT OVERWRITES THIS FILE.  
+# MODIFY /src/ontology/imports/langual/template_gazetteer_ontofox.txt 
+# THEN REDO LANGUAL IMPORT TO REVISE THIS FILE SO THAT make COMMAND WORKS.
+
+http://purl.obolibrary.org/obo/GAZ_00000462 # ANTARCTICA
+http://purl.obolibrary.org/obo/GAZ_00001453 # BOUVET ISLAND
+http://purl.obolibrary.org/obo/GAZ_00002566 # ALBERTA
+http://purl.obolibrary.org/obo/GAZ_00002562 # BRITISH COLUMBIA
+http://purl.obolibrary.org/obo/GAZ_00002571 # MANITOBA
+http://purl.obolibrary.org/obo/GAZ_00002570 # NEW BRUNSWICK
+http://purl.obolibrary.org/obo/GAZ_00002561 # NEWFOUNDLAND
+http://purl.obolibrary.org/obo/GAZ_00002567 # NORTHWEST TERRITORIES
+http://purl.obolibrary.org/obo/GAZ_00002565 # NOVA SCOTIA
+http://purl.obolibrary.org/obo/GAZ_00002563 # ONTARIO
+http://purl.obolibrary.org/obo/GAZ_00002572 # PRINCE EDWARD ISLAND
+http://purl.obolibrary.org/obo/GAZ_00002566 # QUEBEC
+http://purl.obolibrary.org/obo/GAZ_00002569 # SASKATCHEWAN
+http://purl.obolibrary.org/obo/GAZ_00002564 # YUKON TERRITORY
+http://purl.obolibrary.org/obo/GAZ_00002901 # COSTA RICA
+http://purl.obolibrary.org/obo/GAZ_00002954 # CZECHOSLOVAKIA
+http://purl.obolibrary.org/obo/GAZ_00002641 # ENGLAND
+http://purl.obolibrary.org/obo/GAZ_00002640 # WALES
+http://purl.obolibrary.org/obo/GAZ_00009571 # GAZA STRIP
+http://purl.obolibrary.org/obo/GAZ_00009718 # HEARD AND MCDONALD ISLANDS
+http://purl.obolibrary.org/obo/GAZ_00003734 # BALI
+http://purl.obolibrary.org/obo/GAZ_00024383 # JAVA
+http://purl.obolibrary.org/obo/GAZ_02000610 # IRIAN JAYA
+http://purl.obolibrary.org/obo/GAZ_00025355 # BORNEO
+http://purl.obolibrary.org/obo/GAZ_00024553 # SULAWESI
+http://purl.obolibrary.org/obo/GAZ_00024432 # SUMATRA
+http://purl.obolibrary.org/obo/GAZ_00003985 # BRITISH INDIAN OCEAN TERRITORY
+http://purl.obolibrary.org/obo/GAZ_00005328 # TAHITI
+http://purl.obolibrary.org/obo/GAZ_00000457 # AFRICA
+http://purl.obolibrary.org/obo/GAZ_00000465 # ASIA
+http://purl.obolibrary.org/obo/GAZ_00002846 # ASIA, NORTHEAST
+http://purl.obolibrary.org/obo/GAZ_00000464 # EUROPE
+http://purl.obolibrary.org/obo/GAZ_00000458 # NORTH AMERICA
+http://purl.obolibrary.org/obo/GAZ_00017678 # SVALBARD AND JAN MAYEN ISLANDS
+http://purl.obolibrary.org/obo/GAZ_00007113 # UNITED STATES MINOR OUTLYING ISLANDS
+http://purl.obolibrary.org/obo/GAZ_00006881 # ALABAMA
+http://purl.obolibrary.org/obo/GAZ_00002521 # ALASKA
+http://purl.obolibrary.org/obo/GAZ_00002518 # ARIZONA
+http://purl.obolibrary.org/obo/GAZ_00004441 # ARKANSAS
+http://purl.obolibrary.org/obo/GAZ_00002461 # CALIFORNIA
+http://purl.obolibrary.org/obo/GAZ_00006254 # COLORADO
+http://purl.obolibrary.org/obo/GAZ_00002591 # CONNECTICUT
+http://purl.obolibrary.org/obo/GAZ_00002878 # DELAWARE
+http://purl.obolibrary.org/obo/GAZ_00003175 # DISTRICT OF COLUMBIA
+http://purl.obolibrary.org/obo/GAZ_00002888 # FLORIDA
+http://purl.obolibrary.org/obo/GAZ_00002611 # GEORGIA
+http://purl.obolibrary.org/obo/GAZ_00003939 # HAWAII
+http://purl.obolibrary.org/obo/GAZ_00006291 # IDAHO
+http://purl.obolibrary.org/obo/GAZ_00003142 # ILLINOIS
+http://purl.obolibrary.org/obo/GAZ_00004439 # INDIANA
+http://purl.obolibrary.org/obo/GAZ_00004438 # IOWA
+http://purl.obolibrary.org/obo/GAZ_00004435 # KANSAS
+http://purl.obolibrary.org/obo/GAZ_00004440 # KENTUCKY
+http://purl.obolibrary.org/obo/GAZ_00004432 # LOUISIANA
+http://purl.obolibrary.org/obo/GAZ_00002602 # MAINE
+http://purl.obolibrary.org/obo/GAZ_00002519 # MARYLAND
+http://purl.obolibrary.org/obo/GAZ_00002537 # MASSACHUSETTS
+http://purl.obolibrary.org/obo/GAZ_00003152 # MICHIGAN
+http://purl.obolibrary.org/obo/GAZ_00002539 # MINNESOTA
+http://purl.obolibrary.org/obo/GAZ_00004430 # MISSISSIPPI
+http://purl.obolibrary.org/obo/GAZ_00004431 # MISSOURI
+http://purl.obolibrary.org/obo/GAZ_00002606 # MONTANA
+http://purl.obolibrary.org/obo/GAZ_00005070 # NEBRASKA
+http://purl.obolibrary.org/obo/GAZ_00004444 # NEVADA
+http://purl.obolibrary.org/obo/GAZ_00004428 # NEW HAMPSHIRE
+http://purl.obolibrary.org/obo/GAZ_00002557 # NEW JERSEY
+http://purl.obolibrary.org/obo/GAZ_00004427 # NEW MEXICO
+http://purl.obolibrary.org/obo/GAZ_00002514 # NEW YORK
+http://purl.obolibrary.org/obo/GAZ_00002520 # NORTH CAROLINA
+http://purl.obolibrary.org/obo/GAZ_00004442 # NORTH DAKOTA
+http://purl.obolibrary.org/obo/GAZ_00004421 # OHIO
+http://purl.obolibrary.org/obo/GAZ_00002546 # OKLAHOMA
+http://purl.obolibrary.org/obo/GAZ_00002515 # OREGON
+http://purl.obolibrary.org/obo/GAZ_00002542 # PENNSYLVANIA
+http://purl.obolibrary.org/obo/GAZ_00002531 # RHODE ISLAND
+http://purl.obolibrary.org/obo/GAZ_00002524 # SOUTH CAROLINA
+http://purl.obolibrary.org/obo/GAZ_00004443 # SOUTH DAKOTA
+http://purl.obolibrary.org/obo/GAZ_00004411 # TENNESSEE
+http://purl.obolibrary.org/obo/GAZ_00002580 # TEXAS
+http://purl.obolibrary.org/obo/GAZ_00004413 # UTAH
+http://purl.obolibrary.org/obo/GAZ_00004429 # VERMONT
+http://purl.obolibrary.org/obo/GAZ_00003171 # VIRGINIA
+http://purl.obolibrary.org/obo/GAZ_00002553 # WASHINGTON
+http://purl.obolibrary.org/obo/GAZ_00004414 # WEST VIRGINIA
+http://purl.obolibrary.org/obo/GAZ_00002586 # WISCONSIN
+http://purl.obolibrary.org/obo/GAZ_00002533 # WYOMING
+http://purl.obolibrary.org/obo/GAZ_00003096 # WESTERN STATES
+http://purl.obolibrary.org/obo/GAZ_00052663 # YUGOSLAVIA
+http://purl.obolibrary.org/obo/GAZ_00009812 # KENT COUNTY
+http://purl.obolibrary.org/obo/GAZ_22222226 # NEW CASTLE COUNTY
+http://purl.obolibrary.org/obo/GAZ_22222228 # SUSSEX COUNTY
+http://purl.obolibrary.org/obo/GAZ_00009975 # ORANGE COUNTY, FL
+http://purl.obolibrary.org/obo/GAZ_00006895 # MACEDONIA
+
+
+[Top level source term URIs and target direct superclass URIs]
+
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115 
+http://purl.obolibrary.org/obo/IAO_0000111
+http://purl.obolibrary.org/obo/IAO_0000114
+http://purl.obolibrary.org/obo/IAO_0000119
+http://purl.obolibrary.org/obo/OBI_0001886
+
+[Source annotation URIs to be excluded]

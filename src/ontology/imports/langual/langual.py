@@ -128,7 +128,7 @@ class Langual(object):
 
         # Uncomment this to update database to latest CHEBI etc ids 
         # for LanguaL entities based on lookup.txt file.
-        #
+        # Note, if trying to clense bad ontology ids further below, must run this script twice.
         #
         self.updateDatabaseOntologyIds('./lookup.txt')
 
@@ -217,7 +217,8 @@ class Langual(object):
 
             # Enable any database item to be looked up by its FOODON assigned ontology id (which could be a CHEBI_xxxxx or other id too.)
             # A cleared out ontology id gets reassigned 
-            if 'ontology_id' in entity and len(entity['ontology_id']) > 0: 
+            # TEMPORARY CLEANUP :  and ('_' in entity['ontology_id'] and entity['ontology_id'][0:entity['ontology_id'].index('_')] in ['CHEBI_','FOODON_','UBERON_','NCBITaxon','GAZ','ancestro'])
+            if 'ontology_id' in entity: 
                 ontology_id = entity['ontology_id']
             else:
                 ontology_id = self.get_ontology_id(database_id)
@@ -283,18 +284,27 @@ class Langual(object):
         with (codecs.open(filename, 'r', 'utf-8')) as input_handle:
             for line in input_handle:
                 if len(line) > 5 and line[0] != '#':
-                    (id, label, uri) = line.split('\t')
+                    (id, uri, label) = line.split('\t',2)
                     uri = uri.strip()
-                    if len(uri) > 0: lookup[id] = uri 
+                    if len(id) > 0 and len(uri) > 0: lookup[id] = uri 
 
         for database_id in self.database['index']:
             entity = self.database['index'][database_id]
             
             if entity['database_id'] in lookup:
-                entity['ontology_id'] = lookup[entity['database_id']]
-                print ("replacing " + entity['database_id'] + ' with ' + lookup[entity['database_id']] )
+                new_ontology_id = lookup[entity['database_id']]
+                self.ontology_index[new_ontology_id] = entity['database_id']
+                old_ontology_id = entity['ontology_id']
+                entity['ontology_id'] = new_ontology_id
+                print ("replacing ref " + entity['database_id'] + ' with ' + new_ontology_id )
+                
+                # Remove old id in ontology_index as signal not to honour any is_a references to it
+                self.ontology_index.pop(old_ontology_id, None)
+                    
 
-            # ISSUE: THIS LEAVES BROKEN EXISTING IS_A REFERENCES from CHILDREN.
+
+            # ISSUE: THIS BREAKS EXISTING IS_A REFERENCES from CHILDREN.
+            # COULD LEAVE THEM IN DATABASE but just not write them into langual_import.owl file.
 
 
     def processEntityAI(self, child, entity, AI):
@@ -479,42 +489,73 @@ class Langual(object):
 
             if entity['status'] != 'ignore': # pick only items that are not marked "ignore"
 
-                # For now accept only first parent as is_a parent
-                label = entity['label']['value'].replace('>','&gt;').replace('<','&lt;').lower()
-                ontology_id = '&obo;' + entity['ontology_id']
-
                 # BEGIN <owl:Class> 
-                owl_class_footer = '' # This will hold axioms that have to follow outside <owl:Class>...</owl:Class>
 
+
+                # Ancestro at moment isn't an OBOFoundry ontology,
+                ontology_id = entity['ontology_id']
+                foodon = True if ontology_id[0:7] == 'FOODON_' else False
+
+                if ontology_id[0:8] == 'ancestro':
+                    ontology_id = 'http://www.ebi.ac.uk/ancestro/' + ontology_id
+                else:
+                    ontology_id = '&obo;' + ontology_id
                 owl_output += '\n\n<owl:Class rdf:about="%s">\n' % ontology_id
-                owl_output += '\t<rdfs:label %(language)s>%(label)s</rdfs:label>\n' % { 
-                    'label': label, 
-                    'language': self.get_language_tag_owl(entity['label']) 
-                }
-                # LANGUAL IMPORT ANNOTATION
-                owl_output += "\t<obo:IAO_0000412>http://langual.org</obo:IAO_0000412>\n"
+
+                label = entity['label']['value'].replace('>','&gt;').replace('<','&lt;').lower()
+                labelLang = self.get_language_tag_owl(entity['label']) 
+
+                # Use alternate label if we're normalizing to another ontology
+                labelTag = 'rdfs:label' if foodon else 'obo:IAO_0000118'
+
+                owl_output += '\t<%(tag)s %(language)s>%(label)s</%(tag)s>\n' % { 'label': label, 'language': labelLang, 'tag': labelTag}
 
                 for item in entity['is_a']:
                     # If parent isn't imported (even as an obsolete item), don't make an is_a for it.
                     # (is_a entries can reference non-FoodOn ids).
                     if self.term_import(entity['is_a'], item): 
-                        obo = '' if item[0:7] == 'http://' else '&obo;'
-                        owl_output += '\t<rdfs:subClassOf rdf:resource="%s%s"/>\n' % (obo, item)
+                        # last check to see if item is still in database:
+                        if item in self.ontology_index:
+                            if item[0:7] == 'http://':
+                                prefix = ''  
+                            elif item[0:8] == 'ancestro':
+                                prefix = 'http://www.ebi.ac.uk/ancestro/' 
+                            else: 
+                                prefix = '&obo;'
+                            owl_output += '\t<rdfs:subClassOf rdf:resource="%s%s"/>\n' % (prefix, item)
+
+
+                # LANGUAL IMPORT ANNOTATION
+                owl_output += "\t<obo:IAO_0000412>http://langual.org</obo:IAO_0000412>\n"
 
                 if self.term_import(entity, 'definition'):
-                    definition = entity['definition']['value']  #.replace('"',r'\"').replace('\n',r'\n')
-                    owl_output += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition.replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;').replace(u'\u0092','"').replace(u'\u0091','"') # angled unicode single quotes  <U+0091>, <U+0092> 
-              
-                if self.term_import(entity, 'definition_source'):
-                    owl_output += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']['value']
+                    # angled unicode single quotes  <U+0091>, <U+0092> 
+                    definition = entity['definition']['value'].replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;').replace(u'\u0092','"').replace(u'\u0091','"') 
+                else:
+                    definition = ''
 
-                # CURATION STATUS
-                if entity['status'] == 'deprecated':
-                    owl_output += '\t<owl:deprecated rdf:datatype="&xsd;boolean">true</owl:deprecated>\n'
-                    # ready for release
-                    owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000122"/>\n' 
-                elif entity['status'] == 'draft': # Anything marked as 'draft' status is written as 'requires discussion'
-                    owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000428"/>\n'
+                # If this item is primarily a foodon one, provide full annotation
+                if foodon:
+                    if definition > '':
+                        owl_output += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition
+                  
+                    if self.term_import(entity, 'definition_source'):
+                        owl_output += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']['value']
+
+                    # CURATION STATUS
+                    if entity['status'] == 'deprecated':
+                        owl_output += '\t<owl:deprecated rdf:datatype="&xsd;boolean">true</owl:deprecated>\n'
+                        # ready for release
+                        owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000122"/>\n' 
+
+                    # Anything marked as 'draft' status is written as 'requires discussion'
+                    elif entity['status'] == 'draft': 
+                        owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000428"/>\n'
+
+                # Langual is adding information to a 3rd party CHEBI/UBERON/ etc. term
+                elif definition > '':
+                    owl_output += '\t<rdfs:comment xml:lang="en">LanguaL term definition: %s</rdfs:comment>\n' % definition
+
 
                 if self.term_import(entity, 'comment'):
                     owl_output += '\t<rdfs:comment xml:lang="en">LanguaL curation note: %s</rdfs:comment>\n' % entity['comment']['value']
@@ -540,6 +581,9 @@ class Langual(object):
                                 owl_output += '\t<oboInOwl:hasDbXref>http://eol.org/pages/%s</oboInOwl:hasDbXref>\n' % entity['xrefs'][item]['value']
                             else:
                                 owl_output += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
+
+
+                owl_class_footer = '' # This will hold axioms that have to follow outside <owl:Class>...</owl:Class>
 
                 if 'taxon' in entity:
                     for taxon_rank_name in entity['taxon']:
@@ -974,10 +1018,18 @@ class Langual(object):
 
 
     def writeOntoFox_specs(self):
-        # Create the OntoFox import specification files, one for each ontology listed below.
-        # ontofoxSpec is a key-value bag containing one OntoFox command string for each ontology.
-
-        ontofoxSpec = {'chebi':'','uberon':''}
+        """
+        Create the OntoFox import specification files, one for each ontology listed below.
+        A "template_[ontology]_ontofox.txt" template file is read, and all the ontology codes
+        are inserted just before the "[Top level source term URIs ..." section.
+        
+        ontofoxSpec is a key-value bag containing one OntoFox command string for each ontology.
+        """
+        # List of ontology prefixes to generate ontofox specification files for:
+        ontofoxSpec = {
+            'chebi':'',
+            'uberon':'',
+            'gaz':''}
         ontofoxSpecKeys = ontofoxSpec.keys()
 
         # For each entity in database, check its ontology_id to see if it references an entity 
@@ -994,7 +1046,6 @@ class Langual(object):
         for ontology in ontofoxSpecKeys:
             if len(ontofoxSpec[ontology]) > 0:
                 output_file = '../' + ontology + '_ontofox.txt'
-                print ("Generating " + output_file)
                 with open('template_' + ontology + '_ontofox.txt', 'r') as handle:
                     ontofoxTemplate = handle.read()
 
@@ -1003,6 +1054,7 @@ class Langual(object):
               
                     with (codecs.open(output_file, 'r', 'utf-8')) as read_handle:
                         if read_handle.read() != content:
+                            print ("Generating " + output_file)
                             with (codecs.open(output_file, 'w', 'utf-8')) as output_handle:
                                 output_handle.write(content)
 

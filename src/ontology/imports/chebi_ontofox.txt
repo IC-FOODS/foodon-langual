@@ -22,7 +22,6 @@ http://purl.obolibrary.org/obo/CHEBI_30769 # CITRIC ACID
 http://purl.obolibrary.org/obo/CHEBI_64220 # MONOSODIUM GLUTAMATE
 http://purl.obolibrary.org/obo/CHEBI_32588 # POTASSIUM CHLORIDE
 http://purl.obolibrary.org/obo/CHEBI_32139 # SODIUM HYDROGEN CARBONATE
-http://purl.obolibrary.org/obo/CHEBI_64047 # FOOD ADDITIVE
 http://purl.obolibrary.org/obo/CHEBI_83501 # ACESULFAME K
 http://purl.obolibrary.org/obo/CHEBI_15366 # ACETIC ACID
 http://purl.obolibrary.org/obo/CHEBI_30832 # ADIPIC ACID
@@ -176,6 +175,7 @@ http://purl.obolibrary.org/obo/CHEBI_9679 # TRICALCIUM PHOSPHATE
 http://purl.obolibrary.org/obo/CHEBI_53258 # TRISODIUM CITRATE
 http://purl.obolibrary.org/obo/CHEBI_37583 # TRISODIUM PHOSPHATE
 http://purl.obolibrary.org/obo/CHEBI_17151 # XYLITOL
+http://purl.obolibrary.org/obo/CHEBI_30879 # ALCOHOL
 http://purl.obolibrary.org/obo/CHEBI_12777 # VITAMIN A
 http://purl.obolibrary.org/obo/CHEBI_27300 # VITAMIN D
 http://purl.obolibrary.org/obo/CHEBI_33234 # VITAMIN E
@@ -224,7 +224,6 @@ http://purl.obolibrary.org/obo/CHEBI_32879 # PROPANE
 http://purl.obolibrary.org/obo/CHEBI_27941 # PULLULAN
 http://purl.obolibrary.org/obo/CHEBI_131526 # POTASSIUM CARBONATES
 http://purl.obolibrary.org/obo/CHEBI_17309 # PECTINS
-http://purl.obolibrary.org/obo/CHEBI_16646 # CARBOHYDRATE
 http://purl.obolibrary.org/obo/CHEBI_18154 # POLYSACCHARIDE
 http://purl.obolibrary.org/obo/CHEBI_5291 # GELATIN
 http://purl.obolibrary.org/obo/CHEBI_50699 # OLIGOSACCHARIDE
