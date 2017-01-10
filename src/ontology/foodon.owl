@@ -39,6 +39,7 @@
         <owl:imports rdf:resource="&obo;FOODON/imports/ncbitaxon_import.owl"/>
         <owl:imports rdf:resource="&obo;FOODON/imports/metadata_import.owl"/>
         <owl:imports rdf:resource="&obo;FOODON/imports/eo_import.owl"/>
+        <owl:imports rdf:resource="&obo;FOODON/imports/product_type_import.owl"/>
         <dc:contributor xml:lang="en">Damion Dooley</dc:contributor>
         <dc:contributor xml:lang="en">William Hsiao</dc:contributor>
         <dc:contributor xml:lang="en">Pier Buttigieg</dc:contributor>
@@ -719,7 +720,6 @@
             <rdf:Description rdf:about="&obo;FOODON_00001237"/>
             <rdf:Description rdf:about="&obo;FOODON_00001243"/>
             <rdf:Description rdf:about="&obo;FOODON_00001252"/>
-            <rdf:Description rdf:about="&obo;FOODON_00001256"/>
         </owl:members>
     </rdf:Description>
     <rdf:Description>

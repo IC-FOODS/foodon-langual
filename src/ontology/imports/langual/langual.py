@@ -68,7 +68,7 @@ class Langual(object):
 
         # READ THIS FROM database.json
         self.database_path = './database.json' 
-        self.ontology_path = '../langual_import'
+        self.ontology_name = 'langual_import'
         self.database = { #empty case.
             'index': OrderedDict(), 
             'version': 0 
@@ -103,7 +103,7 @@ class Langual(object):
         self.re_taxonomy = re.compile(r'<?(?P<rank>[A-Z]+)>(?P<name>[^\]]+) ?\[((?P<ref>([A-Z]+[0-9]*|2010 FDA Seafood List))|(?P<db>[A-Z 0-9]+) (?P<id>[^\]]+))]')
 
 
-    def __main__(self, file, database, ontology):
+    def __main__(self, XMLfile, database, ontology):
         """
         Create memory-resident data structure of captured LanguaL items.  Includes:
             - ALL FOOD SOURCE ITEMS, including:
@@ -122,7 +122,7 @@ class Langual(object):
 
         """
         self.database_path = database
-        self.ontology_path = ontology
+        self.ontology_name = ontology
 
         if os.path.isfile(self.database_path):
             self.database = self.get_database_JSON(self.database_path)
@@ -136,16 +136,20 @@ class Langual(object):
         self.updateDatabaseOntologyIds('./lookup.txt')
 
 
-        #file_handle = codecs.open(file, "r", "iso-8859-1")
-        tree = ET.parse(file) # Incoming raw XML database file
+        
+        # Incoming raw XML database file
+        tree = ET.parse(XMLfile) 
         root = tree.getroot()
 
         for child in root.iter('DESCRIPTOR'):
             
             # Place facet characters here to skip them
             category = child.find('FTC').text[0]
-            if category in 'A':
-                continue
+
+            # This isolates Product Types out to a separate database
+            if self.ontology_name == 'langual_import':
+                if category == 'A': continue
+            elif category != 'A': continue
 
             entity = OrderedDict() # Barebones entity
             #Status ranges:
@@ -252,7 +256,7 @@ class Langual(object):
 
                 
         # Do bulk fetch of ITIS and INDEX FUNGORUM to NCBITaxon codes
-        if self.ontology_path == '../langual_import':
+        if self.ontology_name == 'langual_import':
             self.getEOLNCBITaxonData()
             self.writeNCBITaxon_OntoFox_spec()
             self.writeOntoFox_specs()
@@ -262,9 +266,9 @@ class Langual(object):
             output_handle.write(json.dumps(self.database, sort_keys=False, indent=4, separators=(',', ': ')))
 
         # Display stats and problem cases the import found
-        self.report(file)
+        self.report(XMLfile)
 
-        print "Generating ", self.ontology_path + '.owl'
+        print "Generating ../" + self.ontology_name + '.owl'
         self.save_ontology_owl()
 
 
@@ -463,8 +467,11 @@ class Langual(object):
 
         """
         # DON'T CALL THIS header_langual.owl - the Makefile make reads in subdirectories and will try to parse this, and fail.
-        with (open('./template_langual_import_header.txt', 'r')) as input_handle:
+        with (open('./template_import_header.txt', 'r')) as input_handle:
             owl_output = input_handle.read()
+
+        # MUST SUBSTITUTE ONTOLOGY NAME
+        owl_output = owl_output.replace('ONTOLOGY_NAME',self.ontology_name)
 
         genid = 1 # counter for anonymous node ids.
 
@@ -620,9 +627,9 @@ class Langual(object):
 
         owl_output += '</rdf:RDF>'
 
-        print "Saving ", self.ontology_path + '.owl'
+        print "Saving ../" + self.ontology_name + '.owl'
 
-        with (codecs.open(self.ontology_path + '.owl', 'w', 'utf-8')) as output_handle:
+        with (codecs.open('../' + self.ontology_name + '.owl', 'w', 'utf-8')) as output_handle:
             output_handle.write(owl_output)
 
 
@@ -1059,7 +1066,7 @@ class Langual(object):
         dict
         """
         try:
-            response = requests.get(url) #  + '&key=5662da7aff53b902e6f33c86ae5e00b5f394d1f2'
+            response = requests.get(url)
 
         except Exception as e:
             print "ERROR IN SENDING EOL.org request: ", str(e)
@@ -1074,12 +1081,6 @@ class Langual(object):
         print "Facet item counts"
         print self.counts               
         print
-        #print "Food source (facet B) stats"
-        #print " Food additive items: ", self.food_additive
-        #print " Items with taxonomy: ", self.has_taxonomy
-        #print "   Items having ITIS: ", self.has_ITIS
-        #print " Items without taxon: ", self.no_taxonomy
-
         print (self.output)
 
 
@@ -1095,114 +1096,7 @@ class Langual(object):
 if __name__ == '__main__':
 
     foodstruct = Langual()
+    # Generates main import file:
     foodstruct.__main__('langual2014.xml','./database.json', '../langual_import')
-
-
-""" TAXONOMY NOTES
-
-Taxonomy roles in LanguaL VS NCBI (NCBITaxon#_taxonomic_rank , relation: ncbitaxon#has_rank)
-LanguaL code                    NCBI_Taxon_
-                                superkingdom
-               Kingdom          kingdom 
-               Subkingdom       subkingdom
-               Infrakingdom
-               Superdivision    superphylum     * division/phylum merged (Botany division = plant)
-SCIDIV         Division         phylum          * division -> phylum in NCBI 
-               Subdivision      subphylum
-                                
-SCIPHY         Phylum           
-SCISUBPHY      Subphylum        subphylum
-SCISUPCLASS                     superclass 
-SCICLASS       Class            class
-                                subclass
-SCIINFCLASS                     infraclass
-               Superorder       superorder
-SCIORD         Order            order
-SCISUBORD                       suborder
-SCIINFORD                       infraorder
-                                parvorder
-SCISUPFAM                       superfamily
-SCIFAM         Family           family
-SCISUBFAM                       subfamily
-SCITRI                          tribe   
-                                subtribe            
-SCIGEN         Genus            genus
-                                subgenus
-SCINAM         Species          species
-SCISYN                          species     * synonym!?!
-                                subspecies
-                                varietas
-                                forma
-PROBLEM CASES
-SCISUNFAM  typo of SCISUBFAM                                
-NCBI Also has:
-
-                                species_group
-                                species_subgroup
-
-NOTE EOL: http://eol.org/pages/582002/names/synonyms synonyms categorized by preferred, misspelling, authority,  etc. and relate to scientific names.
-
-Example LanguaL record
-<DESCRIPTOR>
-    <FTC>B1249</FTC>
-    <TERM lang="en UK">PAPAYA</TERM>
-    <BT>B1024</BT>
-    <SN></SN>
-    <AI>&#60;SCIFAM&#62;Caricaceae [ITIS 22322]
-    &#60;SCINAM&#62;Carica papaya L. [ITIS 22324]
-    &#60;SCINAM&#62;Carica papaya L. [GRIN 9147]
-    &#60;SCINAM&#62;Carica papaya L. [PLANTS CAPA23]
-    &#60;SCINAM&#62;Carica papaya L. [EuroFIR-NETTOX 2007 73]
-    &#60;SCINAM&#62;Carica papaya L. [DPNL 2003 8382]
-    &#60;MANSFELD&#62;23437</AI>
-    <SYNONYMS>
-        <SYNONYM>carica papaya</SYNONYM>
-        <SYNONYM>hawaiian papaya</SYNONYM>
-        <SYNONYM>lechoza</SYNONYM>
-        <SYNONYM>melon tree</SYNONYM>
-        <SYNONYM>pawpaw</SYNONYM>
-    </SYNONYMS>
-    <RELATEDTERMS>
-    </RELATEDTERMS>
-    <CLASSIFICATION>False</CLASSIFICATION>
-    <ACTIVE>True</ACTIVE>
-    <DATEUPDATED>2011-10-07</DATEUPDATED>
-    <DATECREATED>2000-01-01</DATECREATED>
-    <UPDATECOMMENT></UPDATECOMMENT>
-    <SINGLE>False</SINGLE>
-
-# <SINGLE> appears to be an inconsequential tag.
-# ISSUE: Some "lines" in lines_of_text might not be separated by a carriage return, e.g.
-    
-    <SCINAM>Hapalochlaena maculosa (Hoyle, 1883) [ITIS 556175]<.... > 
-
-
-PROBLEM CASE - ITIS code is NOT following SCINAME in brackets:
-    <SCIFAM>Apiaceae
-    <SCINAM>Apium graveolens var. rapaceum (Miller) Gaudin
-    <ITIS>530941
-    <GRIN>3704
-    <MANSFELD>1236
-
-    <DESCRIPTOR>
-        <FTC>B1729</FTC>
-        <TERM lang="en UK">CELERIAC</TERM>
-        <BT>B1018</BT>
-        <SN></SN>
-        <AI>&#60;SCIFAM&#62;Apiaceae
-        &#60;SCINAM&#62;Apium graveolens var. rapaceum (Miller) Gaudin
-        &#60;ITIS&#62;530941
-        &#60;GRIN&#62;3704
-        &#60;MANSFELD&#62;1236</AI>
-        <SYNONYMS>
-            <SYNONYM>apium graveolens rapaceum</SYNONYM>
-            <SYNONYM>celery root</SYNONYM>
-        </SYNONYMS>
-
-PROBLEM CASE - solanum dulcamara
-<SYNONYMS>
-    <SYNONYM>solanum dulcamara</SYNONYM>
-</SYNONYMS>
-    - no taxonomy but scientific name will return ITIS / EOL / NCBITaxon lookup.
-
-"""
+    # Generates LanguaL Facet A Product Type file
+    #foodstruct.__main__('langual2014.xml','./langual_facet_a.json', 'product_type_import')
