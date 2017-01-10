@@ -6951,18 +6951,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/CHEBI_64047 -->
-
-    <owl:Class rdf:about="&obo;CHEBI_64047">
-        <rdfs:subClassOf rdf:resource="&obo;CHEBI_33232"/>
-        <rdfs:subClassOf rdf:resource="&obo;CHEBI_78295"/>
-        <obo:IAO_0000115 rdf:datatype="&xsd;string">Any substance which is added to food to preserve or enhance its flavour and/or appearance.</obo:IAO_0000115>
-        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
-        <rdfs:label rdf:datatype="&xsd;string">food additive</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/CHEBI_64220 -->
 
     <owl:Class rdf:about="&obo;CHEBI_64220">

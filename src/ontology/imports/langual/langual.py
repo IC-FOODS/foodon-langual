@@ -48,7 +48,7 @@ except ImportError: # Python 2.6
     import json
 
 
-CODE_VERSION = '0.0.3'
+CODE_VERSION = '0.0.4'
 
 def stop_err( msg, exit_code=1 ):
     sys.stderr.write("%s\n" % msg)
@@ -67,7 +67,7 @@ class Langual(object):
     def __init__(self):
 
         # READ THIS FROM database.json
-        self.database_path = './database.json'
+        self.database_path = './database.json' 
         self.ontology_path = '../langual_import'
         self.database = { #empty case.
             'index': OrderedDict(), 
@@ -103,7 +103,7 @@ class Langual(object):
         self.re_taxonomy = re.compile(r'<?(?P<rank>[A-Z]+)>(?P<name>[^\]]+) ?\[((?P<ref>([A-Z]+[0-9]*|2010 FDA Seafood List))|(?P<db>[A-Z 0-9]+) (?P<id>[^\]]+))]')
 
 
-    def __main__(self, file):
+    def __main__(self, file, database, ontology):
         """
         Create memory-resident data structure of captured LanguaL items.  Includes:
             - ALL FOOD SOURCE ITEMS, including:
@@ -121,6 +121,9 @@ class Langual(object):
             <RELATEDTERM>B2177</RELATEDTERM>
 
         """
+        self.database_path = database
+        self.ontology_path = ontology
+
         if os.path.isfile(self.database_path):
             self.database = self.get_database_JSON(self.database_path)
             self.database['version'] +=1
@@ -247,20 +250,12 @@ class Langual(object):
             # dropped if they are latin names already covered by hasNarrowSynonym
             self.load_synonyms(entity, child)
 
-        # 2nd pass: link up as many archaic LanguaL terms as possible to primary entries
-        #for database_id in self.database['index']:
-        #    entity = self.database['index'][database_id]
-        #    if entity['status'] != 'ignore':
-        #        # Need to add parent_id label just for OBO output file "is_a ... ! ..." comment
-        #        for item in entity['is_a']:
-        #            # LOOKUP is ontology_id - need cross reference
-        #            if item in self.ontology_index:  # And item not locked or ignore
-        #                dbid = self.ontology_index[item]
-        #                db_name = self.database['index'][dbid]['label']['value']
-        #                entity['is_a'][item]['value'] = db_name
                 
         # Do bulk fetch of ITIS and INDEX FUNGORUM to NCBITaxon codes
-        self.getEOLNCBITaxonData()
+        if self.ontology_path == '../langual_import':
+            self.getEOLNCBITaxonData()
+            self.writeNCBITaxon_OntoFox_spec()
+            self.writeOntoFox_specs()
 
         print "Updating ", self.database_path
         with (open(self.database_path, 'w')) as output_handle:
@@ -268,9 +263,6 @@ class Langual(object):
 
         # Display stats and problem cases the import found
         self.report(file)
-
-        self.writeNCBITaxon_OntoFox_spec()
-        self.writeOntoFox_specs()
 
         print "Generating ", self.ontology_path + '.owl'
         self.save_ontology_owl()
@@ -301,11 +293,6 @@ class Langual(object):
                 # Remove old id in ontology_index as signal not to honour any is_a references to it
                 self.ontology_index.pop(old_ontology_id, None)
                     
-
-
-            # ISSUE: THIS BREAKS EXISTING IS_A REFERENCES from CHILDREN.
-            # COULD LEAVE THEM IN DATABASE but just not write them into langual_import.owl file.
-
 
     def processEntityAI(self, child, entity, AI):
         # LanguaL encoded html -> markdown italics
@@ -1108,7 +1095,7 @@ class Langual(object):
 if __name__ == '__main__':
 
     foodstruct = Langual()
-    foodstruct.__main__('langual2014.xml')
+    foodstruct.__main__('langual2014.xml','./database.json', '../langual_import')
 
 
 """ TAXONOMY NOTES
