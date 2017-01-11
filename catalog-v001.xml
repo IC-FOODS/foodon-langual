@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/../product_type_import.owl" uri="src/ontology/product_type_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/chebi_import.owl" uri="src/ontology/imports/chebi_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/efo_import.owl" uri="src/ontology/imports/on_hold/efo_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/envo_import.owl" uri="src/ontology/imports/envo_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/eo_import.owl" uri="src/ontology/imports/eo_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/gaz_import.owl" uri="src/ontology/imports/gaz_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/langual_import.owl" uri="src/ontology/imports/langual_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/metadata_import.owl" uri="src/ontology/imports/metadata_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/ncbitaxon_import.owl" uri="src/ontology/imports/ncbitaxon_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/obi_import.owl" uri="src/ontology/imports/obi_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/product_type_import.owl" uri="src/ontology/imports/product_type_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/ro_import.owl" uri="src/ontology/imports/ro_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/FOODON/imports/uberon_import.owl" uri="src/ontology/imports/uberon_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://purl.obolibrary.org/obo/foodon.owl" uri="foodon.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="http://www.ebi.ac.uk/ancestro" uri="src/ontology/imports/ancestro_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/chebi_import.owl" uri="imports/chebi_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/efo_import.owl" uri="imports/efo_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/envo_import.owl" uri="imports/envo_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/eo_import.owl" uri="imports/eo_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/gaz_import.owl" uri="imports/gaz_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/langual_import.owl" uri="imports/langual_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/metadata_import.owl" uri="imports/metadata_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/ncbitaxon_import.owl" uri="imports/ncbitaxon_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/obi_import.owl" uri="imports/obi_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/product_type_import.owl" uri="imports/product_type_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/ro_import.owl" uri="imports/ro_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/FOODON/imports/uberon_import.owl" uri="imports/uberon_import.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/foodon.owl" uri="src/ontology/foodon-edit.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://purl.obolibrary.org/obo/foodon.owl" uri="src/ontology/foodon.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1484079962071" name="shadowed:http://www.ebi.ac.uk/ancestro" uri="imports/ancestro_import.owl"/>
+    </group>
+</catalog>

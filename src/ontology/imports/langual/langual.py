@@ -280,9 +280,12 @@ class Langual(object):
         with (codecs.open(filename, 'r', 'utf-8')) as input_handle:
             for line in input_handle:
                 if len(line) > 5 and line[0] != '#':
-                    (id, uri, label) = line.split('\t',2)
-                    uri = uri.strip()
-                    if len(id) > 0 and len(uri) > 0: lookup[id] = uri 
+                    try:
+                        (id, uri, label) = line.split('\t',2)
+                        uri = uri.strip()
+                        if len(id) > 0 and len(uri) > 0: lookup[id] = uri 
+                    except Exception as err:
+                        print "Problem parsing conversion key/value:" + line
 
         for database_id in self.database['index']:
             entity = self.database['index'][database_id]

@@ -2783,7 +2783,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/FOODON_00001230">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FOODON_00001133"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A condiment  made from the seeds of a mustard plant (white or yellow mustard, Sinapis hirta; brown or Indian mustard, Brassica juncea; or black mustard, Brassica nigra). The whole, ground, cracked, or bruised mustard seeds are mixed with water, vinegar or other liquids, and sometimes other flavorings and spices, to create a thick paste ranging in colour from bright yellow to dark brown.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mustard</rdfs:label>
+        <rdfs:label xml:lang="en">mustard (sensu condiment)</rdfs:label>
     </owl:Class>
     <owl:Axiom>
         <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/FOODON_00001230"/>
