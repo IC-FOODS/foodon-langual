@@ -1122,8 +1122,12 @@ class Langual(object):
 
 if __name__ == '__main__':
 
+
+    # Generates LanguaL Facet A Product Type file. A few special lines of code separate out Facet A from the rest.
     foodstruct = Langual()
+    foodstruct.__main__('langual2014.xml','./langual_facet_a.json', 'product_type_import')
+
     # Generates main import file:
+    foodstruct = Langual()
     foodstruct.__main__('langual2014.xml','./database.json', 'langual_import')
-    # Generates LanguaL Facet A Product Type file
-    #foodstruct.__main__('langual2014.xml','./langual_facet_a.json', 'product_type_import')
+
