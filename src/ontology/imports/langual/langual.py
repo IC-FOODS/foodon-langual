@@ -476,157 +476,159 @@ class Langual(object):
         # MUST SUBSTITUTE ONTOLOGY NAME
         owl_output = owl_output.replace('ONTOLOGY_NAME',self.ontology_name)
 
-        genid = 1 # counter for anonymous node ids.
-
         for entityid in self.database['index']:
             entity = self.database['index'][entityid]
-            
+
+
             if entity['database_id'] > self.owl_test_max_entry: # Quickie output possible to see example output only.
                 continue
 
-            if entity['status'] != 'ignore': # pick only items that are not marked "ignore"
+            if entity['status'] == 'ignore': # pick only items that are not marked "ignore"
+                continue
 
-                # BEGIN <owl:Class> 
+            # BEGIN <owl:Class> 
+            owl_class_footer = '' # This will hold axioms that have to follow outside <owl:Class>...</owl:Class>
 
+            # Ancestro at moment isn't an OBOFoundry ontology,
+            ontology_id = entity['ontology_id']
+            foodon = True if ontology_id[0:7] == 'FOODON_' else False
 
-                # Ancestro at moment isn't an OBOFoundry ontology,
-                ontology_id = entity['ontology_id']
-                foodon = True if ontology_id[0:7] == 'FOODON_' else False
+            if ontology_id[0:8] == 'ancestro':
+                ontology_id = 'http://www.ebi.ac.uk/ancestro/' + ontology_id
+                full_ontology_id = ontology_id
+            else:
+                full_ontology_id = 'http://purl.obolibrary.org/obo/' + ontology_id
+                ontology_id = '&obo;' + ontology_id
+                
 
-                if ontology_id[0:8] == 'ancestro':
-                    ontology_id = 'http://www.ebi.ac.uk/ancestro/' + ontology_id
-                else:
-                    ontology_id = '&obo;' + ontology_id
-                owl_output += '\n\n<owl:Class rdf:about="%s">\n' % ontology_id
+            owl_output += '\n\n<owl:Class rdf:about="%s">\n' % ontology_id
 
-                label = entity['label']['value'].replace('>','&gt;').replace('<','&lt;').lower()
-                labelLang = self.get_language_tag_owl(entity['label']) 
+            label = entity['label']['value'].replace('>','&gt;').replace('<','&lt;').lower()
+            labelLang = self.get_language_tag_owl(entity['label']) 
 
-                # Use alternate label if we're normalizing to another ontology
-                labelTag = 'rdfs:label' if foodon else 'obo:IAO_0000118'
+            # Use alternate label if we're normalizing to another ontology
+            labelTag = 'rdfs:label' if foodon else 'obo:IAO_0000118'
 
-                owl_output += '\t<%(tag)s %(language)s>%(label)s</%(tag)s>\n' % { 'label': label, 'language': labelLang, 'tag': labelTag}
+            owl_output += '\t<%(tag)s %(language)s>%(label)s</%(tag)s>\n' % { 'label': label, 'language': labelLang, 'tag': labelTag}
 
-                for item in entity['is_a']:
-                    # If parent isn't imported (even as an obsolete item), don't make an is_a for it.
-                    # (is_a entries can reference non-FoodOn ids).
-                    if self.term_import(entity['is_a'], item): 
-                        # last check to see if item is still in database:
-                        if item in self.ontology_index:
-                            if item[0:7] == 'http://':
-                                prefix = ''  
-                            elif item[0:8] == 'ancestro':
-                                prefix = 'http://www.ebi.ac.uk/ancestro/' 
-                            else: 
-                                prefix = '&obo;'
-                            owl_output += '\t<rdfs:subClassOf rdf:resource="%s%s"/>\n' % (prefix, item)
-
-
-                # LANGUAL IMPORT ANNOTATION
-                owl_output += "\t<obo:IAO_0000412>http://langual.org</obo:IAO_0000412>\n"
-
-                if self.term_import(entity, 'definition'):
-                    # angled unicode single quotes  <U+0091>, <U+0092> 
-                    definition = entity['definition']['value'].replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;').replace(u'\u0092','"').replace(u'\u0091','"') 
-                else:
-                    definition = ''
-
-                # If this item is primarily a foodon one, provide full annotation
-                if foodon:
-                    if definition > '':
-                        owl_output += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition
-                  
-                    if self.term_import(entity, 'definition_source'):
-                        owl_output += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']['value']
-
-                    # CURATION STATUS
-                    if entity['status'] == 'deprecated':
-                        owl_output += '\t<owl:deprecated rdf:datatype="&xsd;boolean">true</owl:deprecated>\n'
-                        # ready for release
-                        owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000122"/>\n' 
-
-                    # Anything marked as 'draft' status is written as 'requires discussion'
-                    elif entity['status'] == 'draft': 
-                        owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000428"/>\n'
-
-                # Langual is adding information to a 3rd party CHEBI/UBERON/ etc. term
-                elif definition > '':
-                    owl_output += '\t<rdfs:comment xml:lang="en">LanguaL term definition: %s</rdfs:comment>\n' % definition
+            for item in entity['is_a']:
+                # If parent isn't imported (even as an obsolete item), don't make an is_a for it.
+                # (is_a entries can reference non-FoodOn ids).
+                if self.term_import(entity['is_a'], item): 
+                    # last check to see if item is still in database:
+                    if item in self.ontology_index:
+                        if item[0:7] == 'http://':
+                            prefix = ''  
+                        elif item[0:8] == 'ancestro':
+                            prefix = 'http://www.ebi.ac.uk/ancestro/' 
+                        else: 
+                            prefix = '&obo;'
+                        owl_output += '\t<rdfs:subClassOf rdf:resource="%s%s"/>\n' % (prefix, item)
 
 
-                if self.term_import(entity, 'comment'):
-                    owl_output += '\t<rdfs:comment xml:lang="en">LanguaL curation note: %s</rdfs:comment>\n' % entity['comment']['value']
+            # LANGUAL IMPORT ANNOTATION
+            owl_output += "\t<obo:IAO_0000412>http://langual.org</obo:IAO_0000412>\n"
 
-                if 'replaced_by' in entity: #AnnotationAssertion(<obo:IAO_0100001> <obo:CL_0007015> <obo:CLO_0000018>)
-                    replacement = '&obo;' + self.database['index'][entity['replaced_by']]['ontology_id']
-                    owl_output += '\t<obo:IAO_0100001 rdf:resource="%s"/>\n' % replacement
+            if self.term_import(entity, 'definition'):
+                # angled unicode single quotes  <U+0091>, <U+0092> 
+                definition = entity['definition']['value'].replace('&',r'&amp;').replace('>','&gt;').replace('<','&lt;').replace(u'\u0092','"').replace(u'\u0091','"') 
+            else:
+                definition = ''
 
-                if 'synonyms' in entity:
-                    for item in entity['synonyms']:
-                        if self.term_import(entity['synonyms'], item):
-                            
-                            owl_output += '\t<oboInOwl:has%(scope)sSynonym %(language)s>%(phrase)s</oboInOwl:has%(scope)sSynonym>\n' % {
-                                'scope': entity['synonyms'][item]['value'].title(), # Exact / Narrow / Broad 
-                                'language': self.get_language_tag_owl(entity['synonyms'][item]),
-                                'phrase': item.lower() 
-                            }
+            # If this item is primarily a foodon one, provide full annotation
+            if foodon:
+                if definition > '':
+                    owl_output += '\t<obo:IAO_0000115 xml:lang="en">%s</obo:IAO_0000115>\n' % definition
+              
+                if self.term_import(entity, 'definition_source'):
+                    owl_output += '\t<obo:IAO_0000119>%s</obo:IAO_0000119>\n' % entity['definition_source']['value']
 
-                if 'xrefs' in entity:
-                    for item in entity['xrefs']:
-                        if self.term_import(entity['xrefs'], item):
-                            if item == 'EOL':
-                                owl_output += '\t<oboInOwl:hasDbXref>http://eol.org/pages/%s</oboInOwl:hasDbXref>\n' % entity['xrefs'][item]['value']
-                            else:
-                                owl_output += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
+                # CURATION STATUS
+                if entity['status'] == 'deprecated':
+                    owl_output += '\t<owl:deprecated rdf:datatype="&xsd;boolean">true</owl:deprecated>\n'
+                    # ready for release
+                    owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000122"/>\n' 
+
+                # Anything marked as 'draft' status is written as 'requires discussion'
+                elif entity['status'] == 'draft': 
+                    owl_output += '\t<obo:IAO_0000114 rdf:resource="&obo;IAO_0000428"/>\n'
+
+            # Langual is adding information to a 3rd party CHEBI/UBERON/ etc. term
+            elif definition > '':
+                owl_output += '\t<rdfs:comment xml:lang="en">LanguaL term definition: %s</rdfs:comment>\n' % definition
 
 
-                owl_class_footer = '' # This will hold axioms that have to follow outside <owl:Class>...</owl:Class>
+            if self.term_import(entity, 'comment'):
+                owl_output += '\t<rdfs:comment xml:lang="en">LanguaL curation note: %s</rdfs:comment>\n' % entity['comment']['value']
 
-                if 'taxon' in entity:
-                    for taxon_rank_name in entity['taxon']:
-                        #try
-                        (rank, latin_name) = taxon_rank_name.split(':',1)
-                        #except Exception as e:
-                        #    print taxon_rank_name
-                        latin_name = latin_name.replace('&','&amp;')
+            if 'replaced_by' in entity: #AnnotationAssertion(<obo:IAO_0100001> <obo:CL_0007015> <obo:CLO_0000018>)
+                replacement = '&obo;' + self.database['index'][entity['replaced_by']]['ontology_id']
+                owl_output += '\t<obo:IAO_0100001 rdf:resource="%s"/>\n' % replacement
 
-                        if rank == 'species':
-                            synonymTag = 'hasNarrowSynonym' 
-                            rankTag = ''
+            if 'synonyms' in entity:
+                for item in entity['synonyms']:
+                    if self.term_import(entity['synonyms'], item):
+                        
+                        owl_output += '\t<oboInOwl:has%(scope)sSynonym %(language)s>%(phrase)s</oboInOwl:has%(scope)sSynonym>\n' % {
+                            'scope': entity['synonyms'][item]['value'].title(), # Exact / Narrow / Broad 
+                            'language': self.get_language_tag_owl(entity['synonyms'][item]),
+                            'phrase': item.lower() 
+                        }
+
+            if 'xrefs' in entity:
+                for item in entity['xrefs']:
+                    if self.term_import(entity['xrefs'], item):
+                        if item == 'EOL':
+                            owl_output += '\t<oboInOwl:hasDbXref>http://eol.org/pages/%s</oboInOwl:hasDbXref>\n' % entity['xrefs'][item]['value']
                         else:
-                            synonymTag = 'hasBroadSynonym'
-                            rankTag = '<taxon:_taxonomic_rank rdf:resource="&obo;NCBITaxon_%s" />\n' % rank
+                            owl_output += '\t<oboInOwl:hasDbXref>%s:%s</oboInOwl:hasDbXref>\n' % (item, entity['xrefs'][item]['value'] )
 
-                        # If an NCBITaxon reference exists, let it replace all the others
-                        if 'NCBITaxon' in entity['taxon'][taxon_rank_name] and entity['taxon'][taxon_rank_name]['NCBITaxon']['import'] == True:
-                            dbid = entity['taxon'][taxon_rank_name]['NCBITaxon']['value']
-                            
-                            if synonymTag == 'hasNarrowSynonym':
-                                owl_output += self.item_food_role(dbid)
 
-                            else:
-                                # FUTURE: CHANGE THIS TO SOME OTHER RELATION?
-                                # Exact or (usually) BroadSynonym:
-                                owl_output += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
+            if 'taxon' in entity:
+                for taxon_rank_name in entity['taxon']:
+                    #try
+                    (rank, latin_name) = taxon_rank_name.split(':',1)
+                    #except Exception as e:
+                    #    print taxon_rank_name
+                    latin_name = latin_name.replace('&','&amp;')
 
-                                # Adds NCBITaxon rank annotation to above:
-                                if len(rankTag):
-                                    owl_class_footer += self.item_taxonomy_annotation(ontology_id, synonymTag, dbid, rankTag)
+                    if rank == 'species':
+                        synonymTag = 'hasNarrowSynonym' 
+                        rankTag = ''
+                    else:
+                        synonymTag = 'hasBroadSynonym'
+                        rankTag = '<taxon:_taxonomic_rank rdf:resource="&obo;NCBITaxon_%s" />\n' % rank
+
+                    # If an NCBITaxon reference exists, let it replace all the others
+                    if 'NCBITaxon' in entity['taxon'][taxon_rank_name] and entity['taxon'][taxon_rank_name]['NCBITaxon']['import'] == True:
+                        dbid = entity['taxon'][taxon_rank_name]['NCBITaxon']['value']
+                        
+                        if synonymTag == 'hasNarrowSynonym':
+                            owl_output += self.item_food_role(dbid)
 
                         else:
+                            # FUTURE: CHANGE THIS TO SOME OTHER RELATION?
+                            # Exact or (usually) BroadSynonym:
+                            owl_output += '\t<oboInOwl:%(synonymTag)s rdf:resource="&obo;NCBITaxon_%(dbid)s" />\n' % {'synonymTag': synonymTag, 'dbid': dbid}
 
-                            owl_output += '\t<oboInOwl:%(synonymTag)s>%(latin_name)s</oboInOwl:%(synonymTag)s>\n' % {'synonymTag': synonymTag, 'latin_name': latin_name}
+                            # Adds NCBITaxon rank annotation to above:
+                            if len(rankTag):
+                                owl_class_footer += self.item_taxonomy_annotation(ontology_id, synonymTag, dbid, rankTag)
 
-                            axiom_content = rankTag
+                    else:
 
-                            for database in entity['taxon'][taxon_rank_name]:
-                                if database != 'NCBITaxon':
-                                    axiom_content += '     <oboInOwl:hasDbXref>%(database)s:%(dbid)s</oboInOwl:hasDbXref>\n' % {'database':database, 'dbid': entity['taxon'][taxon_rank_name][database]['value']}
+                        owl_output += '\t<oboInOwl:%(synonymTag)s>%(latin_name)s</oboInOwl:%(synonymTag)s>\n' % {'synonymTag': synonymTag, 'latin_name': latin_name}
 
-                            owl_class_footer += self.item_synonym_text_annotation(ontology_id, synonymTag, latin_name, axiom_content)
-                            
+                        axiom_content = rankTag
 
-                owl_output += '</owl:Class>' + owl_class_footer
+                        for database in entity['taxon'][taxon_rank_name]:
+                            if database != 'NCBITaxon':
+                                axiom_content += '     <oboInOwl:hasDbXref>%(database)s:%(dbid)s</oboInOwl:hasDbXref>\n' % {'database':database, 'dbid': entity['taxon'][taxon_rank_name][database]['value']}
+
+                        owl_class_footer += self.item_synonym_text_annotation(ontology_id, synonymTag, latin_name, axiom_content)
+                        
+
+            owl_output += '</owl:Class>' + owl_class_footer
 
         owl_output += '</rdf:RDF>'
 
@@ -642,6 +644,20 @@ class Langual(object):
             [NCBITaxon item] and 'has role' some food (CHEBI_33290)
         """
         return '''
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&obo;NCBITaxon_%s"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&obo;RO_0000087"/>
+                        <owl:someValuesFrom rdf:resource="&obo;CHEBI_33290"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        ''' % NCBITaxon_id
+
+        '''
             <owl:equivalentClass>
                 <owl:Class>
                     <owl:intersectionOf>
@@ -664,6 +680,7 @@ class Langual(object):
         ''' % NCBITaxon_id
 
 
+    # There may be a bug in protege in which annotatedSource/annotatedProperty have to be fully qualified IRI's, no entity use?
     def item_taxonomy_annotation(self, ontology_id, synonymTag, dbid, content):
         return """
         <owl:Axiom>
@@ -684,7 +701,14 @@ class Langual(object):
         </owl:Axiom>
         """ % {'ontology_id': ontology_id, 'synonymTag': synonymTag, 'text': text, 'content':content}
 
-
+        '''
+        <owl:Axiom>
+            <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/FOODON_03411003"/>
+            <owl:annotatedProperty rdf:resource="http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym"/>
+            <owl:annotatedTarget>Thunnus maccoyii</owl:annotatedTarget>
+            <oboInOwl:hasDbXref>hehaw</oboInOwl:hasDbXref>
+        </owl:Axiom>
+        '''
     def term_import(self, entity, term):
         """
         returns boolean test of whether a particular entity attribute exists and should be imported into ontology file.
@@ -1100,6 +1124,6 @@ if __name__ == '__main__':
 
     foodstruct = Langual()
     # Generates main import file:
-    foodstruct.__main__('langual2014.xml','./database.json', '../langual_import')
+    foodstruct.__main__('langual2014.xml','./database.json', 'langual_import')
     # Generates LanguaL Facet A Product Type file
     #foodstruct.__main__('langual2014.xml','./langual_facet_a.json', 'product_type_import')

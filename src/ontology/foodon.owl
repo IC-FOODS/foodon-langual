@@ -28,7 +28,7 @@
      xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:dc="http://purl.org/dc/elements/1.1/">
     <owl:Ontology rdf:about="&obo;foodon.owl">
-        <owl:versionIRI rdf:resource="&obo;foodon/releases/2017-01-11/foodon.owl"/>
+        <owl:versionIRI rdf:resource="&obo;foodon/releases/2017-01-12/foodon.owl"/>
         <owl:imports rdf:resource="&obo;FOODON/imports/gaz_import.owl"/>
         <owl:imports rdf:resource="&obo;FOODON/imports/uberon_import.owl"/>
         <owl:imports rdf:resource="&obo;FOODON/imports/obi_import.owl"/>

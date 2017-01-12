@@ -229,6 +229,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/CHEBI_15693 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_15693">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_35381"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">Aldehydic parent sugars (polyhydroxy aldehydes H[CH(OH)]nC(=O)H, n &gt;= 2) and their intramolecular hemiacetals.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">aldose</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/CHEBI_15705 -->
 
     <owl:Class rdf:about="&obo;CHEBI_15705">
@@ -491,6 +502,29 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/CHEBI_17234 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_17234">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_33917"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">An aldohexose used as a source of energy and metabolic intermediate.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">glucose</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_17306 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_17306">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_17593"/>
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_24405"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">A glycosylglucose consisting of two D-glucopyranose units connected by an alpha-(1-&gt;4)-linkage.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">maltose</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/CHEBI_17309 -->
 
     <owl:Class rdf:about="&obo;CHEBI_17309">
@@ -561,6 +595,29 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/CHEBI_17593 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_17593">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_24268"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">A glucooligosaccharide derived from glucose monomers linked via alpha-D-1,4 bonds as in maltose.  The term is commonly applied to the series of linear oligosaccharides composed of two, three, four, five and six such units of glucose.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">maltooligosaccharide</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_17608 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_17608">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_33917"/>
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_4194"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">Any D-aldose having a chain of six carbon atoms in the molecule.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">D-aldohexose</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/CHEBI_17621 -->
 
     <owl:Class rdf:about="&obo;CHEBI_17621">
@@ -568,6 +625,29 @@
         <obo:IAO_0000115 rdf:datatype="&xsd;string">A flavin mononucleotide that is riboflavin (vitamin B2) in which the primary hydroxy group has been converted to its dihydrogen phosphate ester.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
         <rdfs:label rdf:datatype="&xsd;string">FMN</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_17634 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_17634">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_17234"/>
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_17608"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">A glucose with D-configuration.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">D-glucose</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_17716 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_17716">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_24405"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">A  glycosylglucose disaccharide, found most notably in milk, that consists of D-galactose and D-glucose fragments bonded through a beta-1-&gt;4 glycosidic linkage. The glucose fragment can be in either the alpha- or beta-pyranose form, whereas the galactose fragment can only have the beta-pyranose form.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">lactose</rdfs:label>
     </owl:Class>
     
 
@@ -637,6 +717,17 @@
         <obo:IAO_0000115 rdf:datatype="&xsd;string">A member of the class of phylloquinones that consists of 1,4-naphthoquinone having methyl and phytyl groups at positions 2 and 3 respectively. The parent of the class of phylloquinones.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
         <rdfs:label rdf:datatype="&xsd;string">phylloquinone</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_18133 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_18133">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_35381"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">Any six-carbon monosaccharide which in its linear form contains either an aldehyde group at position 1 (aldohexose) or a ketone group at position 2 (ketohexose).</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">hexose</rdfs:label>
     </owl:Class>
     
 
@@ -1155,6 +1246,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/CHEBI_24268 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_24268">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_50699"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">An oligosaccharide comprised of glucose residues.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">glucooligosaccharide</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/CHEBI_24278 -->
 
     <owl:Class rdf:about="&obo;CHEBI_24278">
@@ -1193,6 +1295,16 @@
         <obo:IAO_0000115 rdf:datatype="&xsd;string">A glycosyl compound resulting from the attachment of a glycosyl group to a non-acyl group RO-, RS-, RSe-, etc. The bond between the glycosyl group and the non-acyl group is called a glycosidic bond. By extension, the terms N-glycosides and C-glycosides are used as class names for glycosylamines and for compounds having a glycosyl group attached to a hydrocarbyl group respectively. These terms are misnomers and should not be used. The preferred terms are glycosylamines and C-glycosyl compounds, respectively.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
         <rdfs:label rdf:datatype="&xsd;string">glycoside</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_24405 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_24405">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_36233"/>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">glycosylglucose</rdfs:label>
     </owl:Class>
     
 
@@ -1468,6 +1580,28 @@
         <obo:IAO_0000115 rdf:datatype="&xsd;string">Oxo carboxylic acids formally derived from aldonic acids by replacement of a secondary CHOH group by a carbonyl group.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
         <rdfs:label rdf:datatype="&xsd;string">ketoaldonic acid</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_24973 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_24973">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_18133"/>
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_24978"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">Any hexose containing a single ketone group.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">ketohexose</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_24978 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_24978">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_35381"/>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">ketose</rdfs:label>
     </owl:Class>
     
 
@@ -2595,6 +2729,17 @@
         <obo:IAO_0000115 rdf:datatype="&xsd;string">A fat-soluble vitamin required for the synthesis of prothrombin and certain other blood coagulation factors.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
         <rdfs:label rdf:datatype="&xsd;string">vitamin K</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_28757 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_28757">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_24973"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">A ketohexose that is an isomer of glucose.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">fructose</rdfs:label>
     </owl:Class>
     
 
@@ -4256,6 +4401,18 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/CHEBI_33917 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_33917">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_15693"/>
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_18133"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">A hexose with a (potential) aldehyde group at one end.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">aldohexose</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/CHEBI_33958 -->
 
     <owl:Class rdf:about="&obo;CHEBI_33958">
@@ -5793,6 +5950,17 @@
         <rdfs:subClassOf rdf:resource="&obo;CHEBI_17087"/>
         <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
         <rdfs:label rdf:datatype="&xsd;string">cyclic ketone</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_4194 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_4194">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_18133"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">A hexose that has D-configuration at position 5.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">D-hexose</rdfs:label>
     </owl:Class>
     
 
@@ -7462,6 +7630,18 @@
         <obo:IAO_0000115 rdf:datatype="&xsd;string">An organic molecular entity that has formula C6H12NNaO3S.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
         <rdfs:label rdf:datatype="&xsd;string">Cyclamate</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_83163 -->
+
+    <owl:Class rdf:about="&obo;CHEBI_83163">
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_16646"/>
+        <rdfs:subClassOf rdf:resource="&obo;CHEBI_60004"/>
+        <obo:IAO_0000115 rdf:datatype="&xsd;string">A mixture of sugar (fructose, glucose, sucrose) and carbohydrate components that is a by-product from sugar refinery.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="&obo;chebi.owl"/>
+        <rdfs:label rdf:datatype="&xsd;string">molasses</rdfs:label>
     </owl:Class>
     
 
