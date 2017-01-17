@@ -2,7 +2,7 @@
 http://purl.obolibrary.org/obo/FOODON/imports/gaz_import.owl
 
 [Source ontology]
-GAZETTEER
+GAZ
 
 [Low level source term URIs]
 

@@ -5,7 +5,12 @@ http://purl.obolibrary.org/obo/FOODON/imports/obi_import.owl
 OBI
 
 [Low level source term URIs]
-http://purl.obolibrary.org/obo/OBI_0100026 #organism
+http://purl.obolibrary.org/obo/OBI_0100026 # organism
+
+http://purl.obolibrary.org/obo/OBI_0000456 # material transformation objective
+http://purl.obolibrary.org/obo/OBI_0000686 # 	material combination objective
+http://purl.obolibrary.org/obo/OBI_0000434 # 		adding material objective
+
 http://www.geneontology.org/formats/oboInOwl#ObsoleteClass
 
 [Top level source term URIs and target direct superclass URIs]
