@@ -1,0 +1,109 @@
+
+""" TAXONOMY NOTES
+
+Taxonomy roles in LanguaL VS NCBI (NCBITaxon#_taxonomic_rank , relation: ncbitaxon#has_rank)
+LanguaL code                    NCBI_Taxon_
+                                superkingdom
+               Kingdom          kingdom 
+               Subkingdom       subkingdom
+               Infrakingdom
+               Superdivision    superphylum     * division/phylum merged (Botany division = plant)
+SCIDIV         Division         phylum          * division -> phylum in NCBI 
+               Subdivision      subphylum
+                                
+SCIPHY         Phylum           
+SCISUBPHY      Subphylum        subphylum
+SCISUPCLASS                     superclass 
+SCICLASS       Class            class
+                                subclass
+SCIINFCLASS                     infraclass
+               Superorder       superorder
+SCIORD         Order            order
+SCISUBORD                       suborder
+SCIINFORD                       infraorder
+                                parvorder
+SCISUPFAM                       superfamily
+SCIFAM         Family           family
+SCISUBFAM                       subfamily
+SCITRI                          tribe   
+                                subtribe            
+SCIGEN         Genus            genus
+                                subgenus
+SCINAM         Species          species
+SCISYN                          species     * synonym!?!
+                                subspecies
+                                varietas
+                                forma
+PROBLEM CASES
+SCISUNFAM  typo of SCISUBFAM                                
+NCBI Also has:
+
+                                species_group
+                                species_subgroup
+
+NOTE EOL: http://eol.org/pages/582002/names/synonyms synonyms categorized by preferred, misspelling, authority,  etc. and relate to scientific names.
+
+Example LanguaL record
+<DESCRIPTOR>
+    <FTC>B1249</FTC>
+    <TERM lang="en UK">PAPAYA</TERM>
+    <BT>B1024</BT>
+    <SN></SN>
+    <AI>&#60;SCIFAM&#62;Caricaceae [ITIS 22322]
+    &#60;SCINAM&#62;Carica papaya L. [ITIS 22324]
+    &#60;SCINAM&#62;Carica papaya L. [GRIN 9147]
+    &#60;SCINAM&#62;Carica papaya L. [PLANTS CAPA23]
+    &#60;SCINAM&#62;Carica papaya L. [EuroFIR-NETTOX 2007 73]
+    &#60;SCINAM&#62;Carica papaya L. [DPNL 2003 8382]
+    &#60;MANSFELD&#62;23437</AI>
+    <SYNONYMS>
+        <SYNONYM>carica papaya</SYNONYM>
+        <SYNONYM>hawaiian papaya</SYNONYM>
+        <SYNONYM>lechoza</SYNONYM>
+        <SYNONYM>melon tree</SYNONYM>
+        <SYNONYM>pawpaw</SYNONYM>
+    </SYNONYMS>
+    <RELATEDTERMS>
+    </RELATEDTERMS>
+    <CLASSIFICATION>False</CLASSIFICATION>
+    <ACTIVE>True</ACTIVE>
+    <DATEUPDATED>2011-10-07</DATEUPDATED>
+    <DATECREATED>2000-01-01</DATECREATED>
+    <UPDATECOMMENT></UPDATECOMMENT>
+    <SINGLE>False</SINGLE>
+
+# <SINGLE> appears to be an inconsequential tag.
+# ISSUE: Some "lines" in lines_of_text might not be separated by a carriage return, e.g.
+    
+    <SCINAM>Hapalochlaena maculosa (Hoyle, 1883) [ITIS 556175]<.... > 
+
+
+PROBLEM CASE - ITIS code is NOT following SCINAME in brackets:
+    <SCIFAM>Apiaceae
+    <SCINAM>Apium graveolens var. rapaceum (Miller) Gaudin
+    <ITIS>530941
+    <GRIN>3704
+    <MANSFELD>1236
+
+    <DESCRIPTOR>
+        <FTC>B1729</FTC>
+        <TERM lang="en UK">CELERIAC</TERM>
+        <BT>B1018</BT>
+        <SN></SN>
+        <AI>&#60;SCIFAM&#62;Apiaceae
+        &#60;SCINAM&#62;Apium graveolens var. rapaceum (Miller) Gaudin
+        &#60;ITIS&#62;530941
+        &#60;GRIN&#62;3704
+        &#60;MANSFELD&#62;1236</AI>
+        <SYNONYMS>
+            <SYNONYM>apium graveolens rapaceum</SYNONYM>
+            <SYNONYM>celery root</SYNONYM>
+        </SYNONYMS>
+
+PROBLEM CASE - solanum dulcamara
+<SYNONYMS>
+    <SYNONYM>solanum dulcamara</SYNONYM>
+</SYNONYMS>
+    - no taxonomy but scientific name will return ITIS / EOL / NCBITaxon lookup.
+
+"""

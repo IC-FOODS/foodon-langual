@@ -1,0 +1,35 @@
+[URI of the OWL(RDF/XML) output file]
+http://purl.obolibrary.org/obo/FOODON/imports/chebi_import.owl #CHEBI CHEmicals of Biological Interest
+
+[Source ontology]
+CHEBI
+
+[Low level source term URIs]
+
+http://purl.obolibrary.org/obo/CHEBI_33290 # food
+# http://purl.obolibrary.org/obo/CHEBI_50906 # role
+http://purl.obolibrary.org/obo/CHEBI_24432 #    biological role
+http://purl.obolibrary.org/obo/CHEBI_52211 #   physiological role
+http://purl.obolibrary.org/obo/CHEBI_78295 # food component
+http://purl.obolibrary.org/obo/CHEBI_33284 # nutrient
+http://purl.obolibrary.org/obo/CHEBI_33229 # vitamin
+http://purl.obolibrary.org/obo/CHEBI_78299 # environmental food contaminant
+
+# NOTE: LANGUAL IMPORT OVERWRITES THIS FILE.  MODIFY TEMPLATE IN /langual/ FOLDER 
+# AND REDO LANGUAL IMPORT TO REVISE THIS FILE SO THAT make COMMAND WORKS.
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/CHEBI_50906 # role 
+
+[Source term retrieval setting]
+includeAllIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115 
+http://purl.obolibrary.org/obo/IAO_0000111
+http://purl.obolibrary.org/obo/IAO_0000114
+http://purl.obolibrary.org/obo/IAO_0000119
+http://purl.obolibrary.org/obo/OBI_0001886
+
+[Source annotation URIs to be excluded]

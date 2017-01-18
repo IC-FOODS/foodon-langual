@@ -1,0 +1,253 @@
+[URI of the OWL(RDF/XML) output file]
+http://purl.obolibrary.org/obo/FOODON/imports/chebi_import.owl #CHEBI CHEmicals of Biological Interest
+
+[Source ontology]
+CHEBI
+
+[Low level source term URIs]
+
+http://purl.obolibrary.org/obo/CHEBI_33290 # food
+# http://purl.obolibrary.org/obo/CHEBI_50906 # role
+http://purl.obolibrary.org/obo/CHEBI_24432 #    biological role
+http://purl.obolibrary.org/obo/CHEBI_52211 #   physiological role
+http://purl.obolibrary.org/obo/CHEBI_78295 # food component
+http://purl.obolibrary.org/obo/CHEBI_33284 # nutrient
+http://purl.obolibrary.org/obo/CHEBI_33229 # vitamin
+http://purl.obolibrary.org/obo/CHEBI_78299 # environmental food contaminant
+
+# NOTE: LANGUAL IMPORT OVERWRITES THIS FILE.  MODIFY TEMPLATE IN /langual/ FOLDER 
+# AND REDO LANGUAL IMPORT TO REVISE THIS FILE SO THAT make COMMAND WORKS.
+
+http://purl.obolibrary.org/obo/CHEBI_30769 # CITRIC ACID
+http://purl.obolibrary.org/obo/CHEBI_64220 # MONOSODIUM GLUTAMATE
+http://purl.obolibrary.org/obo/CHEBI_32588 # POTASSIUM CHLORIDE
+http://purl.obolibrary.org/obo/CHEBI_32139 # SODIUM HYDROGEN CARBONATE
+http://purl.obolibrary.org/obo/CHEBI_83501 # ACESULFAME K
+http://purl.obolibrary.org/obo/CHEBI_15366 # ACETIC ACID
+http://purl.obolibrary.org/obo/CHEBI_30832 # ADIPIC ACID
+http://purl.obolibrary.org/obo/CHEBI_2509 # AGAR
+http://purl.obolibrary.org/obo/CHEBI_17548 # ALGINIC ACID
+http://purl.obolibrary.org/obo/CHEBI_22470 # ALPHA-TOCOPHEROL
+http://purl.obolibrary.org/obo/CHEBI_33628 # ALUMINIUM
+http://purl.obolibrary.org/obo/CHEBI_86463 # ALUMINIUM POTASSIUM SULPHATE
+http://purl.obolibrary.org/obo/CHEBI_74772 # ALUMINIUM SULPHATE
+http://purl.obolibrary.org/obo/CHEBI_34533 # AMARANTH
+http://purl.obolibrary.org/obo/CHEBI_18219 # AMMONIUM HYDROXIDE
+http://purl.obolibrary.org/obo/CHEBI_62946 # AMMONIUM SULPHATE
+http://purl.obolibrary.org/obo/CHEBI_3136 # ANNATTO, BIXIN, NORBIXIN
+http://purl.obolibrary.org/obo/CHEBI_38697 # ANTHOCYANINS
+http://purl.obolibrary.org/obo/CHEBI_36908 # ARGON
+http://purl.obolibrary.org/obo/CHEBI_22652 # ASCORBIC ACID
+http://purl.obolibrary.org/obo/CHEBI_2877 # ASPARTAME
+http://purl.obolibrary.org/obo/CHEBI_133354 # BENTONITE
+http://purl.obolibrary.org/obo/CHEBI_30746 # BENZOIC ACID
+http://purl.obolibrary.org/obo/CHEBI_17579 # BETA-CAROTENE
+http://purl.obolibrary.org/obo/CHEBI_17097 # BIPHENYL, DIPHENYL
+http://purl.obolibrary.org/obo/CHEBI_33118 # BORIC ACID
+http://purl.obolibrary.org/obo/CHEBI_82411 # BRILLIANT BLUE FCF
+http://purl.obolibrary.org/obo/CHEBI_76359 # BUTYLATED HYDROXYANISOLE (BHA)
+http://purl.obolibrary.org/obo/CHEBI_34247 # BUTYLATED HYDROXYTOLUENE (BHT)
+http://purl.obolibrary.org/obo/CHEBI_3310 # CALCIUM ACETATE
+http://purl.obolibrary.org/obo/CHEBI_3311 # CALCIUM CARBONATE
+http://purl.obolibrary.org/obo/CHEBI_3312 # CALCIUM CHLORIDE
+http://purl.obolibrary.org/obo/CHEBI_42191 # CALCIUM DISODIUM ETHYLENE DIAMINE TETRA-ACETATE (CALCIUM DISODIUM EDTA)
+http://purl.obolibrary.org/obo/CHEBI_3309 # CALCIUM GLUCONATE
+http://purl.obolibrary.org/obo/CHEBI_35150 # CALCIUM HYDROXIDE
+http://purl.obolibrary.org/obo/CHEBI_31344 # CALCIUM OXIDE
+http://purl.obolibrary.org/obo/CHEBI_81716 # CALCIUM PROPIONATE
+http://purl.obolibrary.org/obo/CHEBI_31346 # CALCIUM SULPHATE
+http://purl.obolibrary.org/obo/CHEBI_3362 # CANTHAXANTHIN
+http://purl.obolibrary.org/obo/CHEBI_16199 # CARBAMIDE
+http://purl.obolibrary.org/obo/CHEBI_16526 # CARBON DIOXIDE
+http://purl.obolibrary.org/obo/CHEBI_3435 # CARRAGEENAN
+http://purl.obolibrary.org/obo/CHEBI_28966 # CHLOROPHYLLS
+http://purl.obolibrary.org/obo/CHEBI_3962 # CURCUMIN
+http://purl.obolibrary.org/obo/CHEBI_47772 # DELTA-TOCOPHEROL
+http://purl.obolibrary.org/obo/CHEBI_61468 # DIMETHYL POLYSILOXANE
+http://purl.obolibrary.org/obo/CHEBI_63018 # DIPOTASSIUM TARTRATE
+http://purl.obolibrary.org/obo/CHEBI_34683 # DISODIUM PHOSPHATE
+http://purl.obolibrary.org/obo/CHEBI_63017 # DISODIUM TARTRATE
+http://purl.obolibrary.org/obo/CHEBI_51438 # ERYTHORBIC ACID
+http://purl.obolibrary.org/obo/CHEBI_87117 # ERYTHROSINE
+http://purl.obolibrary.org/obo/CHEBI_35366 # FATTY ACIDS
+http://purl.obolibrary.org/obo/CHEBI_31608 # FERROUS GLUCONATE
+http://purl.obolibrary.org/obo/CHEBI_81048 # FERROUS LACTATE
+http://purl.obolibrary.org/obo/CHEBI_18012 # FUMARIC ACID
+http://purl.obolibrary.org/obo/CHEBI_18185 # GAMMA-TOCOPHEROL
+http://purl.obolibrary.org/obo/CHEBI_85248 # GELLAN GUM
+http://purl.obolibrary.org/obo/CHEBI_24266 # GLUCONIC ACID
+http://purl.obolibrary.org/obo/CHEBI_18237 # GLUTAMIC ACID
+http://purl.obolibrary.org/obo/CHEBI_17754 # GLYCEROL
+http://purl.obolibrary.org/obo/CHEBI_15428 # GLYCINE
+http://purl.obolibrary.org/obo/CHEBI_33969 # GOLD
+http://purl.obolibrary.org/obo/CHEBI_33680 # HELIUM
+http://purl.obolibrary.org/obo/CHEBI_6824 # HEXAMETHYLENE TETRAMINE
+http://purl.obolibrary.org/obo/CHEBI_17883 # HYDROCHLORIC ACID
+http://purl.obolibrary.org/obo/CHEBI_30618 # HYDROXYPROPYL METHYL CELLULOSE
+http://purl.obolibrary.org/obo/CHEBI_17202 # INOSINIC ACID
+http://purl.obolibrary.org/obo/CHEBI_78320 # LACTIC ACID
+http://purl.obolibrary.org/obo/CHEBI_75323 # LACTITOL
+http://purl.obolibrary.org/obo/CHEBI_61995 # LECITHINS
+http://purl.obolibrary.org/obo/CHEBI_28838 # LUTEIN
+http://purl.obolibrary.org/obo/CHEBI_15948 # LYCOPENE
+http://purl.obolibrary.org/obo/CHEBI_31793 # MAGNESIUM CARBONATE
+http://purl.obolibrary.org/obo/CHEBI_6636 # MAGNESIUM CHLORIDE
+http://purl.obolibrary.org/obo/CHEBI_35149 # MAGNESIUM HYDROXIDE
+http://purl.obolibrary.org/obo/CHEBI_31794 # MAGNESIUM OXIDE
+http://purl.obolibrary.org/obo/CHEBI_6650 # MALIC ACID
+http://purl.obolibrary.org/obo/CHEBI_68428 # MALTITOL
+http://purl.obolibrary.org/obo/CHEBI_29864 # MANNITOL
+http://purl.obolibrary.org/obo/CHEBI_53448 # METHYL CELLULOSE
+http://purl.obolibrary.org/obo/CHEBI_31835 # METHYL P-HYDROXYBENZOATE
+http://purl.obolibrary.org/obo/CHEBI_35433 # MONOCALCIUM PHOSPHATE
+http://purl.obolibrary.org/obo/CHEBI_63036 # MONOPOTASSIUM PHOSPHATE
+http://purl.obolibrary.org/obo/CHEBI_37585 # MONOSODIUM PHOSPHATE
+http://purl.obolibrary.org/obo/CHEBI_7488 # NATAMYCIN
+http://purl.obolibrary.org/obo/CHEBI_71629 # NISIN
+http://purl.obolibrary.org/obo/CHEBI_51143 # NITROGEN
+http://purl.obolibrary.org/obo/CHEBI_17045 # NITROUS OXIDE
+http://purl.obolibrary.org/obo/CHEBI_83631 # OCTYL GALLATE
+http://purl.obolibrary.org/obo/CHEBI_33262 # OXYGEN
+http://purl.obolibrary.org/obo/CHEBI_3375 # PAPRIKA EXTRACT, CAPSANTHIN, CAPSORUBIN
+http://purl.obolibrary.org/obo/CHEBI_59601 # PATENT BLUE V
+http://purl.obolibrary.org/obo/CHEBI_17309 # PECTIN
+http://purl.obolibrary.org/obo/CHEBI_26078 # PHOSPHORIC ACID
+http://purl.obolibrary.org/obo/CHEBI_53424 # POLYOXYETHYLENE (20) SORBITAN MONOLAURATE (POLYSORBATE 20)
+http://purl.obolibrary.org/obo/CHEBI_53426 # POLYOXYETHYLENE (20) SORBITAN MONOOLEATE (POLYSORBATE 80)
+http://purl.obolibrary.org/obo/CHEBI_53423 # POLYOXYETHYLENE (20) SORBITAN MONOPALMITATE (POLYSORBATE 40)
+http://purl.obolibrary.org/obo/CHEBI_53425 # POLYOXYETHYLENE (20) SORBITAN MONOSTEARATE (POLYSORBATE 60)
+http://purl.obolibrary.org/obo/CHEBI_53248 # POLYVINYLPYRROLIDONE
+http://purl.obolibrary.org/obo/CHEBI_32029 # POTASSIUM ACETATE
+http://purl.obolibrary.org/obo/CHEBI_131526 # POTASSIUM CARBONATE
+http://purl.obolibrary.org/obo/CHEBI_30059 # POTASSIUM FERROCYANIDE
+http://purl.obolibrary.org/obo/CHEBI_32032 # POTASSIUM GLUCONATE
+http://purl.obolibrary.org/obo/CHEBI_81862 # POTASSIUM HYDROGEN CARBONATE
+http://purl.obolibrary.org/obo/CHEBI_32035 # POTASSIUM HYDROXIDE
+http://purl.obolibrary.org/obo/CHEBI_63043 # POTASSIUM NITRATE
+http://purl.obolibrary.org/obo/CHEBI_77868 # POTASSIUM SORBATE
+http://purl.obolibrary.org/obo/CHEBI_32036 # POTASSIUM SULPHATE
+http://purl.obolibrary.org/obo/CHEBI_28972 # PROPANE-1,2-DIOL (PROPYLENE GLYCOL)
+http://purl.obolibrary.org/obo/CHEBI_30768 # PROPIONIC ACID
+http://purl.obolibrary.org/obo/CHEBI_10607 # PROPYL GALLATE
+http://purl.obolibrary.org/obo/CHEBI_32063 # PROPYL P-HYDROXYBENZOATE
+http://purl.obolibrary.org/obo/CHEBI_53700 # QUINOLINE YELLOW
+http://purl.obolibrary.org/obo/CHEBI_17015 # RIBOFLAVIN
+http://purl.obolibrary.org/obo/CHEBI_17621 # RIBOFLAVIN-5'-PHOSPHATE
+http://purl.obolibrary.org/obo/CHEBI_32111 # SACCHARIN
+http://purl.obolibrary.org/obo/CHEBI_30563 # SILICON DIOXIDE
+http://purl.obolibrary.org/obo/CHEBI_33966 # SILVER
+http://purl.obolibrary.org/obo/CHEBI_32954 # SODIUM ACETATE
+http://purl.obolibrary.org/obo/CHEBI_53311 # SODIUM ALGINATE
+http://purl.obolibrary.org/obo/CHEBI_113451 # SODIUM ASCORBATE
+http://purl.obolibrary.org/obo/CHEBI_113455 # SODIUM BENZOATE
+http://purl.obolibrary.org/obo/CHEBI_29377 # SODIUM CARBONATE
+http://purl.obolibrary.org/obo/CHEBI_82431 # SODIUM CYCLAMATE
+http://purl.obolibrary.org/obo/CHEBI_30061 # SODIUM FERROCYANIDE
+http://purl.obolibrary.org/obo/CHEBI_84997 # SODIUM GLUCONATE
+http://purl.obolibrary.org/obo/CHEBI_32145 # SODIUM HYDROXIDE
+http://purl.obolibrary.org/obo/CHEBI_75228 # SODIUM LACTATE
+http://purl.obolibrary.org/obo/CHEBI_114786 # SODIUM METABISULPHITE
+http://purl.obolibrary.org/obo/CHEBI_63005 # SODIUM NITRATE
+http://purl.obolibrary.org/obo/CHEBI_78870 # SODIUM NITRITE
+http://purl.obolibrary.org/obo/CHEBI_63019 # SODIUM POTASSIUM TARTRATE
+http://purl.obolibrary.org/obo/CHEBI_132106 # SODIUM PROPIONATE
+http://purl.obolibrary.org/obo/CHEBI_32112 # SODIUM SACCHARIN
+http://purl.obolibrary.org/obo/CHEBI_32149 # SODIUM SULPHATE
+http://purl.obolibrary.org/obo/CHEBI_86477 # SODIUM SULPHITE
+http://purl.obolibrary.org/obo/CHEBI_86222 # SODIUM TETRABORATE (BORAX)
+http://purl.obolibrary.org/obo/CHEBI_35962 # SORBIC ACID
+http://purl.obolibrary.org/obo/CHEBI_53424 # SORBITAN MONOLAURATE
+http://purl.obolibrary.org/obo/CHEBI_53426 # SORBITAN MONOOLEATE
+http://purl.obolibrary.org/obo/CHEBI_53423 # SORBITAN MONOPALMITATE
+http://purl.obolibrary.org/obo/CHEBI_53425 # SORBITAN MONOSTEARATE
+http://purl.obolibrary.org/obo/CHEBI_30911 # SORBITOL
+http://purl.obolibrary.org/obo/CHEBI_78074 # STANNOUS CHLORIDE
+http://purl.obolibrary.org/obo/CHEBI_15741 # SUCCINIC ACID
+http://purl.obolibrary.org/obo/CHEBI_18422 # SULPHUR DIOXIDE
+http://purl.obolibrary.org/obo/CHEBI_26836 # SULPHURIC ACID
+http://purl.obolibrary.org/obo/CHEBI_32178 # TALC
+http://purl.obolibrary.org/obo/CHEBI_15674 # TARTARIC ACID (L(+)-)
+http://purl.obolibrary.org/obo/CHEBI_9405 # TARTRAZINE
+http://purl.obolibrary.org/obo/CHEBI_45979 # THIABENDAZOLE
+http://purl.obolibrary.org/obo/CHEBI_32234 # TITANIUM DIOXIDE
+http://purl.obolibrary.org/obo/CHEBI_63037 # TRIAMMONIUM CITRATE
+http://purl.obolibrary.org/obo/CHEBI_9679 # TRICALCIUM PHOSPHATE
+http://purl.obolibrary.org/obo/CHEBI_53258 # TRISODIUM CITRATE
+http://purl.obolibrary.org/obo/CHEBI_37583 # TRISODIUM PHOSPHATE
+http://purl.obolibrary.org/obo/CHEBI_17151 # XYLITOL
+http://purl.obolibrary.org/obo/CHEBI_30879 # ALCOHOL
+http://purl.obolibrary.org/obo/CHEBI_12777 # VITAMIN A
+http://purl.obolibrary.org/obo/CHEBI_27300 # VITAMIN D
+http://purl.obolibrary.org/obo/CHEBI_33234 # VITAMIN E
+http://purl.obolibrary.org/obo/CHEBI_28384 # VITAMIN K
+http://purl.obolibrary.org/obo/CHEBI_26948 # VITAMIN B1
+http://purl.obolibrary.org/obo/CHEBI_17015 # VITAMIN B2
+http://purl.obolibrary.org/obo/CHEBI_15940 # NIACIN
+http://purl.obolibrary.org/obo/CHEBI_7916 # PANTOTHENIC ACID
+http://purl.obolibrary.org/obo/CHEBI_27306 # VITAMIN B6
+http://purl.obolibrary.org/obo/CHEBI_27470 # FOLIC ACID
+http://purl.obolibrary.org/obo/CHEBI_15956 # BIOTIN
+http://purl.obolibrary.org/obo/CHEBI_21241 # VITAMIN C
+http://purl.obolibrary.org/obo/CHEBI_50211 # RETINOL
+http://purl.obolibrary.org/obo/CHEBI_32095 # RETINYL ACETATE
+http://purl.obolibrary.org/obo/CHEBI_15040 # RETINYL PALMITATE
+http://purl.obolibrary.org/obo/CHEBI_28940 # CHOLECALCIFEROL
+http://purl.obolibrary.org/obo/CHEBI_28934 # ERGOCALCIFEROL
+http://purl.obolibrary.org/obo/CHEBI_15940 # NICOTINIC ACID
+http://purl.obolibrary.org/obo/CHEBI_17154 # NICOTINAMIDE
+http://purl.obolibrary.org/obo/CHEBI_31345 # D-PANTOTHENATE, CALCIUM
+http://purl.obolibrary.org/obo/CHEBI_49105 # THIAMIN HYDROCHLORIDE
+http://purl.obolibrary.org/obo/CHEBI_17439 # CYANOCOBALAMIN
+http://purl.obolibrary.org/obo/CHEBI_27786 # HYDROXOCOBALAMIN
+http://purl.obolibrary.org/obo/CHEBI_30961 # PYRIDOXINE HYDROCHLORIDE
+http://purl.obolibrary.org/obo/CHEBI_28803 # PYRIDOXINE 5'-PHOSPHATE
+http://purl.obolibrary.org/obo/CHEBI_33234 # D-ALPHA-TOCOPHEROL
+http://purl.obolibrary.org/obo/CHEBI_32321 # D-ALPHA-TOCOPHERYL ACETATE
+http://purl.obolibrary.org/obo/CHEBI_18067 # PHYLLOQUINONE
+http://purl.obolibrary.org/obo/CHEBI_17113 # ERYTHRITOL
+http://purl.obolibrary.org/obo/CHEBI_31793 # MAGNESIUM CARBONATES
+http://purl.obolibrary.org/obo/CHEBI_33260 # HYDROGEN
+http://purl.obolibrary.org/obo/CHEBI_30363 # ISOBUTANE
+http://purl.obolibrary.org/obo/CHEBI_17987 # BENZYL ALCOHOL
+http://purl.obolibrary.org/obo/CHEBI_495055 # BETA-CYCLODEXTRIN
+http://purl.obolibrary.org/obo/CHEBI_37808 # BUTANE
+http://purl.obolibrary.org/obo/CHEBI_23042 # CAROTENES
+http://purl.obolibrary.org/obo/CHEBI_37586 # SODIUM PHOSPHATES
+http://purl.obolibrary.org/obo/CHEBI_17561 # L-CYSTEINE
+http://purl.obolibrary.org/obo/CHEBI_30911 # SORBITOLS
+http://purl.obolibrary.org/obo/CHEBI_32159 # SUCRALOSE
+http://purl.obolibrary.org/obo/CHEBI_62984 # ZINC ACETATE
+http://purl.obolibrary.org/obo/CHEBI_83503 # NEOTAME
+http://purl.obolibrary.org/obo/CHEBI_46793 # POLYETHYLENE GLYCOL
+http://purl.obolibrary.org/obo/CHEBI_26197 # POLYPHOSPHATES
+http://purl.obolibrary.org/obo/CHEBI_32879 # PROPANE
+http://purl.obolibrary.org/obo/CHEBI_27941 # PULLULAN
+http://purl.obolibrary.org/obo/CHEBI_131526 # POTASSIUM CARBONATES
+http://purl.obolibrary.org/obo/CHEBI_17309 # PECTINS
+http://purl.obolibrary.org/obo/CHEBI_18154 # POLYSACCHARIDE
+http://purl.obolibrary.org/obo/CHEBI_17306 # MALTOSE
+http://purl.obolibrary.org/obo/CHEBI_83163 # MOLASSES
+http://purl.obolibrary.org/obo/CHEBI_17716 # LACTOSE
+http://purl.obolibrary.org/obo/CHEBI_5291 # GELATIN
+http://purl.obolibrary.org/obo/CHEBI_17634 # DEXTROSE
+http://purl.obolibrary.org/obo/CHEBI_28757 # FRUCTOSE
+http://purl.obolibrary.org/obo/CHEBI_50699 # OLIGOSACCHARIDE
+http://purl.obolibrary.org/obo/CHEBI_30911 # SORBITOL
+http://purl.obolibrary.org/obo/CHEBI_25140 # MALTODEXTRIN
+
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/CHEBI_50906 # role 
+
+[Source term retrieval setting]
+includeAllIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115 
+http://purl.obolibrary.org/obo/IAO_0000111
+http://purl.obolibrary.org/obo/IAO_0000114
+http://purl.obolibrary.org/obo/IAO_0000119
+http://purl.obolibrary.org/obo/OBI_0001886
+
+[Source annotation URIs to be excluded]
